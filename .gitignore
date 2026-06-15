@@ -46,3 +46,13 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Environment variables
+.env
+.env.*
+
+# Firebase generated / local config
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
