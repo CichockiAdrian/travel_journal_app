@@ -1,17 +1,92 @@
-# travel_journal_app
+# Travel Journal
 
-A new Flutter project.
+Aplikacja mobilna tworzona we Flutterze do prowadzenia dziennika podróży.
 
-## Getting Started
+## Cel projektu
 
-This project is a starting point for a Flutter application.
+Travel Journal umożliwia:
 
-A few resources to get you started if this is your first Flutter project:
+- przeglądanie krajów świata pobieranych z REST Countries API,
+- oznaczanie odwiedzonych krajów,
+- prowadzenie dziennika podróży,
+- dodawanie zdjęć z podróży,
+- przeglądanie odwiedzonych miejsc na mapie,
+- synchronizację danych między urządzeniami.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Technologie
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Główne
+
+- Flutter
+- flutter_bloc
+- get_it
+- dio
+- firebase_auth
+- cloud_firestore
+- Hive
+- flutter_map
+- image_picker
+
+### Dodatkowe
+
+- freezed
+- json_serializable
+- fl_chart
+
+## Źródło danych
+
+Dane o krajach pobierane są z REST Countries API.
+
+Przykładowe dane:
+
+- nazwa kraju,
+- stolica,
+- flaga,
+- populacja,
+- region,
+- współrzędne geograficzne.
+
+## Aktualny zakres
+
+Na obecnym etapie projekt zawiera:
+
+- początkowy szkielet aplikacji,
+- podstawowy motyw light/dark,
+- konfigurację dependency injection przez `get_it`,
+- klienta HTTP przez `dio`,
+- ekrany logowania i rejestracji przez Firebase Auth,
+- ekran główny z dolną nawigacją,
+- ekran krajów,
+- pobieranie krajów z API,
+- wyszukiwanie krajów,
+- lokalną paginację listy,
+- bottom sheet ze szczegółami kraju,
+- testowy przycisk oznaczenia kraju jako odwiedzonego.
+
+## Struktura projektu
+
+```txt
+lib/
+  core/
+    di/
+    network/
+    theme/
+
+  features/
+    auth/
+      data/
+      presentation/
+
+    home/
+      presentation/
+
+    countries/
+      data/
+      logic/
+      presentation/
+
+    map/
+      presentation/
+
+    account/
+      presentation/
