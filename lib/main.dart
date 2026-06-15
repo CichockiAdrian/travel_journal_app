@@ -1,11 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'core/theme/app_theme.dart';
-import 'features/auth/presentation/login_page.dart';
+import 'features/auth/presentation/auth_gate.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const TravelJournalApp());
 }
+
 
 class TravelJournalApp extends StatelessWidget {
   const TravelJournalApp({super.key});
@@ -19,7 +28,7 @@ class TravelJournalApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
-      home: const LoginPage(),
+      home: const AuthGate(),
     );
   }
 }
