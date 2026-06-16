@@ -28,11 +28,14 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = _getAuthErrorMessage(e.code);
-      });
-    } catch (_) {
+    }  on FirebaseAuthException catch (e) {
+  debugPrint('FirebaseAuth error code: ${e.code}');
+  debugPrint('FirebaseAuth error message: ${e.message}');
+
+  setState(() {
+    errorMessage = '${_getAuthErrorMessage(e.code)} (${e.code})';
+  });
+} catch (_) {
       setState(() {
         errorMessage = 'Wystąpił nieoczekiwany błąd.';
       });
