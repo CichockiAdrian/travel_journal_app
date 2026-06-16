@@ -1,6 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../home/presentation/main_shell_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -10,21 +9,81 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final repeatPasswordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController repeatPasswordController = TextEditingController();
 
-  void register() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const MainShellPage()),
-    );
+  bool isLoading = false;
+  String? errorMessage;
+
+  Future<void> register() async {
+    if (passwordController.text.trim() != repeatPasswordController.text.trim()) {
+      setState(() {
+        errorMessage = 'Hasła nie są takie same.';
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        errorMessage = _getAuthErrorMessage(e.code);
+      });
+    } catch (_) {
+      setState(() {
+        errorMessage = 'Wystąpił nieoczekiwany błąd.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  String _getAuthErrorMessage(String code) {
+    switch (code) {
+      case 'email-already-in-use':
+        return 'Konto z tym adresem email już istnieje.';
+      case 'invalid-email':
+        return 'Nieprawidłowy adres email.';
+      case 'weak-password':
+        return 'Hasło jest za słabe. Użyj minimum 6 znaków.';
+      case 'network-request-failed':
+        return 'Brak połączenia z internetem.';
+      default:
+        return 'Nie udało się utworzyć konta.';
+    }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    repeatPasswordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rejestracja')),
+      appBar: AppBar(
+        title: const Text('Rejestracja'),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -36,8 +95,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   Text(
                     'Utwórz konto',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 28),
                   TextField(
@@ -66,13 +125,29 @@ class _RegisterPageState extends State<RegisterPage> {
                       prefixIcon: Icon(Icons.lock_reset),
                     ),
                   ),
+                  if (errorMessage != null) ...[
+                    const SizedBox(height: 14),
+                    Text(
+                      errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     height: 52,
                     child: FilledButton(
-                      onPressed: register,
-                      child: const Text('Zarejestruj się'),
+                      onPressed: isLoading ? null : register,
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text('Zarejestruj się'),
                     ),
                   ),
                 ],
