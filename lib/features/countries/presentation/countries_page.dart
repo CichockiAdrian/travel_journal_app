@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import '../data/countries_api_service.dart';
+import '../data/country_model.dart';
 
 class CountriesPage extends StatefulWidget {
   const CountriesPage({super.key});
@@ -8,71 +13,121 @@ class CountriesPage extends StatefulWidget {
 }
 
 class _CountriesPageState extends State<CountriesPage> {
-  final searchController = TextEditingController();
+  final CountriesApiService apiService = CountriesApiService();
+  final TextEditingController searchController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
-  final countries = const [
-    {
-      'name': 'Poland',
-      'capital': 'Warsaw',
-      'region': 'Europe',
-      'flag': '🇵🇱',
-      'population': '37 600 000',
-    },
-    {
-      'name': 'Germany',
-      'capital': 'Berlin',
-      'region': 'Europe',
-      'flag': '🇩🇪',
-      'population': '83 000 000',
-    },
-    {
-      'name': 'Japan',
-      'capital': 'Tokyo',
-      'region': 'Asia',
-      'flag': '🇯🇵',
-      'population': '125 000 000',
-    },
-    {
-      'name': 'Canada',
-      'capital': 'Ottawa',
-      'region': 'North America',
-      'flag': '🇨🇦',
-      'population': '39 000 000',
-    },
-    {
-      'name': 'Brazil',
-      'capital': 'Brasília',
-      'region': 'South America',
-      'flag': '🇧🇷',
-      'population': '203 000 000',
-    },
-  ];
+  static const int pageSize = 20;
 
-  List<Map<String, String>> filteredCountries = [];
+  List<CountryModel> allCountries = [];
+  List<CountryModel> visibleCountries = [];
+
+  bool isLoading = false;
+  bool hasMore = false;
+  String? errorMessage;
+  int currentPage = 1;
+  Timer? searchDebounce;
 
   @override
   void initState() {
     super.initState();
-    filteredCountries = List<Map<String, String>>.from(countries);
-  }
 
-  void searchCountry(String query) {
-    final lowerQuery = query.toLowerCase();
+    loadAllCountries();
 
-    setState(() {
-      filteredCountries = countries.where((country) {
-        final name = country['name']!.toLowerCase();
-        final capital = country['capital']!.toLowerCase();
-        final region = country['region']!.toLowerCase();
-
-        return name.contains(lowerQuery) ||
-            capital.contains(lowerQuery) ||
-            region.contains(lowerQuery);
-      }).toList();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >
+          scrollController.position.maxScrollExtent - 250) {
+        loadMore();
+      }
     });
   }
 
-  void showCountryDetails(Map<String, String> country) {
+  Future<void> loadAllCountries() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+      currentPage = 1;
+    });
+
+    try {
+      final countries = await apiService.getAllCountries();
+
+      countries.sort((a, b) => a.name.compareTo(b.name));
+
+      setState(() {
+        allCountries = countries;
+        visibleCountries = countries.take(pageSize).toList();
+        hasMore = countries.length > pageSize;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = e.toString();
+        allCountries = [];
+        visibleCountries = [];
+        hasMore = false;
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  void onSearchChanged(String value) {
+    searchDebounce?.cancel();
+
+    searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      final query = value.trim();
+
+      if (query.isEmpty) {
+        setState(() {
+          currentPage = 1;
+          visibleCountries = allCountries.take(pageSize).toList();
+          errorMessage = null;
+        });
+        return;
+      }
+
+      searchCountriesLocally(query);
+    });
+  }
+
+  void searchCountriesLocally(String query) {
+    final lowerQuery = query.toLowerCase();
+
+    final filtered = allCountries.where((country) {
+      final name = country.name.toLowerCase();
+      final capital = country.capital?.toLowerCase() ?? '';
+      final region = country.region.toLowerCase();
+
+      return name.contains(lowerQuery) ||
+          capital.contains(lowerQuery) ||
+          region.contains(lowerQuery);
+    }).toList();
+
+    setState(() {
+      currentPage = 1;
+      visibleCountries = filtered.take(pageSize).toList();
+      hasMore = filtered.length > pageSize;
+    });
+  }
+
+  void loadMore() {
+    if (!hasMore || isLoading) return;
+
+    final nextPage = currentPage + 1;
+    final nextItems = allCountries.take(nextPage * pageSize).toList();
+
+    setState(() {
+      currentPage = nextPage;
+      visibleCountries = nextItems;
+      hasMore = nextItems.length < allCountries.length;
+    });
+  }
+
+  void showCountryDetails(CountryModel country) {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -82,31 +137,61 @@ class _CountriesPageState extends State<CountriesPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(country['flag']!, style: const TextStyle(fontSize: 56)),
-              const SizedBox(height: 8),
+              if (country.flagUrl != null && country.flagUrl!.isNotEmpty)
+                Image.network(
+                  country.flagUrl!,
+                  width: 80,
+                  height: 54,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) {
+                    return const Icon(Icons.flag, size: 54);
+                  },
+                )
+              else
+                const Icon(Icons.flag, size: 54),
+
+              const SizedBox(height: 12),
+
               Text(
-                country['name']!,
+                country.name,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
+
               const SizedBox(height: 20),
-              _InfoRow(label: 'Stolica', value: country['capital']!),
-              _InfoRow(label: 'Region', value: country['region']!),
-              _InfoRow(label: 'Populacja', value: country['population']!),
+
+              _InfoRow(
+                label: 'Stolica',
+                value: country.capital ?? 'Brak danych',
+              ),
+              _InfoRow(label: 'Region', value: country.region),
+              _InfoRow(
+                label: 'Populacja',
+                value: country.population?.toString() ?? 'Brak danych',
+              ),
+              _InfoRow(
+                label: 'Współrzędne',
+                value: country.latitude != null && country.longitude != null
+                    ? '${country.latitude}, ${country.longitude}'
+                    : 'Brak danych',
+              ),
+
               const SizedBox(height: 24),
+
               SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: FilledButton.icon(
                   onPressed: () {
-                    debugPrint('Oznaczono jako odwiedzony: ${country['name']}');
+                    debugPrint('Oznaczono jako odwiedzony: ${country.name}');
                     Navigator.pop(context);
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          'Oznaczono jako odwiedzony: ${country['name']}',
+                          'Oznaczono jako odwiedzony: ${country.name}',
                         ),
                       ),
                     );
@@ -124,12 +209,16 @@ class _CountriesPageState extends State<CountriesPage> {
 
   @override
   void dispose() {
+    searchDebounce?.cancel();
     searchController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final showInitialLoader = isLoading && visibleCountries.isEmpty;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Kraje')),
       body: Column(
@@ -138,33 +227,73 @@ class _CountriesPageState extends State<CountriesPage> {
             padding: const EdgeInsets.all(16),
             child: TextField(
               controller: searchController,
-              onChanged: searchCountry,
+              onChanged: onSearchChanged,
               decoration: const InputDecoration(
-                hintText: 'Szukaj kraju, stolicy lub regionu...',
+                hintText: 'Szukaj kraju, np. Poland, Canada...',
                 prefixIcon: Icon(Icons.search),
               ),
             ),
           ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: filteredCountries.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final country = filteredCountries[index];
 
-                return ListTile(
-                  leading: Text(
-                    country['flag']!,
-                    style: const TextStyle(fontSize: 28),
+          if (showInitialLoader)
+            const Expanded(child: Center(child: CircularProgressIndicator()))
+          else if (errorMessage != null)
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'Nie udało się pobrać krajów.\n\nSprawdź token API, internet albo endpoint.\n\nSzczegóły:\n$errorMessage',
+                    textAlign: TextAlign.center,
                   ),
-                  title: Text(country['name']!),
-                  subtitle: Text(country['capital']!),
-                  trailing: Text(country['region']!),
-                  onTap: () => showCountryDetails(country),
-                );
-              },
+                ),
+              ),
+            )
+          else if (visibleCountries.isEmpty)
+            const Expanded(
+              child: Center(child: Text('Brak wyników. Wpisz nazwę kraju.')),
+            )
+          else
+            Expanded(
+              child: ListView.separated(
+                controller: scrollController,
+                itemCount: visibleCountries.length + 1,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  if (index == visibleCountries.length) {
+                    if (!hasMore) {
+                      return const SizedBox(height: 24);
+                    }
+
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  final country = visibleCountries[index];
+
+                  return ListTile(
+                    leading:
+                        country.flagUrl != null && country.flagUrl!.isNotEmpty
+                        ? Image.network(
+                            country.flagUrl!,
+                            width: 42,
+                            height: 28,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) {
+                              return const Icon(Icons.flag);
+                            },
+                          )
+                        : const Icon(Icons.flag),
+                    title: Text(country.name),
+                    subtitle: Text(country.capital ?? 'Brak stolicy'),
+                    trailing: Text(country.region),
+                    onTap: () => showCountryDetails(country),
+                  );
+                },
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -190,7 +319,7 @@ class _InfoRow extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(child: Text(value)),
+          Expanded(child: Text(value, textAlign: TextAlign.right)),
         ],
       ),
     );
