@@ -1,19 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../auth/presentation/login_page.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
 
-  void logout(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginPage()),
-    );
+  Future<void> logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     final menuItems = [
       {
         'icon': Icons.public,
@@ -38,7 +36,9 @@ class AccountPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Konto')),
+      appBar: AppBar(
+        title: const Text('Konto'),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -55,36 +55,38 @@ class AccountPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Adrian',
+                    const Text(
+                      'Użytkownik',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
-                    Text('adrian@example.com'),
+                    const SizedBox(height: 4),
+                    Text(user?.email ?? 'Brak adresu email'),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 28),
-          ...menuItems.map((item) {
-            return Card(
-              child: ListTile(
-                leading: Icon(item['icon'] as IconData),
-                title: Text(item['title'] as String),
-                subtitle: Text(item['subtitle'] as String),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
-              ),
-            );
-          }),
+          ...menuItems.map(
+            (item) {
+              return Card(
+                child: ListTile(
+                  leading: Icon(item['icon'] as IconData),
+                  title: Text(item['title'] as String),
+                  subtitle: Text(item['subtitle'] as String),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {},
+                ),
+              );
+            },
+          ),
           const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: () => logout(context),
