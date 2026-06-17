@@ -61,3 +61,5 @@ ui-debug.log
 .env
 .env.*
 !.env.example
+
+/lib/l10n/generated/
