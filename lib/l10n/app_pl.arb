@@ -1,0 +1,24 @@
+{
+  "@@locale": "pl",
+  "appTitle": "Travel Journal",
+  "countries": "Kraje",
+  "searchCountry": "Szukaj kraju",
+  "noCountriesFound": "Nie znaleziono krajów.",
+  "noSearchResults": "Brak wyników dla podanej frazy.",
+  "capital": "Stolica",
+  "region": "Region",
+  "population": "Populacja",
+  "coordinates": "Współrzędne",
+  "noData": "Brak danych",
+  "markAsVisited": "Oznacz jako odwiedzony",
+  "markedAsVisited": "Oznaczono jako odwiedzony: {countryName}",
+  "@markedAsVisited": {
+    "placeholders": {
+      "countryName": {}
+    }
+  },
+  "settings": "Ustawienia",
+  "language": "Język",
+  "polish": "Polski",
+  "english": "Angielski"
+}

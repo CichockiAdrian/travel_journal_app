@@ -1,0 +1,24 @@
+{
+  "@@locale": "en",
+  "appTitle": "Travel Journal",
+  "countries": "Countries",
+  "searchCountry": "Search country",
+  "noCountriesFound": "No countries found.",
+  "noSearchResults": "No results for the entered phrase.",
+  "capital": "Capital",
+  "region": "Region",
+  "population": "Population",
+  "coordinates": "Coordinates",
+  "noData": "No data",
+  "markAsVisited": "Mark as visited",
+  "markedAsVisited": "Marked as visited: {countryName}",
+  "@markedAsVisited": {
+    "placeholders": {
+      "countryName": {}
+    }
+  },
+  "settings": "Settings",
+  "language": "Language",
+  "polish": "Polish",
+  "english": "English"
+}

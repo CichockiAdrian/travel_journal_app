@@ -6,6 +6,8 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/auth_gate.dart';
 import 'firebase_options.dart';
 
+import 'package:travel_journal_app/l10n/generated/app_localizations.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -28,6 +30,8 @@ class TravelJournalApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const AuthGate(),
     );
   }
