@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../auth/data/auth_repository.dart';
+import '../../settings/presentation/settings_page.dart';
 import '../logic/account_cubit.dart';
+import '../models/account_menu_item.dart';
 import '../models/account_menu_items.dart';
 
 class AccountPage extends StatelessWidget {
@@ -72,7 +74,7 @@ class AccountView extends StatelessWidget {
                     title: Text(item.title),
                     subtitle: Text(item.subtitle),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: item.onTap,
+                    onTap: () => _handleMenuItemTap(context, item.type),
                   ),
                 );
               }),
@@ -91,5 +93,24 @@ class AccountView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _handleMenuItemTap(BuildContext context, AccountMenuItemType type) {
+    switch (type) {
+      case AccountMenuItemType.settings:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsPage()),
+        );
+        break;
+
+      case AccountMenuItemType.visitedCountries:
+      case AccountMenuItemType.travelJournal:
+      case AccountMenuItemType.photos:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ta sekcja zostanie dodana później.')),
+        );
+        break;
+    }
   }
 }

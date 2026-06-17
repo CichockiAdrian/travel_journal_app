@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
+enum AccountMenuItemType { visitedCountries, travelJournal, photos, settings }
+
 class AccountMenuItem {
   final IconData icon;
   final String title;
   final String subtitle;
-  final VoidCallback? onTap;
+  final AccountMenuItemType type;
 
   const AccountMenuItem({
     required this.icon,
     required this.title,
     required this.subtitle,
-    this.onTap,
+    required this.type,
   });
 }
