@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../../../core/constants/app_urls.dart';
 import 'country_model.dart';
 
 class CountriesApiService {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'https://api.restcountries.com/countries/v5',
+      baseUrl: AppUrls.restCountriesBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
     ),
@@ -23,15 +24,35 @@ class CountriesApiService {
   }
 
   Future<List<CountryModel>> getAllCountries() async {
-    final response = await _dio.get('', options: _authOptions());
+    const limit = 100;
+    var offset = 0;
+    var hasMore = true;
 
-    return _parseCountries(response.data);
+    final countries = <CountryModel>[];
+
+    while (hasMore) {
+      final response = await _dio.get(
+        '',
+        queryParameters: {'limit': limit, 'offset': offset},
+        options: _authOptions(),
+      );
+
+      countries.addAll(_parseCountries(response.data));
+
+      final meta = _readMeta(response.data);
+      final more = meta?['more'];
+
+      hasMore = more == true;
+      offset += limit;
+    }
+
+    return countries;
   }
 
   Future<List<CountryModel>> searchCountries(String query) async {
     final response = await _dio.get(
       '',
-      queryParameters: {'q': query},
+      queryParameters: {'q': query, 'limit': 100},
       options: _authOptions(),
     );
 
@@ -47,7 +68,20 @@ class CountriesApiService {
     }
 
     if (data is Map<String, dynamic>) {
-      final results = data['data'] ?? data['countries'] ?? data['results'];
+      final responseData = data['data'];
+
+      if (responseData is Map<String, dynamic>) {
+        final objects = responseData['objects'];
+
+        if (objects is List) {
+          return objects
+              .whereType<Map<String, dynamic>>()
+              .map(CountryModel.fromJson)
+              .toList();
+        }
+      }
+
+      final results = data['countries'] ?? data['results'];
 
       if (results is List) {
         return results
@@ -58,5 +92,21 @@ class CountriesApiService {
     }
 
     return [];
+  }
+
+  Map<String, dynamic>? _readMeta(dynamic data) {
+    if (data is! Map<String, dynamic>) return null;
+
+    final responseData = data['data'];
+
+    if (responseData is! Map<String, dynamic>) return null;
+
+    final meta = responseData['meta'];
+
+    if (meta is Map<String, dynamic>) {
+      return meta;
+    }
+
+    return null;
   }
 }

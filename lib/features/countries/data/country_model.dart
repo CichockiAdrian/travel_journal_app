@@ -22,7 +22,7 @@ class CountryModel {
       name: _readName(json),
       capital: _readCapital(json),
       flagUrl: _readFlag(json),
-      region: json['region']?.toString() ?? 'Brak danych',
+      region: _readRegion(json),
       population: _readInt(json['population']),
       latitude: _readLatitude(json),
       longitude: _readLongitude(json),
@@ -37,7 +37,17 @@ class CountryModel {
     }
 
     if (name is Map) {
-      return name['common']?.toString() ?? name['official'] ?? 'Nieznany kraj';
+      return name['common']?.toString() ??
+          name['official']?.toString() ??
+          'Nieznany kraj';
+    }
+
+    final names = json['names'];
+
+    if (names is Map) {
+      return names['common']?.toString() ??
+          names['official']?.toString() ??
+          'Nieznany kraj';
     }
 
     return json['commonName']?.toString() ??
@@ -52,8 +62,38 @@ class CountryModel {
       return capital;
     }
 
+    if (capital is Map) {
+      return capital['name']?.toString();
+    }
+
     if (capital is List && capital.isNotEmpty) {
-      return capital.first.toString();
+      final firstCapital = capital.first;
+
+      if (firstCapital is String) {
+        return firstCapital;
+      }
+
+      if (firstCapital is Map) {
+        return firstCapital['name']?.toString();
+      }
+
+      return firstCapital.toString();
+    }
+
+    final capitals = json['capitals'];
+
+    if (capitals is List && capitals.isNotEmpty) {
+      final firstCapital = capitals.first;
+
+      if (firstCapital is String) {
+        return firstCapital;
+      }
+
+      if (firstCapital is Map) {
+        return firstCapital['name']?.toString();
+      }
+
+      return firstCapital.toString();
     }
 
     return null;
@@ -63,15 +103,48 @@ class CountryModel {
     final flags = json['flags'];
 
     if (flags is Map) {
-      return flags['png']?.toString() ?? flags['svg']?.toString();
+      return flags['png']?.toString() ??
+          flags['svg']?.toString() ??
+          flags['url_png']?.toString() ??
+          flags['url_svg']?.toString();
     }
 
-    return json['flag']?.toString();
+    final flag = json['flag'];
+
+    if (flag is Map) {
+      return flag['png']?.toString() ??
+          flag['svg']?.toString() ??
+          flag['url_png']?.toString() ??
+          flag['url_svg']?.toString();
+    }
+
+    final flagValue = flag?.toString();
+
+    if (flagValue != null && flagValue.startsWith('http')) {
+      return flagValue;
+    }
+
+    return null;
+  }
+
+  static String _readRegion(Map<String, dynamic> json) {
+    final region = json['region'];
+
+    if (region is String) {
+      return region;
+    }
+
+    if (region is Map) {
+      return region['name']?.toString() ?? 'Brak danych';
+    }
+
+    return 'Brak danych';
   }
 
   static int? _readInt(dynamic value) {
     if (value is int) return value;
     if (value is num) return value.toInt();
+
     return int.tryParse(value?.toString() ?? '');
   }
 
@@ -87,6 +160,13 @@ class CountryModel {
 
     if (coordinates is Map) {
       final lat = coordinates['lat'] ?? coordinates['latitude'];
+      if (lat is num) return lat.toDouble();
+    }
+
+    final geo = json['geo'];
+
+    if (geo is Map) {
+      final lat = geo['lat'] ?? geo['latitude'];
       if (lat is num) return lat.toDouble();
     }
 
@@ -107,6 +187,13 @@ class CountryModel {
       final lng =
           coordinates['lng'] ?? coordinates['lon'] ?? coordinates['longitude'];
 
+      if (lng is num) return lng.toDouble();
+    }
+
+    final geo = json['geo'];
+
+    if (geo is Map) {
+      final lng = geo['lng'] ?? geo['lon'] ?? geo['longitude'];
       if (lng is num) return lng.toDouble();
     }
 
