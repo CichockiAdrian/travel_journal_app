@@ -20,5 +20,22 @@
   "settings": "Ustawienia",
   "language": "Język",
   "polish": "Polski",
-  "english": "Angielski"
+  "english": "Angielski",
+  "account": "Konto",
+"user": "Użytkownik",
+"logout": "Wyloguj się",
+"loggingOut": "Wylogowywanie...",
+"comingSoon": "Ta sekcja zostanie dodana później.",
+"account": "Konto",
+"user": "Użytkownik",
+"logout": "Wyloguj się",
+"loggingOut": "Wylogowywanie...",
+"visitedCountries": "Odwiedzone kraje",
+"visitedCountriesSubtitle": "Lista krajów oznaczonych jako odwiedzone",
+"travelJournal": "Dziennik podróży",
+"travelJournalSubtitle": "Wpisy i wspomnienia z wyjazdów",
+"photos": "Zdjęcia",
+"photosSubtitle": "Zdjęcia dodane do podróży",
+"settingsSubtitle": "Preferencje aplikacji",
+"comingSoon": "Ta sekcja zostanie dodana później."
 }

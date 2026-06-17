@@ -20,5 +20,22 @@
   "settings": "Settings",
   "language": "Language",
   "polish": "Polish",
-  "english": "English"
+  "english": "English",
+  "account": "Account",
+"user": "User",
+"logout": "Log out",
+"loggingOut": "Logging out...",
+"comingSoon": "This section will be added later.",
+"account": "Account",
+"user": "User",
+"logout": "Log out",
+"loggingOut": "Logging out...",
+"visitedCountries": "Visited countries",
+"visitedCountriesSubtitle": "List of countries marked as visited",
+"travelJournal": "Travel journal",
+"travelJournalSubtitle": "Entries and memories from trips",
+"photos": "Photos",
+"photosSubtitle": "Photos added to trips",
+"settingsSubtitle": "App preferences",
+"comingSoon": "This section will be added later."
 }
