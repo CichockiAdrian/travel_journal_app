@@ -14,16 +14,17 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController repeatPasswordController = TextEditingController();
+  final TextEditingController repeatPasswordController =
+      TextEditingController();
 
   void register(BuildContext context) {
     context.read<AuthBloc>().add(
-          AuthRegisterRequested(
-            email: emailController.text,
-            password: passwordController.text,
-            repeatedPassword: repeatPasswordController.text,
-          ),
-        );
+      AuthRegisterRequested(
+        email: emailController.text,
+        password: passwordController.text,
+        repeatedPassword: repeatPasswordController.text,
+      ),
+    );
   }
 
   @override
@@ -37,9 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthBloc(
-        authRepository: FirebaseAuthRepository(),
-      ),
+      create: (_) => AuthBloc(authRepository: FirebaseAuthRepository()),
       child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state.status == AuthStatus.success) {
@@ -48,9 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
         },
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(
-              title: const Text('Rejestracja'),
-            ),
+            appBar: AppBar(title: const Text('Rejestracja')),
             body: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -61,12 +58,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       children: [
                         Text(
                           'Utwórz konto',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 28),
                         TextField(

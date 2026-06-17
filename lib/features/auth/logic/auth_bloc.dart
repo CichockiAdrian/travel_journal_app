@@ -11,10 +11,7 @@ class AuthLoginRequested extends AuthEvent {
   final String email;
   final String password;
 
-  const AuthLoginRequested({
-    required this.email,
-    required this.password,
-  });
+  const AuthLoginRequested({required this.email, required this.password});
 }
 
 class AuthRegisterRequested extends AuthEvent {
@@ -29,45 +26,27 @@ class AuthRegisterRequested extends AuthEvent {
   });
 }
 
-enum AuthStatus {
-  initial,
-  loading,
-  success,
-  failure,
-}
+enum AuthStatus { initial, loading, success, failure }
 
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
 
-  const AuthState({
-    required this.status,
-    this.errorMessage,
-  });
+  const AuthState({required this.status, this.errorMessage});
 
-  const AuthState.initial()
-      : status = AuthStatus.initial,
-        errorMessage = null;
+  const AuthState.initial() : status = AuthStatus.initial, errorMessage = null;
 
   bool get isLoading => status == AuthStatus.loading;
 
-  AuthState copyWith({
-    AuthStatus? status,
-    String? errorMessage,
-  }) {
-    return AuthState(
-      status: status ?? this.status,
-      errorMessage: errorMessage,
-    );
+  AuthState copyWith({AuthStatus? status, String? errorMessage}) {
+    return AuthState(status: status ?? this.status, errorMessage: errorMessage);
   }
 }
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
 
-  AuthBloc({
-    required this.authRepository,
-  }) : super(const AuthState.initial()) {
+  AuthBloc({required this.authRepository}) : super(const AuthState.initial()) {
     on<AuthLoginRequested>(_onLoginRequested);
     on<AuthRegisterRequested>(_onRegisterRequested);
   }
@@ -76,12 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(
-      state.copyWith(
-        status: AuthStatus.loading,
-        errorMessage: null,
-      ),
-    );
+    emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
 
     try {
       await authRepository.login(
@@ -89,12 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password.trim(),
       );
 
-      emit(
-        state.copyWith(
-          status: AuthStatus.success,
-          errorMessage: null,
-        ),
-      );
+      emit(state.copyWith(status: AuthStatus.success, errorMessage: null));
     } on FirebaseAuthException catch (e) {
       emit(
         state.copyWith(
@@ -130,25 +99,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        status: AuthStatus.loading,
-        errorMessage: null,
-      ),
-    );
+    emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
 
     try {
-      await authRepository.register(
-        email: email,
-        password: password,
-      );
+      await authRepository.register(email: email, password: password);
 
-      emit(
-        state.copyWith(
-          status: AuthStatus.success,
-          errorMessage: null,
-        ),
-      );
+      emit(state.copyWith(status: AuthStatus.success, errorMessage: null));
     } on FirebaseAuthException catch (e) {
       emit(
         state.copyWith(

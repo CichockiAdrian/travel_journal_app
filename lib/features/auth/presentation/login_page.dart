@@ -18,11 +18,11 @@ class _LoginPageState extends State<LoginPage> {
 
   void login(BuildContext context) {
     context.read<AuthBloc>().add(
-          AuthLoginRequested(
-            email: emailController.text,
-            password: passwordController.text,
-          ),
-        );
+      AuthLoginRequested(
+        email: emailController.text,
+        password: passwordController.text,
+      ),
+    );
   }
 
   @override
@@ -35,9 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthBloc(
-        authRepository: FirebaseAuthRepository(),
-      ),
+      create: (_) => AuthBloc(authRepository: FirebaseAuthRepository()),
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           return Scaffold(
@@ -65,12 +63,8 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 20),
                         Text(
                           'Travel Journal',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -109,8 +103,9 @@ class _LoginPageState extends State<LoginPage> {
                           width: double.infinity,
                           height: 52,
                           child: FilledButton(
-                            onPressed:
-                                state.isLoading ? null : () => login(context),
+                            onPressed: state.isLoading
+                                ? null
+                                : () => login(context),
                             child: state.isLoading
                                 ? const SizedBox(
                                     width: 22,
@@ -134,9 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   );
                                 },
-                          child: const Text(
-                            'Nie masz konta? Zarejestruj się',
-                          ),
+                          child: const Text('Nie masz konta? Zarejestruj się'),
                         ),
                       ],
                     ),
