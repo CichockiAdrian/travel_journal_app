@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../data/auth_repository.dart';
 import '../logic/auth_bloc.dart';
+import '../logic/auth_event.dart';
+import '../logic/auth_state.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -38,15 +41,15 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthBloc(authRepository: FirebaseAuthRepository()),
+      create: (_) => AuthBloc(authRepository: getIt<AuthRepository>()),
       child: BlocConsumer<AuthBloc, AuthState>(
         listenWhen: (previous, current) {
-          return previous.status != current.status && current.status == AuthStatus.success;
-          },
-          listener: (context, state){
-            Navigator.pop(context);
-            
-          },
+          return previous.status != current.status &&
+              current.status == AuthStatus.success;
+        },
+        listener: (context, state) {
+          Navigator.pop(context);
+        },
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(title: const Text('Rejestracja')),

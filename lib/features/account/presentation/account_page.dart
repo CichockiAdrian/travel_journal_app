@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../../auth/data/auth_repository.dart';
 import '../logic/account_cubit.dart';
@@ -11,9 +12,9 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AccountCubit>(
-      create: (_) => AccountCubit(
-        authRepository: FirebaseAuthRepository(),
-      )..loadUserEmail(),
+      create: (_) =>
+          AccountCubit(authRepository: getIt<AuthRepository>())
+            ..loadUserEmail(),
       child: const AccountView(),
     );
   }
@@ -27,9 +28,7 @@ class AccountView extends StatelessWidget {
     return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Konto'),
-          ),
+          appBar: AppBar(title: const Text('Konto')),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -38,8 +37,9 @@ class AccountView extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 34,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer,
                     child: Icon(
                       Icons.person,
                       size: 36,
@@ -66,19 +66,17 @@ class AccountView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 28),
-              ...accountMenuItems.map(
-                (item) {
-                  return Card(
-                    child: ListTile(
-                      leading: Icon(item.icon),
-                      title: Text(item.title),
-                      subtitle: Text(item.subtitle),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: item.onTap,
-                    ),
-                  );
-                },
-              ),
+              ...accountMenuItems.map((item) {
+                return Card(
+                  child: ListTile(
+                    leading: Icon(item.icon),
+                    title: Text(item.title),
+                    subtitle: Text(item.subtitle),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: item.onTap,
+                  ),
+                );
+              }),
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: state.isLoading
