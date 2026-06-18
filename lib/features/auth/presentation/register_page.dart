@@ -40,11 +40,13 @@ class _RegisterPageState extends State<RegisterPage> {
     return BlocProvider(
       create: (_) => AuthBloc(authRepository: FirebaseAuthRepository()),
       child: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state.status == AuthStatus.success) {
+        listenWhen: (previous, current) {
+          return previous.status != current.status && current.status == AuthStatus.success;
+          },
+          listener: (context, state){
             Navigator.pop(context);
-          }
-        },
+            
+          },
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(title: const Text('Rejestracja')),
