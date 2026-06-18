@@ -107,4 +107,8 @@ class CountriesCubit extends Cubit<CountriesState> {
       ),
     );
   }
+
+  void clearError() {
+    emit(state.copyWith(errorMessage: null));
+  }
 }
