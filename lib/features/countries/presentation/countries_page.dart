@@ -148,7 +148,7 @@ class _CountriesPageState extends State<CountriesPage> {
           Expanded(
             child: ListView.separated(
               itemCount: filteredCountries.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
+              separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final country = filteredCountries[index];
 

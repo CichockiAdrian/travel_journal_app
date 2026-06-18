@@ -8,7 +8,7 @@ class AccountState {
 
   const AccountState({required this.email, required this.isLoading});
 
-  const AccountState.initial() : email = 'Brak adresu email', isLoading = false;
+  const AccountState.initial() : email = 'null', isLoading = false;
 
   AccountState copyWith({String? email, bool? isLoading}) {
     return AccountState(
@@ -27,7 +27,7 @@ class AccountCubit extends Cubit<AccountState> {
   void loadUserEmail() {
     final email = authRepository.currentUserEmail;
 
-    emit(state.copyWith(email: email ?? 'Brak adresu email'));
+    emit(state.copyWith(email: email));
   }
 
   Future<void> logout() async {
