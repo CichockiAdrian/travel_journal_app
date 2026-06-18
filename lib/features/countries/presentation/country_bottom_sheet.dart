@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../data/country_model.dart';
 
 class CountryBottomSheet extends StatelessWidget {
@@ -9,6 +10,7 @@ class CountryBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final translations = AppLocalizations.of(context);
     final flagUrl = country.flagUrl;
 
     return Padding(
@@ -26,17 +28,20 @@ class CountryBottomSheet extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          _InfoRow(label: 'Stolica', value: country.capital ?? 'Brak danych'),
-          _InfoRow(label: 'Region', value: country.region),
           _InfoRow(
-            label: 'Populacja',
-            value: country.population?.toString() ?? 'Brak danych',
+            label: translations.capital,
+            value: country.capital ?? translations.noData,
+          ),
+          _InfoRow(label: translations.region, value: country.region),
+          _InfoRow(
+            label: translations.population,
+            value: country.population?.toString() ?? translations.noData,
           ),
           _InfoRow(
-            label: 'Współrzędne',
+            label: translations.coordinates,
             value: country.latitude != null && country.longitude != null
                 ? '${country.latitude}, ${country.longitude}'
-                : 'Brak danych',
+                : translations.noData,
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -44,17 +49,18 @@ class CountryBottomSheet extends StatelessWidget {
             height: 52,
             child: FilledButton.icon(
               onPressed: () {
-                debugPrint('Oznaczono jako odwiedzony: ${country.name}');
+                debugPrint(translations.markedAsVisited(country.name));
+
                 Navigator.pop(context);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Oznaczono jako odwiedzony: ${country.name}'),
+                    content: Text(translations.markedAsVisited(country.name)),
                   ),
                 );
               },
               icon: const Icon(Icons.check_circle_outline),
-              label: const Text('Oznacz jako odwiedzony'),
+              label: Text(translations.markAsVisited),
             ),
           ),
         ],

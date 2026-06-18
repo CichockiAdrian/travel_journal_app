@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_journal_app/core/di/service_locator.dart';
 
-import '../data/countries_repository.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../data/country_model.dart';
 import '../logic/countries_cubit.dart';
 import '../logic/countries_state.dart';
@@ -15,8 +15,7 @@ class CountriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          CountriesCubit(countriesRepository: getIt<CountriesRepository>())
-            ..loadAllCountries(),
+          CountriesCubit(countriesRepository: getIt())..loadAllCountries(),
       child: const CountriesView(),
     );
   }
@@ -49,6 +48,8 @@ class CountriesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final translations = AppLocalizations.of(context);
+
     return BlocListener<CountriesCubit, CountriesState>(
       listenWhen: (previous, current) {
         return previous.errorMessage != current.errorMessage &&
@@ -67,7 +68,7 @@ class CountriesView extends StatelessWidget {
               state.isLoading && state.visibleCountries.isEmpty;
 
           return Scaffold(
-            appBar: AppBar(title: const Text('Kraje')),
+            appBar: AppBar(title: Text(translations.countries)),
             body: Column(
               children: [
                 Padding(
@@ -76,9 +77,9 @@ class CountriesView extends StatelessWidget {
                     onChanged: (value) {
                       context.read<CountriesCubit>().searchCountries(value);
                     },
-                    decoration: const InputDecoration(
-                      hintText: 'Szukaj kraju, np. Poland, Canada...',
-                      prefixIcon: Icon(Icons.search),
+                    decoration: InputDecoration(
+                      hintText: translations.searchCountry,
+                      prefixIcon: const Icon(Icons.search),
                     ),
                   ),
                 ),
@@ -94,8 +95,8 @@ class CountriesView extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
-                              'Nie udało się pobrać krajów.',
+                            Text(
+                              translations.countriesFetchFailed,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 12),
@@ -105,7 +106,7 @@ class CountriesView extends StatelessWidget {
                                     .read<CountriesCubit>()
                                     .loadAllCountries();
                               },
-                              child: const Text('Spróbuj ponownie'),
+                              child: Text(translations.tryAgain),
                             ),
                           ],
                         ),
@@ -119,8 +120,8 @@ class CountriesView extends StatelessWidget {
                         padding: const EdgeInsets.all(24),
                         child: Text(
                           state.allCountries.isEmpty
-                              ? 'Nie znaleziono krajów.'
-                              : 'Brak wyników dla podanej frazy.',
+                              ? translations.noCountriesFound
+                              : translations.noSearchResults,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Theme.of(
