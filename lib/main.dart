@@ -22,7 +22,6 @@ Future<void> main() async {
 
   setupServiceLocator();
 
-  runApp(const TravelJournalApp());
   runApp(
     BlocProvider(
       create: (_) =>
