@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../auth/data/auth_repository.dart';
@@ -15,7 +16,7 @@ class AccountPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AccountCubit>(
       create: (_) =>
-          AccountCubit(authRepository: FirebaseAuthRepository())
+          AccountCubit(authRepository: getIt<AuthRepository>())
             ..loadUserEmail(),
       child: const AccountView(),
     );

@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/auth_gate.dart';
 import 'firebase_options.dart';
+import 'core/di/service_locator.dart';
 
 import 'package:travel_journal_app/l10n/generated/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +20,9 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  setupServiceLocator();
+
+  runApp(const TravelJournalApp());
   runApp(
     BlocProvider(
       create: (_) =>
