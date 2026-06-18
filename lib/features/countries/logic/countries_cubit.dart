@@ -23,6 +23,8 @@ class CountriesCubit extends Cubit<CountriesState> {
     try {
       final countries = await countriesRepository.getAllCountries();
 
+      if (isClosed) return;
+
       countries.sort((a, b) => a.name.compareTo(b.name));
 
       emit(
