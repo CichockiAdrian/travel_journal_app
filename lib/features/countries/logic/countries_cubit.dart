@@ -71,12 +71,18 @@ class CountriesCubit extends Cubit<CountriesState> {
 
     final filtered = state.allCountries.where((country) {
       final name = country.name.toLowerCase();
+      final translatedNames = country.translatedNames.values
+          .map((value) => value.toLowerCase())
+          .join(' ');
       final capital = country.capital?.toLowerCase() ?? '';
       final region = country.region.toLowerCase();
+      final subregion = country.subregion?.toLowerCase() ?? '';
 
       return name.contains(lowerQuery) ||
+          translatedNames.contains(lowerQuery) ||
           capital.contains(lowerQuery) ||
-          region.contains(lowerQuery);
+          region.contains(lowerQuery) ||
+          subregion.contains(lowerQuery);
     }).toList();
 
     emit(

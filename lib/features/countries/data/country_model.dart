@@ -1,17 +1,21 @@
 class CountryModel {
   final String name;
+  final Map<String, String> translatedNames;
   final String? capital;
   final String? flagUrl;
   final String region;
+  final String? subregion;
   final int? population;
   final double? latitude;
   final double? longitude;
 
   const CountryModel({
     required this.name,
+    required this.translatedNames,
     required this.capital,
     required this.flagUrl,
     required this.region,
+    required this.subregion,
     required this.population,
     required this.latitude,
     required this.longitude,
@@ -20,9 +24,11 @@ class CountryModel {
   factory CountryModel.fromJson(Map<String, dynamic> json) {
     return CountryModel(
       name: _readName(json),
+      translatedNames: _readTranslatedNames(json),
       capital: _readCapital(json),
       flagUrl: _readFlag(json),
       region: _readRegion(json),
+      subregion: _readSubregion(json),
       population: _readInt(json['population']),
       latitude: _readLatitude(json),
       longitude: _readLongitude(json),
@@ -39,7 +45,7 @@ class CountryModel {
     if (name is Map) {
       return name['common']?.toString() ??
           name['official']?.toString() ??
-          'Nieznany kraj';
+          'Unknown country';
     }
 
     final names = json['names'];
@@ -47,12 +53,45 @@ class CountryModel {
     if (names is Map) {
       return names['common']?.toString() ??
           names['official']?.toString() ??
-          'Nieznany kraj';
+          'Unknown country';
     }
 
     return json['commonName']?.toString() ??
         json['officialName']?.toString() ??
-        'Nieznany kraj';
+        'Unknown country';
+  }
+
+  static Map<String, String> _readTranslatedNames(Map<String, dynamic> json) {
+    final names = json['names'];
+    final translationsFromNames = names is Map ? names['translations'] : null;
+
+    final translations =
+        translationsFromNames ??
+        json['names.translations'] ??
+        json['translations'];
+
+    if (translations is! Map) {
+      return {};
+    }
+
+    final result = <String, String>{};
+
+    for (final entry in translations.entries) {
+      final languageCode = entry.key.toString();
+      final value = entry.value;
+
+      if (value is Map) {
+        final common = value['common']?.toString();
+
+        if (common != null && common.isNotEmpty) {
+          result[languageCode] = common;
+        }
+      } else if (value is String && value.isNotEmpty) {
+        result[languageCode] = value;
+      }
+    }
+
+    return result;
   }
 
   static String? _readCapital(Map<String, dynamic> json) {
@@ -135,10 +174,30 @@ class CountryModel {
     }
 
     if (region is Map) {
-      return region['name']?.toString() ?? 'Brak danych';
+      return region['name']?.toString() ?? 'No data';
     }
 
-    return 'Brak danych';
+    return 'No data';
+  }
+
+  static String? _readSubregion(Map<String, dynamic> json) {
+    final subregion = json['subregion'];
+
+    if (subregion is String) {
+      return subregion;
+    }
+
+    if (subregion is Map) {
+      return subregion['name']?.toString();
+    }
+
+    final region = json['region'];
+
+    if (region is Map) {
+      return region['subregion']?.toString();
+    }
+
+    return null;
   }
 
   static int? _readInt(dynamic value) {
@@ -153,6 +212,7 @@ class CountryModel {
 
     if (latlng is List && latlng.isNotEmpty) {
       final value = latlng[0];
+
       if (value is num) return value.toDouble();
     }
 
@@ -160,6 +220,7 @@ class CountryModel {
 
     if (coordinates is Map) {
       final lat = coordinates['lat'] ?? coordinates['latitude'];
+
       if (lat is num) return lat.toDouble();
     }
 
@@ -167,6 +228,7 @@ class CountryModel {
 
     if (geo is Map) {
       final lat = geo['lat'] ?? geo['latitude'];
+
       if (lat is num) return lat.toDouble();
     }
 
@@ -178,6 +240,7 @@ class CountryModel {
 
     if (latlng is List && latlng.length > 1) {
       final value = latlng[1];
+
       if (value is num) return value.toDouble();
     }
 
@@ -194,6 +257,7 @@ class CountryModel {
 
     if (geo is Map) {
       final lng = geo['lng'] ?? geo['lon'] ?? geo['longitude'];
+
       if (lng is num) return lng.toDouble();
     }
 

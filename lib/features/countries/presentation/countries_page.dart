@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import 'country_display_mapper.dart';
 import '../data/country_model.dart';
 import '../logic/countries_cubit.dart';
 import '../logic/countries_state.dart';
@@ -49,6 +50,7 @@ class CountriesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final translations = AppLocalizations.of(context);
+    final languageCode = Localizations.localeOf(context).languageCode;
 
     return BlocListener<CountriesCubit, CountriesState>(
       listenWhen: (previous, current) {
@@ -157,6 +159,13 @@ class CountriesView extends StatelessWidget {
 
                           final country = state.visibleCountries[index];
 
+                          final displayCountry =
+                              CountryDisplayMapper.fromCountry(
+                                country: country,
+                                languageCode: languageCode,
+                                translations: translations,
+                              );
+
                           return ListTile(
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20,
@@ -164,14 +173,14 @@ class CountriesView extends StatelessWidget {
                             ),
                             leading: _CountryFlag(flagUrl: country.flagUrl),
                             title: Text(
-                              country.name,
+                              displayCountry.name,
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             subtitle: Text(
-                              country.region,
+                              displayCountry.region,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Theme.of(
