@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../data/auth_repository.dart';
 import '../logic/auth_bloc.dart';
@@ -36,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthBloc(authRepository: FirebaseAuthRepository()),
+      create: (_) => AuthBloc(authRepository: getIt<AuthRepository>()),
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           return Scaffold(

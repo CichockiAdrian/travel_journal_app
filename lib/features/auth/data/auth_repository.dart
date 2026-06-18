@@ -5,6 +5,8 @@ abstract class AuthRepository {
 
   String? get currentUserEmail;
 
+  Stream<User?> authStateChanges();
+
   Future<User?> login({required String email, required String password});
 
   Future<User?> register({required String email, required String password});
@@ -17,6 +19,11 @@ class FirebaseAuthRepository implements AuthRepository {
 
   FirebaseAuthRepository({FirebaseAuth? firebaseAuth})
     : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+
+  @override
+  Stream<User?> authStateChanges() {
+    return _firebaseAuth.authStateChanges();
+  }
 
   @override
   User? get currentUser => _firebaseAuth.currentUser;
