@@ -2,66 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/auth_repository.dart';
-
-sealed class AuthEvent {
-  const AuthEvent();
-}
-
-class AuthLoginRequested extends AuthEvent {
-  final String email;
-  final String password;
-
-  const AuthLoginRequested({required this.email, required this.password});
-}
-
-class AuthRegisterRequested extends AuthEvent {
-  final String email;
-  final String password;
-  final String repeatedPassword;
-
-  const AuthRegisterRequested({
-    required this.email,
-    required this.password,
-    required this.repeatedPassword,
-  });
-}
-
-enum AuthStatus { initial, loading, success, failure }
-
-class AuthState {
-  final AuthStatus status;
-  final String? errorMessage;
-  final User? user;
-
-  const AuthState({
-    required this.status,
-    this.errorMessage,
-    this.user,
-  });
-
-  const AuthState.initial()
-      : status = AuthStatus.initial,
-        errorMessage = null,
-        user = null;
-
-  bool get isLoading => status == AuthStatus.loading;
-
-  AuthState copyWith({
-    AuthStatus? status,
-    String? errorMessage,
-    User? user,
-    bool clearErrorMessage = false,
-    bool clearUser = false,
-  }) {
-    return AuthState(
-      status: status ?? this.status,
-      errorMessage: clearErrorMessage
-          ? null
-          : errorMessage ?? this.errorMessage,
-      user: clearUser ? null : user ?? this.user,
-    );
-  }
-}
+import 'auth_event.dart';
+import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;

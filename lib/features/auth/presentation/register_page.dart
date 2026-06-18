@@ -4,6 +4,8 @@ import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../data/auth_repository.dart';
 import '../logic/auth_bloc.dart';
+import '../logic/auth_event.dart';
+import '../logic/auth_state.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

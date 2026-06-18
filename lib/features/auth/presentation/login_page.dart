@@ -6,6 +6,8 @@ import '../data/auth_repository.dart';
 import '../logic/auth_bloc.dart';
 import 'register_page.dart';
 import '../../../core/constants/app_assets.dart';
+import '../logic/auth_event.dart';
+import '../logic/auth_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
