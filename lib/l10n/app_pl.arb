@@ -13,7 +13,7 @@
   "createAccount": "Utwórz konto",
 
   "countries": "Kraje",
-  "searchCountry": "Szukaj kraju, np. Poland, Canada...",
+  "searchCountry": "Szukaj kraju...",
   "noCountriesFound": "Nie znaleziono krajów.",
   "noSearchResults": "Brak wyników dla podanej frazy.",
   "countriesFetchFailed": "Nie udało się pobrać krajów.",
@@ -53,5 +53,10 @@
   "photos": "Zdjęcia",
   "photosSubtitle": "Zdjęcia dodane do podróży",
   "settingsSubtitle": "Preferencje aplikacji",
-  "comingSoon": "Ta sekcja zostanie dodana później."
+  "comingSoon": "Ta sekcja zostanie dodana później.",
+
+  "theme": "Motyw",
+  "systemTheme": "Systemowy",
+  "lightTheme": "Jasny",
+  "darkTheme": "Ciemny"
 }
