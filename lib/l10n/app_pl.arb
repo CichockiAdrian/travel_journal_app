@@ -1,0 +1,41 @@
+{
+  "@@locale": "pl",
+  "appTitle": "Travel Journal",
+  "countries": "Kraje",
+  "searchCountry": "Szukaj kraju",
+  "noCountriesFound": "Nie znaleziono krajów.",
+  "noSearchResults": "Brak wyników dla podanej frazy.",
+  "capital": "Stolica",
+  "region": "Region",
+  "population": "Populacja",
+  "coordinates": "Współrzędne",
+  "noData": "Brak danych",
+  "markAsVisited": "Oznacz jako odwiedzony",
+  "markedAsVisited": "Oznaczono jako odwiedzony: {countryName}",
+  "@markedAsVisited": {
+    "placeholders": {
+      "countryName": {}
+    }
+  },
+  "settings": "Ustawienia",
+  "language": "Język",
+  "polish": "Polski",
+  "english": "Angielski",
+  "account": "Konto",
+"user": "Użytkownik",
+"logout": "Wyloguj się",
+"loggingOut": "Wylogowywanie...",
+"comingSoon": "Ta sekcja zostanie dodana później.",
+"account": "Konto",
+"user": "Użytkownik",
+"logout": "Wyloguj się",
+"loggingOut": "Wylogowywanie...",
+"visitedCountries": "Odwiedzone kraje",
+"visitedCountriesSubtitle": "Lista krajów oznaczonych jako odwiedzone",
+"travelJournal": "Dziennik podróży",
+"travelJournalSubtitle": "Wpisy i wspomnienia z wyjazdów",
+"photos": "Zdjęcia",
+"photosSubtitle": "Zdjęcia dodane do podróży",
+"settingsSubtitle": "Preferencje aplikacji",
+"comingSoon": "Ta sekcja zostanie dodana później."
+}

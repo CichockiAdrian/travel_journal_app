@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_journal_app/core/di/service_locator.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../settings/presentation/settings_page.dart';
 import '../logic/account_cubit.dart';
+import '../models/account_menu_item.dart';
 import '../models/account_menu_items.dart';
 
 class AccountPage extends StatelessWidget {
@@ -25,10 +28,12 @@ class AccountView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final translations = AppLocalizations.of(context);
+
     return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Konto')),
+          appBar: AppBar(title: Text(translations.account)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -51,9 +56,9 @@ class AccountView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Użytkownik',
-                          style: TextStyle(
+                        Text(
+                          translations.user,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -70,10 +75,11 @@ class AccountView extends StatelessWidget {
                 return Card(
                   child: ListTile(
                     leading: Icon(item.icon),
-                    title: Text(item.title),
-                    subtitle: Text(item.subtitle),
+                    title: Text(_getMenuTitle(translations, item.type)),
+                    subtitle: Text(_getMenuSubtitle(translations, item.type)),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: item.onTap,
+                    onTap: () =>
+                        _handleMenuItemTap(context, item.type, translations),
                   ),
                 );
               }),
@@ -84,13 +90,68 @@ class AccountView extends StatelessWidget {
                     : () => context.read<AccountCubit>().logout(),
                 icon: const Icon(Icons.logout),
                 label: state.isLoading
-                    ? const Text('Wylogowywanie...')
-                    : const Text('Wyloguj się'),
+                    ? Text(translations.loggingOut)
+                    : Text(translations.logout),
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  String _getMenuTitle(
+    AppLocalizations translations,
+    AccountMenuItemType type,
+  ) {
+    switch (type) {
+      case AccountMenuItemType.visitedCountries:
+        return translations.visitedCountries;
+      case AccountMenuItemType.travelJournal:
+        return translations.travelJournal;
+      case AccountMenuItemType.photos:
+        return translations.photos;
+      case AccountMenuItemType.settings:
+        return translations.settings;
+    }
+  }
+
+  String _getMenuSubtitle(
+    AppLocalizations translations,
+    AccountMenuItemType type,
+  ) {
+    switch (type) {
+      case AccountMenuItemType.visitedCountries:
+        return translations.visitedCountriesSubtitle;
+      case AccountMenuItemType.travelJournal:
+        return translations.travelJournalSubtitle;
+      case AccountMenuItemType.photos:
+        return translations.photosSubtitle;
+      case AccountMenuItemType.settings:
+        return translations.settingsSubtitle;
+    }
+  }
+
+  void _handleMenuItemTap(
+    BuildContext context,
+    AccountMenuItemType type,
+    AppLocalizations translations,
+  ) {
+    switch (type) {
+      case AccountMenuItemType.settings:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsPage()),
+        );
+        break;
+
+      case AccountMenuItemType.visitedCountries:
+      case AccountMenuItemType.travelJournal:
+      case AccountMenuItemType.photos:
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(translations.comingSoon)));
+        break;
+    }
   }
 }
