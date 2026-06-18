@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/auth_repository.dart';
 import '../logic/auth_bloc.dart';
 import 'register_page.dart';
+import '../../../core/constants/app_assets.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -49,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/logo.png',
+                          AppAssets.logo,
                           width: 120,
                           height: 120,
                           errorBuilder: (context, error, stackTrace) {

@@ -31,15 +31,35 @@ enum AuthStatus { initial, loading, success, failure }
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
+  final User? user;
 
-  const AuthState({required this.status, this.errorMessage});
+  const AuthState({
+    required this.status,
+    this.errorMessage,
+    this.user,
+  });
 
-  const AuthState.initial() : status = AuthStatus.initial, errorMessage = null;
+  const AuthState.initial()
+      : status = AuthStatus.initial,
+        errorMessage = null,
+        user = null;
 
   bool get isLoading => status == AuthStatus.loading;
 
-  AuthState copyWith({AuthStatus? status, String? errorMessage}) {
-    return AuthState(status: status ?? this.status, errorMessage: errorMessage);
+  AuthState copyWith({
+    AuthStatus? status,
+    String? errorMessage,
+    User? user,
+    bool clearErrorMessage = false,
+    bool clearUser = false,
+  }) {
+    return AuthState(
+      status: status ?? this.status,
+      errorMessage: clearErrorMessage
+          ? null
+          : errorMessage ?? this.errorMessage,
+      user: clearUser ? null : user ?? this.user,
+    );
   }
 }
 
@@ -83,6 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         state.copyWith(
           status: AuthStatus.failure,
           errorMessage: 'Passwords do not match.',
+          clearUser: true,
         ),
       );
       return;
@@ -98,19 +119,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _performAuthAction({
     required Emitter<AuthState> emit,
-    required Future<void> Function() action,
+    required Future<User?> Function() action,
   }) async {
-    emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
+    emit(
+      state.copyWith(
+        status: AuthStatus.loading,
+        clearErrorMessage: true,
+        clearUser: true,
+      ),
+    );
 
     try {
-      await action();
+      final user = await action();
 
-      emit(state.copyWith(status: AuthStatus.success, errorMessage: null));
+      emit(
+        state.copyWith(
+          status: AuthStatus.success,
+          user: user,
+          clearErrorMessage: true,
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
           errorMessage: _getAuthErrorMessage(e.code),
+          clearUser: true,
         ),
       );
     } catch (_) {
@@ -118,6 +152,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         state.copyWith(
           status: AuthStatus.failure,
           errorMessage: 'An unexpected error occurred.',
+          clearUser: true,
         ),
       );
     }
