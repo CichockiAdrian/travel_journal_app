@@ -91,11 +91,6 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> handleCurrentLocationButtonPressed() async {
-    if (_currentLocation != null) {
-      focusOnCurrentLocation();
-      return;
-    }
-
     await loadCurrentLocation(showCardAfterLoad: true, focusAfterLoad: true);
   }
 
