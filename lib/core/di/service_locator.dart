@@ -4,6 +4,8 @@ import 'package:travel_journal_app/features/auth/data/auth_repository.dart';
 import 'package:travel_journal_app/features/countries/data/countries_api_service.dart';
 import 'package:travel_journal_app/features/countries/data/countries_remote_data_source.dart';
 import 'package:travel_journal_app/features/countries/data/countries_repository.dart';
+import '../../features/map/data/device_location_service.dart';
+import '../../features/map/logic/map_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -27,4 +29,10 @@ void setupServiceLocator() {
       remoteDataSource: getIt<CountriesRemoteDataSource>(),
     ),
   );
+
+  getIt.registerLazySingleton<DeviceLocationService>(
+    () => DeviceLocationService(),
+  );
+
+  getIt.registerFactory<MapCubit>(() => MapCubit(getIt()));
 }

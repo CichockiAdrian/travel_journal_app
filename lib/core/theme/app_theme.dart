@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'map_controls_theme.dart';
 
 class AppTheme {
   static ThemeData get light {
@@ -37,6 +38,15 @@ class AppTheme {
           borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
         ),
       ),
+      extensions: <ThemeExtension<dynamic>>[
+        MapControlsTheme(
+          backgroundColor: colorScheme.primary.withValues(alpha: 0.9),
+          foregroundColor: colorScheme.onPrimary,
+          borderColor: colorScheme.onPrimary.withValues(alpha: 0.18),
+          dividerColor: colorScheme.onPrimary.withValues(alpha: 0.35),
+          shadowOpacity: 0.18,
+        ),
+      ],
     );
   }
 
@@ -76,6 +86,17 @@ class AppTheme {
           borderSide: const BorderSide(color: Color(0xFF334155)),
         ),
       ),
+      extensions: <ThemeExtension<dynamic>>[
+        MapControlsTheme(
+          backgroundColor: colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.9,
+          ),
+          foregroundColor: colorScheme.onSurface,
+          borderColor: colorScheme.outlineVariant.withValues(alpha: 0.35),
+          dividerColor: colorScheme.outlineVariant.withValues(alpha: 0.55),
+          shadowOpacity: 0.28,
+        ),
+      ],
     );
   }
 }
