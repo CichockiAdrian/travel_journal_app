@@ -58,5 +58,11 @@
   "theme": "Theme",
   "systemTheme": "System",
   "lightTheme": "Light",
-  "darkTheme": "Dark"
+  "darkTheme": "Dark",
+  "showCurrentLocation": "Show current location",
+  "currentLocation": "Current location",
+  "locationServiceDisabled": "Location services are disabled.",
+  "locationPermissionDenied": "Location permission was denied.",
+  "locationPermissionDeniedForever": "Location permission was permanently denied. Enable it in app settings.",
+  "locationUnknownError": "Could not get your current location."
 }

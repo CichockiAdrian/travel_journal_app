@@ -55,7 +55,7 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 12),
 
               DropdownButtonFormField<ThemeMode>(
-                value: state.themeMode,
+                initialValue: state.themeMode,
                 decoration: const InputDecoration(border: OutlineInputBorder()),
                 items: [
                   DropdownMenuItem(

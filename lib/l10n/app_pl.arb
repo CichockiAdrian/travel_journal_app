@@ -58,5 +58,11 @@
   "theme": "Motyw",
   "systemTheme": "Systemowy",
   "lightTheme": "Jasny",
-  "darkTheme": "Ciemny"
+  "darkTheme": "Ciemny",
+  "showCurrentLocation": "Pokaż aktualną lokalizację",
+ "currentLocation": "Aktualna lokalizacja",
+ "locationServiceDisabled": "Usługi lokalizacji są wyłączone.",
+ "locationPermissionDenied": "Odmówiono dostępu do lokalizacji.",
+ "locationPermissionDeniedForever": "Dostęp do lokalizacji został trwale zablokowany. Włącz go w ustawieniach aplikacji.",
+ "locationUnknownError": "Nie udało się pobrać aktualnej lokalizacji."
 }
