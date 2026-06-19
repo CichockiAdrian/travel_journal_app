@@ -23,11 +23,9 @@ class CountriesCubit extends Cubit<CountriesState> {
     try {
       final countries = await countriesRepository.getAllCountries();
 
-      countries.sort((a, b) {
-        final nameA = a.name ?? '';
-        final nameB = b.name ?? '';
-        return nameA.compareTo(nameB);
-      });
+      if (isClosed) return;
+
+      countries.sort((a, b) => a.name.compareTo(b.name));
 
       emit(
         state.copyWith(

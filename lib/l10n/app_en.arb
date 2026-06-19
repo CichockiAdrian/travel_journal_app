@@ -13,7 +13,7 @@
   "createAccount": "Create account",
 
   "countries": "Countries",
-  "searchCountry": "Search country, e.g. Poland, Canada...",
+  "searchCountry": "Search country...",
   "noCountriesFound": "No countries found.",
   "noSearchResults": "No results for the entered phrase.",
   "countriesFetchFailed": "Could not load countries.",
@@ -55,4 +55,9 @@
   "settingsSubtitle": "App preferences",
   "comingSoon": "This section will be added later.",
   "unknownCountry": "Unknown country"
+
+  "theme": "Theme",
+  "systemTheme": "System",
+  "lightTheme": "Light",
+  "darkTheme": "Dark"
 }
