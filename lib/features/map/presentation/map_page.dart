@@ -24,6 +24,8 @@ class _MapPageState extends State<MapPage> {
 
   bool _isLoadingLocation = false;
   bool _hasCurrentLocationPoint = false;
+  bool _isCurrentLocationCardVisible = false;
+
   DeviceLocation? _currentLocation;
 
   @override
@@ -45,6 +47,9 @@ class _MapPageState extends State<MapPage> {
       surfaceLightingEnabled: true,
       ambientLight: 0.65,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadCurrentLocation(showCardAfterLoad: false, focusAfterLoad: false);
+    });
   }
 
   @override
@@ -53,10 +58,52 @@ class _MapPageState extends State<MapPage> {
     super.dispose();
   }
 
-  Future<void> showCurrentLocation() async {
-    if (_isLoadingLocation) return;
+  void hideCurrentLocationCard() {
+    if (!_isCurrentLocationCardVisible) return;
 
-    final translations = AppLocalizations.of(context);
+    setState(() {
+      _isCurrentLocationCardVisible = false;
+    });
+  }
+
+  void focusOnCurrentLocation() {
+    final currentLocation = _currentLocation;
+
+    if (currentLocation == null) return;
+
+    final coordinates = GlobeCoordinates(
+      currentLocation.latitude,
+      currentLocation.longitude,
+    );
+
+    setState(() {
+      _isCurrentLocationCardVisible = true;
+    });
+
+    _controller.stopRotation();
+    _controller.setZoom(0.72);
+    _controller.focusOnCoordinates(
+      coordinates,
+      animate: true,
+      duration: const Duration(milliseconds: 900),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  Future<void> handleCurrentLocationButtonPressed() async {
+    if (_currentLocation != null) {
+      focusOnCurrentLocation();
+      return;
+    }
+
+    await loadCurrentLocation(showCardAfterLoad: true, focusAfterLoad: true);
+  }
+
+  Future<void> loadCurrentLocation({
+    required bool showCardAfterLoad,
+    required bool focusAfterLoad,
+  }) async {
+    if (_isLoadingLocation) return;
 
     setState(() {
       _isLoadingLocation = true;
@@ -65,12 +112,12 @@ class _MapPageState extends State<MapPage> {
     try {
       final location = await _locationService.getCurrentLocation();
 
+      if (!mounted) return;
+
       final coordinates = GlobeCoordinates(
         location.latitude,
         location.longitude,
       );
-
-      if (!mounted) return;
 
       if (_hasCurrentLocationPoint) {
         _controller.removePoint(_currentLocationPointId);
@@ -110,16 +157,19 @@ class _MapPageState extends State<MapPage> {
       setState(() {
         _currentLocation = location;
         _hasCurrentLocationPoint = true;
+        _isCurrentLocationCardVisible = showCardAfterLoad;
       });
 
-      _controller.stopRotation();
-      _controller.setZoom(0.72);
-      _controller.focusOnCoordinates(
-        coordinates,
-        animate: true,
-        duration: const Duration(milliseconds: 900),
-        curve: Curves.easeInOutCubic,
-      );
+      if (focusAfterLoad) {
+        _controller.stopRotation();
+        _controller.setZoom(0.72);
+        _controller.focusOnCoordinates(
+          coordinates,
+          animate: true,
+          duration: const Duration(milliseconds: 900),
+          curve: Curves.easeInOutCubic,
+        );
+      }
     } on DeviceLocationException catch (error) {
       if (!mounted) return;
 
@@ -162,12 +212,17 @@ class _MapPageState extends State<MapPage> {
         title: Text(translations.map),
         actions: [
           IconButton(
-            onPressed: _controller.toggleRotation,
+            onPressed: () {
+              hideCurrentLocationCard();
+              _controller.toggleRotation();
+            },
             icon: const Icon(Icons.threesixty),
           ),
           IconButton(
             tooltip: translations.showCurrentLocation,
-            onPressed: _isLoadingLocation ? null : showCurrentLocation,
+            onPressed: _isLoadingLocation
+                ? null
+                : handleCurrentLocationButtonPressed,
             icon: _isLoadingLocation
                 ? const SizedBox.square(
                     dimension: 20,
@@ -205,16 +260,21 @@ class _MapPageState extends State<MapPage> {
                         width: constraints.maxWidth,
                         height: constraints.maxHeight + extraRenderHeight,
                         child: Center(
-                          child: FlutterEarthGlobe(
-                            controller: _controller,
-                            radius: radius,
+                          child: Listener(
+                            onPointerDown: (_) {
+                              hideCurrentLocationCard();
+                            },
+                            child: FlutterEarthGlobe(
+                              controller: _controller,
+                              radius: radius,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                if (_currentLocation != null)
+                if (_currentLocation != null && _isCurrentLocationCardVisible)
                   Positioned(
                     left: 16,
                     right: 16,
