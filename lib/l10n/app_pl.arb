@@ -69,5 +69,14 @@
  "removeFromVisited": "Usuń z odwiedzonych",
  "visitedCountriesSyncFailed": "Nie udało się zsynchronizować odwiedzonych krajów.",
  "signInToSyncVisitedCountries": "Zaloguj się, aby synchronizować odwiedzone kraje.",
- "countryCannotBeMarkedAsVisited": "Tego kraju nie można oznaczyć jako odwiedzonego."
+ "countryCannotBeMarkedAsVisited": "Tego kraju nie można oznaczyć jako odwiedzonego.",
+"noVisitedCountriesYet": "Nie masz jeszcze oznaczonych odwiedzonych krajów.",
+"visitedCountriesCount": "Odwiedzone kraje: {count}",
+"@visitedCountriesCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+}
 }

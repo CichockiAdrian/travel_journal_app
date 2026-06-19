@@ -61,7 +61,7 @@ class VisitedCountriesRepository {
     }
 
     await _visitedCountriesCollection(user.uid).doc(countryId).set({
-      'name': country.name ?? countryId,
+      'name': country.name,
       'flagUrl': country.flagUrl,
       'latitude': country.latitude,
       'longitude': country.longitude,

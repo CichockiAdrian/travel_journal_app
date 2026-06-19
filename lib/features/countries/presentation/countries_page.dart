@@ -26,7 +26,8 @@ class CountriesPage extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) =>
-              getIt<VisitedCountriesCubit>()..watchVisitedCountries(),
+              VisitedCountriesCubit(getIt<VisitedCountriesRepository>())
+                ..watchVisitedCountries(),
         ),
       ],
       child: const CountriesView(),
