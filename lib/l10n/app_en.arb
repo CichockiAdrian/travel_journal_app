@@ -64,5 +64,10 @@
   "locationServiceDisabled": "Location services are disabled.",
   "locationPermissionDenied": "Location permission was denied.",
   "locationPermissionDeniedForever": "Location permission was permanently denied. Enable it in app settings.",
-  "locationUnknownError": "Could not get your current location."
+  "locationUnknownError": "Could not get your current location.",
+  "visited": "Visited",
+  "removeFromVisited": "Remove from visited",
+  "visitedCountriesSyncFailed": "Could not sync visited countries.",
+  "signInToSyncVisitedCountries": "Sign in to sync visited countries.",
+  "countryCannotBeMarkedAsVisited": "This country cannot be marked as visited."
 }

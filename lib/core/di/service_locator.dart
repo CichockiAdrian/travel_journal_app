@@ -4,6 +4,10 @@ import 'package:travel_journal_app/features/auth/data/auth_repository.dart';
 import 'package:travel_journal_app/features/countries/data/countries_api_service.dart';
 import 'package:travel_journal_app/features/countries/data/countries_remote_data_source.dart';
 import 'package:travel_journal_app/features/countries/data/countries_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../features/visited_countries/data/visited_countries_repository.dart';
+import '../../features/visited_countries/logic/visited_countries_cubit.dart';
 import '../../features/map/data/device_location_service.dart';
 import '../../features/map/logic/map_cubit.dart';
 
@@ -35,4 +39,12 @@ void setupServiceLocator() {
   );
 
   getIt.registerFactory<MapCubit>(() => MapCubit(getIt()));
+
+  getIt.registerLazySingleton(() => FirebaseFirestore.instance);
+
+  getIt.registerLazySingleton(
+    () => VisitedCountriesRepository(firestore: getIt(), firebaseAuth: getIt()),
+  );
+
+  getIt.registerFactory(() => VisitedCountriesCubit(getIt()));
 }

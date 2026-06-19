@@ -1,5 +1,6 @@
 class CountryModel {
   final String name;
+  final String? code;
   final Map<String, String> translatedNames;
   final String? capital;
   final String? flagUrl;
@@ -11,6 +12,7 @@ class CountryModel {
 
   const CountryModel({
     required this.name,
+    required this.code,
     required this.translatedNames,
     required this.capital,
     required this.flagUrl,
@@ -24,6 +26,7 @@ class CountryModel {
   factory CountryModel.fromJson(Map<String, dynamic> json) {
     return CountryModel(
       name: _readName(json),
+      code: _readCode(json),
       translatedNames: _readTranslatedNames(json),
       capital: _readCapital(json),
       flagUrl: _readFlag(json),
@@ -59,6 +62,23 @@ class CountryModel {
     return json['commonName']?.toString() ??
         json['officialName']?.toString() ??
         'Unknown country';
+  }
+
+  static String? _readCode(Map json) {
+    final value =
+        json['cca2'] ??
+        json['cca3'] ??
+        json['iso2'] ??
+        json['iso3'] ??
+        json['code'];
+
+    final code = value?.toString().trim().toUpperCase();
+
+    if (code == null || code.isEmpty) {
+      return null;
+    }
+
+    return code;
   }
 
   static Map<String, String> _readTranslatedNames(Map<String, dynamic> json) {
