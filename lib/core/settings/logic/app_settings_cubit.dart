@@ -5,17 +5,28 @@ import '../data/app_settings_repository.dart';
 
 class AppSettingsState {
   final Locale locale;
+  final ThemeMode themeMode;
   final bool isLoading;
 
-  const AppSettingsState({required this.locale, required this.isLoading});
+  const AppSettingsState({
+    required this.locale,
+    required this.themeMode,
+    required this.isLoading,
+  });
 
   const AppSettingsState.initial()
     : locale = const Locale('pl'),
+      themeMode = ThemeMode.system,
       isLoading = true;
 
-  AppSettingsState copyWith({Locale? locale, bool? isLoading}) {
+  AppSettingsState copyWith({
+    Locale? locale,
+    ThemeMode? themeMode,
+    bool? isLoading,
+  }) {
     return AppSettingsState(
       locale: locale ?? this.locale,
+      themeMode: themeMode ?? this.themeMode,
       isLoading: isLoading ?? this.isLoading,
     );
   }
@@ -43,5 +54,10 @@ class AppSettingsCubit extends Cubit<AppSettingsState> {
     await appSettingsRepository.saveLanguageCode(languageCode);
 
     emit(state.copyWith(locale: Locale(languageCode)));
+  }
+
+  Future<void> changeThemeMode(ThemeMode themeMode) async {
+    await appSettingsRepository.saveThemeMode(themeMode);
+    emit(state.copyWith(themeMode: themeMode));
   }
 }

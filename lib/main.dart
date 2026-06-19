@@ -22,7 +22,6 @@ Future<void> main() async {
 
   setupServiceLocator();
 
-  runApp(const TravelJournalApp());
   runApp(
     BlocProvider(
       create: (_) =>
@@ -45,7 +44,7 @@ class TravelJournalApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
-          themeMode: ThemeMode.system,
+          themeMode: state.themeMode,
           locale: state.locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

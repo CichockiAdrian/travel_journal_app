@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
+
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final translations = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Mapa')),
+      appBar: AppBar(title: Text(translations.map)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -20,17 +24,14 @@ class MapPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'Mapa odwiedzonych miejsc',
+                translations.visitedPlacesMap,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              const Text(
-                'W kolejnym etapie pojawi się tutaj mapa z oznaczonymi odwiedzonymi krajami.',
-                textAlign: TextAlign.center,
-              ),
+              Text(translations.mapComingSoon, textAlign: TextAlign.center),
             ],
           ),
         ),

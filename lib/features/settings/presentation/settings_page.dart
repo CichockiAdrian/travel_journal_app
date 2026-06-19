@@ -25,24 +25,56 @@ class SettingsPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 12),
-              RadioListTile<String>(
-                value: 'pl',
+              RadioGroup<String>(
                 groupValue: currentLanguageCode,
-                title: Text(translations.polish),
                 onChanged: (value) {
                   if (value == null) return;
 
                   context.read<AppSettingsCubit>().changeLanguage(value);
                 },
+                child: Column(
+                  children: [
+                    RadioListTile<String>(
+                      value: 'pl',
+                      title: Text(translations.polish),
+                    ),
+                    RadioListTile<String>(
+                      value: 'en',
+                      title: Text(translations.english),
+                    ),
+                  ],
+                ),
               ),
-              RadioListTile<String>(
-                value: 'en',
-                groupValue: currentLanguageCode,
-                title: Text(translations.english),
-                onChanged: (value) {
-                  if (value == null) return;
 
-                  context.read<AppSettingsCubit>().changeLanguage(value);
+              const SizedBox(height: 24),
+
+              Text(
+                translations.theme,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 12),
+
+              DropdownButtonFormField<ThemeMode>(
+                value: state.themeMode,
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+                items: [
+                  DropdownMenuItem(
+                    value: ThemeMode.system,
+                    child: Text(translations.systemTheme),
+                  ),
+                  DropdownMenuItem(
+                    value: ThemeMode.light,
+                    child: Text(translations.lightTheme),
+                  ),
+                  DropdownMenuItem(
+                    value: ThemeMode.dark,
+                    child: Text(translations.darkTheme),
+                  ),
+                ],
+                onChanged: (themeMode) {
+                  if (themeMode == null) return;
+
+                  context.read<AppSettingsCubit>().changeThemeMode(themeMode);
                 },
               ),
             ],

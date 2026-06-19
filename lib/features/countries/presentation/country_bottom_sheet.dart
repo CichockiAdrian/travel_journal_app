@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
+import 'country_display_mapper.dart';
 import '../data/country_model.dart';
 
 class CountryBottomSheet extends StatelessWidget {
@@ -10,6 +12,14 @@ class CountryBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final flagUrl = country.flagUrl;
+    final translations = AppLocalizations.of(context);
+    final languageCode = Localizations.localeOf(context).languageCode;
+
+    final displayCountry = CountryDisplayMapper.fromCountry(
+      country: country,
+      languageCode: languageCode,
+      translations: translations,
+    );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -19,24 +29,24 @@ class CountryBottomSheet extends StatelessWidget {
           _BottomSheetFlag(flagUrl: flagUrl),
           const SizedBox(height: 12),
           Text(
-            country.name,
+            displayCountry.name,
             style: Theme.of(
               context,
             ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          _InfoRow(label: 'Stolica', value: country.capital ?? 'Brak danych'),
-          _InfoRow(label: 'Region', value: country.region),
+          _InfoRow(label: translations.capital, value: displayCountry.capital),
+          _InfoRow(label: translations.region, value: displayCountry.region),
           _InfoRow(
-            label: 'Populacja',
-            value: country.population?.toString() ?? 'Brak danych',
+            label: translations.population,
+            value: country.population?.toString() ?? translations.noData,
           ),
           _InfoRow(
-            label: 'Współrzędne',
+            label: translations.coordinates,
             value: country.latitude != null && country.longitude != null
                 ? '${country.latitude}, ${country.longitude}'
-                : 'Brak danych',
+                : translations.noData,
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -44,17 +54,20 @@ class CountryBottomSheet extends StatelessWidget {
             height: 52,
             child: FilledButton.icon(
               onPressed: () {
-                debugPrint('Oznaczono jako odwiedzony: ${country.name}');
+                debugPrint(translations.markedAsVisited(displayCountry.name));
+
                 Navigator.pop(context);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Oznaczono jako odwiedzony: ${country.name}'),
+                    content: Text(
+                      translations.markedAsVisited(displayCountry.name),
+                    ),
                   ),
                 );
               },
               icon: const Icon(Icons.check_circle_outline),
-              label: const Text('Oznacz jako odwiedzony'),
+              label: Text(translations.markAsVisited),
             ),
           ),
         ],

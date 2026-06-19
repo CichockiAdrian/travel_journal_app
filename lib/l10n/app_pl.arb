@@ -1,10 +1,24 @@
 {
   "@@locale": "pl",
   "appTitle": "Travel Journal",
+  "appTagline": "Twoje podróże.\nTwoje wspomnienia.",
+
+  "email": "Email",
+  "password": "Hasło",
+  "repeatPassword": "Powtórz hasło",
+  "login": "Zaloguj się",
+  "register": "Zarejestruj się",
+  "registerPrompt": "Nie masz konta? Zarejestruj się",
+  "registration": "Rejestracja",
+  "createAccount": "Utwórz konto",
+
   "countries": "Kraje",
-  "searchCountry": "Szukaj kraju",
+  "searchCountry": "Szukaj kraju...",
   "noCountriesFound": "Nie znaleziono krajów.",
   "noSearchResults": "Brak wyników dla podanej frazy.",
+  "countriesFetchFailed": "Nie udało się pobrać krajów.",
+  "tryAgain": "Spróbuj ponownie",
+
   "capital": "Stolica",
   "region": "Region",
   "population": "Populacja",
@@ -17,25 +31,32 @@
       "countryName": {}
     }
   },
+
+  "map": "Mapa",
+  "visitedPlacesMap": "Mapa odwiedzonych miejsc",
+  "mapComingSoon": "W kolejnym etapie pojawi się tutaj mapa z oznaczonymi odwiedzonymi krajami.",
+
   "settings": "Ustawienia",
   "language": "Język",
   "polish": "Polski",
   "english": "Angielski",
+
   "account": "Konto",
-"user": "Użytkownik",
-"logout": "Wyloguj się",
-"loggingOut": "Wylogowywanie...",
-"comingSoon": "Ta sekcja zostanie dodana później.",
-"account": "Konto",
-"user": "Użytkownik",
-"logout": "Wyloguj się",
-"loggingOut": "Wylogowywanie...",
-"visitedCountries": "Odwiedzone kraje",
-"visitedCountriesSubtitle": "Lista krajów oznaczonych jako odwiedzone",
-"travelJournal": "Dziennik podróży",
-"travelJournalSubtitle": "Wpisy i wspomnienia z wyjazdów",
-"photos": "Zdjęcia",
-"photosSubtitle": "Zdjęcia dodane do podróży",
-"settingsSubtitle": "Preferencje aplikacji",
-"comingSoon": "Ta sekcja zostanie dodana później."
+  "user": "Użytkownik",
+  "logout": "Wyloguj się",
+  "loggingOut": "Wylogowywanie...",
+
+  "visitedCountries": "Odwiedzone kraje",
+  "visitedCountriesSubtitle": "Lista krajów oznaczonych jako odwiedzone",
+  "travelJournal": "Dziennik podróży",
+  "travelJournalSubtitle": "Wpisy i wspomnienia z wyjazdów",
+  "photos": "Zdjęcia",
+  "photosSubtitle": "Zdjęcia dodane do podróży",
+  "settingsSubtitle": "Preferencje aplikacji",
+  "comingSoon": "Ta sekcja zostanie dodana później.",
+
+  "theme": "Motyw",
+  "systemTheme": "Systemowy",
+  "lightTheme": "Jasny",
+  "darkTheme": "Ciemny"
 }
