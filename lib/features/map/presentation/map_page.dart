@@ -7,6 +7,7 @@ import 'package:flutter_earth_globe/point.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../data/device_location_service.dart';
+import '../../../core/theme/map_controls_theme.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -18,6 +19,10 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   static const String _currentLocationPointId = 'current-location';
   static const String _currentLocationGlowPointId = 'current-location-glow';
+  static const double _initialZoom = 0.5;
+  static const double _minZoom = 0.1;
+  static const double _maxZoom = 2.5;
+  static const double _zoomStep = 0.2;
 
   late final FlutterEarthGlobeController _controller;
   final DeviceLocationService _locationService = DeviceLocationService();
@@ -26,6 +31,7 @@ class _MapPageState extends State<MapPage> {
   bool _hasCurrentLocationPoint = false;
   bool _isCurrentLocationCardVisible = false;
 
+  double _currentZoom = _initialZoom;
   DeviceLocation? _currentLocation;
 
   @override
@@ -38,9 +44,9 @@ class _MapPageState extends State<MapPage> {
       rotationSpeed: 0.015,
       isRotating: true,
       isZoomEnabled: true,
-      zoom: 0.5,
-      minZoom: 0.1,
-      maxZoom: 2.5,
+      zoom: _initialZoom,
+      minZoom: _minZoom,
+      maxZoom: _maxZoom,
       isBackgroundFollowingSphereRotation: true,
       showAtmosphere: true,
       atmosphereOpacity: 0.25,
@@ -66,6 +72,26 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  void updateZoom(double zoom) {
+    final newZoom = zoom.clamp(_minZoom, _maxZoom).toDouble();
+
+    setState(() {
+      _currentZoom = newZoom;
+    });
+
+    _controller.setZoom(newZoom);
+  }
+
+  void zoomIn() {
+    hideCurrentLocationCard();
+    updateZoom(_currentZoom + _zoomStep);
+  }
+
+  void zoomOut() {
+    hideCurrentLocationCard();
+    updateZoom(_currentZoom - _zoomStep);
+  }
+
   void focusOnCurrentLocation() {
     final currentLocation = _currentLocation;
 
@@ -81,7 +107,7 @@ class _MapPageState extends State<MapPage> {
     });
 
     _controller.stopRotation();
-    _controller.setZoom(0.72);
+    updateZoom(0.72);
     _controller.focusOnCoordinates(
       coordinates,
       animate: true,
@@ -269,6 +295,11 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ),
                 ),
+                Positioned(
+                  left: 16,
+                  top: 16,
+                  child: _MapZoomControls(onZoomOut: zoomOut, onZoomIn: zoomIn),
+                ),
                 if (_currentLocation != null && _isCurrentLocationCardVisible)
                   Positioned(
                     left: 16,
@@ -282,6 +313,63 @@ class _MapPageState extends State<MapPage> {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _MapZoomControls extends StatelessWidget {
+  final VoidCallback onZoomOut;
+  final VoidCallback onZoomIn;
+
+  const _MapZoomControls({required this.onZoomOut, required this.onZoomIn});
+
+  @override
+  Widget build(BuildContext context) {
+    final controlsTheme = Theme.of(context).extension<MapControlsTheme>()!;
+    final borderRadius = BorderRadius.circular(controlsTheme.borderRadius);
+
+    return Material(
+      color: controlsTheme.backgroundColor,
+      borderRadius: borderRadius,
+      child: Container(
+        height: controlsTheme.height,
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          border: Border.all(color: controlsTheme.borderColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(
+                alpha: controlsTheme.shadowOpacity,
+              ),
+              blurRadius: 14,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: onZoomOut,
+              icon: const Icon(Icons.remove),
+              color: controlsTheme.foregroundColor,
+            ),
+            SizedBox(
+              height: 22,
+              child: VerticalDivider(
+                width: 1,
+                thickness: 1,
+                color: controlsTheme.dividerColor,
+              ),
+            ),
+            IconButton(
+              onPressed: onZoomIn,
+              icon: const Icon(Icons.add),
+              color: controlsTheme.foregroundColor,
+            ),
+          ],
         ),
       ),
     );
