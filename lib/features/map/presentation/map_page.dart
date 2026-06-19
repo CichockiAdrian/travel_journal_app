@@ -1,38 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_earth_globe/flutter_earth_globe.dart';
 import 'package:flutter_earth_globe/flutter_earth_globe_controller.dart';
 import 'package:flutter_earth_globe/globe_coordinates.dart';
 import 'package:flutter_earth_globe/point.dart';
 
 import '../../../core/constants/app_assets.dart';
+import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../data/device_location_service.dart';
-import '../../../core/theme/map_controls_theme.dart';
+import '../logic/map_cubit.dart';
+import '../logic/map_state.dart';
 
-class MapPage extends StatefulWidget {
+class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
   @override
-  State<MapPage> createState() => _MapPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<MapCubit>()..loadInitialLocation(),
+      child: const _MapView(),
+    );
+  }
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapView extends StatefulWidget {
+  const _MapView();
+
+  @override
+  State<_MapView> createState() => _MapViewState();
+}
+
+class _MapViewState extends State<_MapView> {
   static const String _currentLocationPointId = 'current-location';
   static const String _currentLocationGlowPointId = 'current-location-glow';
+
   static const double _initialZoom = 0.5;
   static const double _minZoom = 0.1;
   static const double _maxZoom = 2.5;
   static const double _zoomStep = 0.2;
 
   late final FlutterEarthGlobeController _controller;
-  final DeviceLocationService _locationService = DeviceLocationService();
 
-  bool _isLoadingLocation = false;
   bool _hasCurrentLocationPoint = false;
-  bool _isCurrentLocationCardVisible = false;
-
   double _currentZoom = _initialZoom;
-  DeviceLocation? _currentLocation;
 
   @override
   void initState() {
@@ -53,23 +64,12 @@ class _MapPageState extends State<MapPage> {
       surfaceLightingEnabled: true,
       ambientLight: 0.65,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadCurrentLocation(showCardAfterLoad: false, focusAfterLoad: false);
-    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  void hideCurrentLocationCard() {
-    if (!_isCurrentLocationCardVisible) return;
-
-    setState(() {
-      _isCurrentLocationCardVisible = false;
-    });
   }
 
   void updateZoom(double zoom) {
@@ -82,29 +82,62 @@ class _MapPageState extends State<MapPage> {
     _controller.setZoom(newZoom);
   }
 
-  void zoomIn() {
-    hideCurrentLocationCard();
+  void zoomIn(BuildContext context) {
+    context.read<MapCubit>().hideCurrentLocationCard();
     updateZoom(_currentZoom + _zoomStep);
   }
 
-  void zoomOut() {
-    hideCurrentLocationCard();
+  void zoomOut(BuildContext context) {
+    context.read<MapCubit>().hideCurrentLocationCard();
     updateZoom(_currentZoom - _zoomStep);
   }
 
-  void focusOnCurrentLocation() {
-    final currentLocation = _currentLocation;
+  void upsertCurrentLocationPoint(
+    BuildContext context,
+    DeviceLocation location,
+  ) {
+    final coordinates = GlobeCoordinates(location.latitude, location.longitude);
 
-    if (currentLocation == null) return;
+    if (_hasCurrentLocationPoint) {
+      _controller.removePoint(_currentLocationPointId);
+      _controller.removePoint(_currentLocationGlowPointId);
+    }
 
-    final coordinates = GlobeCoordinates(
-      currentLocation.latitude,
-      currentLocation.longitude,
+    final markerColor = Theme.of(context).colorScheme.primary;
+
+    _controller.addPoint(
+      Point(
+        id: _currentLocationGlowPointId,
+        coordinates: coordinates,
+        isLabelVisible: false,
+        style: PointStyle(
+          color: markerColor.withValues(alpha: 0.22),
+          size: 4.8,
+          altitude: 0.025,
+          transitionDuration: 500,
+        ),
+      ),
     );
 
-    setState(() {
-      _isCurrentLocationCardVisible = true;
-    });
+    _controller.addPoint(
+      Point(
+        id: _currentLocationPointId,
+        coordinates: coordinates,
+        isLabelVisible: false,
+        style: const PointStyle(
+          color: Color(0xFFB9F6FF),
+          size: 1.8,
+          altitude: 0.04,
+          transitionDuration: 500,
+        ),
+      ),
+    );
+
+    _hasCurrentLocationPoint = true;
+  }
+
+  void focusOnCurrentLocation(DeviceLocation location) {
+    final coordinates = GlobeCoordinates(location.latitude, location.longitude);
 
     _controller.stopRotation();
     updateZoom(0.72);
@@ -114,96 +147,6 @@ class _MapPageState extends State<MapPage> {
       duration: const Duration(milliseconds: 900),
       curve: Curves.easeInOutCubic,
     );
-  }
-
-  Future<void> handleCurrentLocationButtonPressed() async {
-    await loadCurrentLocation(showCardAfterLoad: true, focusAfterLoad: true);
-  }
-
-  Future<void> loadCurrentLocation({
-    required bool showCardAfterLoad,
-    required bool focusAfterLoad,
-  }) async {
-    if (_isLoadingLocation) return;
-
-    setState(() {
-      _isLoadingLocation = true;
-    });
-
-    try {
-      final location = await _locationService.getCurrentLocation();
-
-      if (!mounted) return;
-
-      final coordinates = GlobeCoordinates(
-        location.latitude,
-        location.longitude,
-      );
-
-      if (_hasCurrentLocationPoint) {
-        _controller.removePoint(_currentLocationPointId);
-        _controller.removePoint(_currentLocationGlowPointId);
-      }
-
-      final markerColor = Theme.of(context).colorScheme.primary;
-
-      _controller.addPoint(
-        Point(
-          id: _currentLocationGlowPointId,
-          coordinates: coordinates,
-          isLabelVisible: false,
-          style: PointStyle(
-            color: markerColor.withValues(alpha: 0.22),
-            size: 4.8,
-            altitude: 0.025,
-            transitionDuration: 500,
-          ),
-        ),
-      );
-
-      _controller.addPoint(
-        Point(
-          id: _currentLocationPointId,
-          coordinates: coordinates,
-          isLabelVisible: false,
-          style: const PointStyle(
-            color: Color(0xFFB9F6FF),
-            size: 1.8,
-            altitude: 0.04,
-            transitionDuration: 500,
-          ),
-        ),
-      );
-
-      setState(() {
-        _currentLocation = location;
-        _hasCurrentLocationPoint = true;
-        _isCurrentLocationCardVisible = showCardAfterLoad;
-      });
-
-      if (focusAfterLoad) {
-        _controller.stopRotation();
-        _controller.setZoom(0.72);
-        _controller.focusOnCoordinates(
-          coordinates,
-          animate: true,
-          duration: const Duration(milliseconds: 900),
-          curve: Curves.easeInOutCubic,
-        );
-      }
-    } on DeviceLocationException catch (error) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(getLocationErrorMessage(context, error.type))),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingLocation = false;
-        });
-      }
-    }
   }
 
   String getLocationErrorMessage(
@@ -228,92 +171,142 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     final translations = AppLocalizations.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(translations.map),
-        actions: [
-          IconButton(
-            onPressed: () {
-              hideCurrentLocationCard();
-              _controller.toggleRotation();
-            },
-            icon: const Icon(Icons.threesixty),
-          ),
-          IconButton(
-            tooltip: translations.showCurrentLocation,
-            onPressed: _isLoadingLocation
-                ? null
-                : handleCurrentLocationButtonPressed,
-            icon: _isLoadingLocation
-                ? const SizedBox.square(
-                    dimension: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.my_location),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final shortestSide = constraints.maxWidth < constraints.maxHeight
-                ? constraints.maxWidth
-                : constraints.maxHeight;
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<MapCubit, MapState>(
+          listenWhen: (previous, current) {
+            return previous.currentLocation != current.currentLocation &&
+                current.currentLocation != null;
+          },
+          listener: (context, state) {
+            upsertCurrentLocationPoint(context, state.currentLocation!);
+          },
+        ),
+        BlocListener<MapCubit, MapState>(
+          listenWhen: (previous, current) {
+            return previous.focusRequestId != current.focusRequestId &&
+                current.currentLocation != null;
+          },
+          listener: (context, state) {
+            focusOnCurrentLocation(state.currentLocation!);
+          },
+        ),
+        BlocListener<MapCubit, MapState>(
+          listenWhen: (previous, current) {
+            return previous.locationErrorType != current.locationErrorType &&
+                current.locationErrorType != null;
+          },
+          listener: (context, state) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  getLocationErrorMessage(context, state.locationErrorType!),
+                ),
+              ),
+            );
 
-            final radius = shortestSide * 0.42;
+            context.read<MapCubit>().clearLocationError();
+          },
+        ),
+      ],
+      child: BlocBuilder<MapCubit, MapState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(translations.map),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    context.read<MapCubit>().hideCurrentLocationCard();
+                    _controller.toggleRotation();
+                  },
+                  icon: const Icon(Icons.threesixty),
+                ),
+                IconButton(
+                  tooltip: translations.showCurrentLocation,
+                  onPressed: state.isLoadingLocation
+                      ? null
+                      : context.read<MapCubit>().refreshCurrentLocation,
+                  icon: state.isLoadingLocation
+                      ? const SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.my_location),
+                ),
+              ],
+            ),
+            body: SafeArea(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final shortestSide =
+                      constraints.maxWidth < constraints.maxHeight
+                      ? constraints.maxWidth
+                      : constraints.maxHeight;
 
-            const globeOffsetY = -50.0;
-            const extraRenderHeight = 120.0;
+                  final radius = shortestSide * 0.42;
 
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                ClipRect(
-                  child: OverflowBox(
-                    alignment: Alignment.center,
-                    minWidth: constraints.maxWidth,
-                    maxWidth: constraints.maxWidth,
-                    minHeight: constraints.maxHeight + extraRenderHeight,
-                    maxHeight: constraints.maxHeight + extraRenderHeight,
-                    child: Transform.translate(
-                      offset: const Offset(0, globeOffsetY),
-                      child: SizedBox(
-                        width: constraints.maxWidth,
-                        height: constraints.maxHeight + extraRenderHeight,
-                        child: Center(
-                          child: Listener(
-                            onPointerDown: (_) {
-                              hideCurrentLocationCard();
-                            },
-                            child: FlutterEarthGlobe(
-                              controller: _controller,
-                              radius: radius,
+                  const globeOffsetY = -50.0;
+                  const extraRenderHeight = 120.0;
+
+                  return Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ClipRect(
+                        child: OverflowBox(
+                          alignment: Alignment.center,
+                          minWidth: constraints.maxWidth,
+                          maxWidth: constraints.maxWidth,
+                          minHeight: constraints.maxHeight + extraRenderHeight,
+                          maxHeight: constraints.maxHeight + extraRenderHeight,
+                          child: Transform.translate(
+                            offset: const Offset(0, globeOffsetY),
+                            child: SizedBox(
+                              width: constraints.maxWidth,
+                              height: constraints.maxHeight + extraRenderHeight,
+                              child: Center(
+                                child: Listener(
+                                  onPointerDown: (_) {
+                                    context
+                                        .read<MapCubit>()
+                                        .hideCurrentLocationCard();
+                                  },
+                                  child: FlutterEarthGlobe(
+                                    controller: _controller,
+                                    radius: radius,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: 16,
-                  top: 16,
-                  child: _MapZoomControls(onZoomOut: zoomOut, onZoomIn: zoomIn),
-                ),
-                if (_currentLocation != null && _isCurrentLocationCardVisible)
-                  Positioned(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                    child: _CurrentLocationCard(
-                      title: translations.currentLocation,
-                      location: _currentLocation!,
-                    ),
-                  ),
-              ],
-            );
-          },
-        ),
+                      Positioned(
+                        left: 16,
+                        top: 16,
+                        child: _MapZoomControls(
+                          onZoomOut: () => zoomOut(context),
+                          onZoomIn: () => zoomIn(context),
+                        ),
+                      ),
+                      if (state.currentLocation != null &&
+                          state.isCurrentLocationCardVisible)
+                        Positioned(
+                          left: 16,
+                          right: 16,
+                          bottom: 16,
+                          child: _CurrentLocationCard(
+                            title: translations.currentLocation,
+                            location: state.currentLocation!,
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -327,22 +320,21 @@ class _MapZoomControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controlsTheme = Theme.of(context).extension<MapControlsTheme>()!;
-    final borderRadius = BorderRadius.circular(controlsTheme.borderRadius);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-      color: controlsTheme.backgroundColor,
-      borderRadius: borderRadius,
+      color: colorScheme.primary.withValues(alpha: 0.9),
+      borderRadius: BorderRadius.circular(18),
       child: Container(
-        height: controlsTheme.height,
+        height: 46,
         decoration: BoxDecoration(
-          borderRadius: borderRadius,
-          border: Border.all(color: controlsTheme.borderColor),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: colorScheme.onPrimary.withValues(alpha: 0.18),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(
-                alpha: controlsTheme.shadowOpacity,
-              ),
+              color: Colors.black.withValues(alpha: 0.18),
               blurRadius: 14,
               offset: const Offset(0, 5),
             ),
@@ -354,20 +346,20 @@ class _MapZoomControls extends StatelessWidget {
             IconButton(
               onPressed: onZoomOut,
               icon: const Icon(Icons.remove),
-              color: controlsTheme.foregroundColor,
+              color: colorScheme.onPrimary,
             ),
             SizedBox(
               height: 22,
               child: VerticalDivider(
                 width: 1,
                 thickness: 1,
-                color: controlsTheme.dividerColor,
+                color: colorScheme.onPrimary.withValues(alpha: 0.35),
               ),
             ),
             IconButton(
               onPressed: onZoomIn,
               icon: const Icon(Icons.add),
-              color: controlsTheme.foregroundColor,
+              color: colorScheme.onPrimary,
             ),
           ],
         ),
