@@ -23,7 +23,11 @@ class CountriesCubit extends Cubit<CountriesState> {
     try {
       final countries = await countriesRepository.getAllCountries();
 
-      countries.sort((a, b) => a.name.compareTo(b.name));
+      countries.sort((a, b) {
+        final nameA = a.name ?? '';
+        final nameB = b.name ?? '';
+        return nameA.compareTo(nameB);
+      });
 
       emit(
         state.copyWith(
@@ -70,12 +74,12 @@ class CountriesCubit extends Cubit<CountriesState> {
     final lowerQuery = trimmedQuery.toLowerCase();
 
     final filtered = state.allCountries.where((country) {
-      final name = country.name.toLowerCase();
+      final name = country.name?.toLowerCase() ?? '';
       final translatedNames = country.translatedNames.values
           .map((value) => value.toLowerCase())
           .join(' ');
       final capital = country.capital?.toLowerCase() ?? '';
-      final region = country.region.toLowerCase();
+      final region = country.region?.toLowerCase() ?? '';
       final subregion = country.subregion?.toLowerCase() ?? '';
 
       return name.contains(lowerQuery) ||
