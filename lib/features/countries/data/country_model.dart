@@ -1,9 +1,9 @@
 class CountryModel {
-  final String name;
+  final String? name;
   final Map<String, String> translatedNames;
   final String? capital;
   final String? flagUrl;
-  final String region;
+  final String? region;
   final String? subregion;
   final int? population;
   final double? latitude;
@@ -35,7 +35,7 @@ class CountryModel {
     );
   }
 
-  static String _readName(Map<String, dynamic> json) {
+  static String? _readName(Map json) {
     final name = json['name'];
 
     if (name is String) {
@@ -43,22 +43,16 @@ class CountryModel {
     }
 
     if (name is Map) {
-      return name['common']?.toString() ??
-          name['official']?.toString() ??
-          'Unknown country';
+      return name['common']?.toString() ?? name['official']?.toString();
     }
 
     final names = json['names'];
 
     if (names is Map) {
-      return names['common']?.toString() ??
-          names['official']?.toString() ??
-          'Unknown country';
+      return names['common']?.toString() ?? names['official']?.toString();
     }
 
-    return json['commonName']?.toString() ??
-        json['officialName']?.toString() ??
-        'Unknown country';
+    return json['commonName']?.toString() ?? json['officialName']?.toString();
   }
 
   static Map<String, String> _readTranslatedNames(Map<String, dynamic> json) {
@@ -166,7 +160,7 @@ class CountryModel {
     return null;
   }
 
-  static String _readRegion(Map<String, dynamic> json) {
+  static String? _readRegion(Map json) {
     final region = json['region'];
 
     if (region is String) {
@@ -174,10 +168,10 @@ class CountryModel {
     }
 
     if (region is Map) {
-      return region['name']?.toString() ?? 'No data';
+      return region['name']?.toString();
     }
 
-    return 'No data';
+    return null;
   }
 
   static String? _readSubregion(Map<String, dynamic> json) {

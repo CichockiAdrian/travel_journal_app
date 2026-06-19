@@ -20,20 +20,25 @@ class CountryDisplayMapper {
     required AppLocalizations translations,
   }) {
     return CountryDisplayData(
-      name: _countryName(country, languageCode),
+      name: _countryName(country, languageCode, translations),
       capital: _capital(country, languageCode, translations),
-      region: _region(country, languageCode),
+      region: _region(country, languageCode, translations),
     );
   }
 
-  static String _countryName(CountryModel country, String languageCode) {
+  static String _countryName(
+    CountryModel country,
+    String languageCode,
+    AppLocalizations translations,
+  ) {
     if (languageCode == 'pl') {
       return country.translatedNames['pol'] ??
           country.translatedNames['pl'] ??
-          country.name;
+          country.name ??
+          translations.unknownCountry;
     }
 
-    return country.name;
+    return country.name ?? translations.unknownCountry;
   }
 
   static String _capital(
@@ -54,8 +59,16 @@ class CountryDisplayMapper {
     return _polishCapitalNames[capital] ?? capital;
   }
 
-  static String _region(CountryModel country, String languageCode) {
+  static String _region(
+    CountryModel country,
+    String languageCode,
+    AppLocalizations translations,
+  ) {
     final rawRegion = _regionValueForDisplay(country);
+
+    if (rawRegion == null || rawRegion.isEmpty) {
+      return translations.noData;
+    }
 
     if (languageCode != 'pl') {
       return rawRegion;
@@ -64,7 +77,7 @@ class CountryDisplayMapper {
     return _polishRegions[rawRegion] ?? rawRegion;
   }
 
-  static String _regionValueForDisplay(CountryModel country) {
+  static String? _regionValueForDisplay(CountryModel country) {
     final subregion = country.subregion;
 
     if (country.region == 'Americas' &&
