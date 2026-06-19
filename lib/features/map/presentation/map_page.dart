@@ -18,7 +18,8 @@ class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<MapCubit>()..loadInitialLocation(),
+      create: (_) =>
+          MapCubit(getIt<DeviceLocationService>())..loadInitialLocation(),
       child: const _MapView(),
     );
   }
