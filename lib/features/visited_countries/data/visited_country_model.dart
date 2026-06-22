@@ -1,21 +1,42 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class VisitedCountryModel {
-  final String id;
-  final String name;
-  final String? flagUrl;
-  final double? latitude;
-  final double? longitude;
-  final DateTime? visitedAt;
+import '../../countries/data/country_model.dart';
 
-  const VisitedCountryModel({
-    required this.id,
-    required this.name,
-    required this.flagUrl,
-    required this.latitude,
-    required this.longitude,
-    required this.visitedAt,
-  });
+part 'visited_country_model.freezed.dart';
+
+@freezed
+abstract class VisitedCountryModel with _$VisitedCountryModel {
+  static const nameField = 'name';
+  static const flagUrlField = 'flagUrl';
+  static const latitudeField = 'latitude';
+  static const longitudeField = 'longitude';
+  static const visitedAtField = 'visitedAt';
+
+  const VisitedCountryModel._();
+
+  const factory VisitedCountryModel({
+    required String id,
+    required String name,
+    required String? flagUrl,
+    required double? latitude,
+    required double? longitude,
+    required DateTime? visitedAt,
+  }) = _VisitedCountryModel;
+
+  factory VisitedCountryModel.fromCountry({
+    required String id,
+    required CountryModel country,
+  }) {
+    return VisitedCountryModel(
+      id: id,
+      name: country.name,
+      flagUrl: country.flagUrl,
+      latitude: country.latitude,
+      longitude: country.longitude,
+      visitedAt: null,
+    );
+  }
 
   factory VisitedCountryModel.fromFirestore({
     required String id,
@@ -23,16 +44,27 @@ class VisitedCountryModel {
   }) {
     return VisitedCountryModel(
       id: id,
-      name: data['name']?.toString() ?? id,
-      flagUrl: data['flagUrl']?.toString(),
-      latitude: _readDouble(data['latitude']),
-      longitude: _readDouble(data['longitude']),
-      visitedAt: _readDate(data['visitedAt']),
+      name: data[nameField]?.toString() ?? id,
+      flagUrl: data[flagUrlField]?.toString(),
+      latitude: _readDouble(data[latitudeField]),
+      longitude: _readDouble(data[longitudeField]),
+      visitedAt: _readDate(data[visitedAtField]),
     );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      nameField: name,
+      flagUrlField: flagUrl,
+      latitudeField: latitude,
+      longitudeField: longitude,
+      visitedAtField: FieldValue.serverTimestamp(),
+    };
   }
 
   static double? _readDouble(dynamic value) {
     if (value is num) return value.toDouble();
+
     return double.tryParse(value?.toString() ?? '');
   }
 

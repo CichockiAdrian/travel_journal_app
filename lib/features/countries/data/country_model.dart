@@ -1,27 +1,23 @@
-class CountryModel {
-  final String name;
-  final String? code;
-  final Map<String, String> translatedNames;
-  final String? capital;
-  final String? flagUrl;
-  final String region;
-  final String? subregion;
-  final int? population;
-  final double? latitude;
-  final double? longitude;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const CountryModel({
-    required this.name,
-    required this.code,
-    required this.translatedNames,
-    required this.capital,
-    required this.flagUrl,
-    required this.region,
-    required this.subregion,
-    required this.population,
-    required this.latitude,
-    required this.longitude,
-  });
+part 'country_model.freezed.dart';
+
+@freezed
+abstract class CountryModel with _$CountryModel {
+  const CountryModel._();
+
+  const factory CountryModel({
+    required String name,
+    required String? code,
+    @Default({}) Map<String, String> translatedNames,
+    required String? capital,
+    required String? flagUrl,
+    required String region,
+    required String? subregion,
+    required int? population,
+    required double? latitude,
+    required double? longitude,
+  }) = _CountryModel;
 
   factory CountryModel.fromJson(Map<String, dynamic> json) {
     return CountryModel(
@@ -41,30 +37,26 @@ class CountryModel {
   static String _readName(Map<String, dynamic> json) {
     final name = json['name'];
 
-    if (name is String) {
+    if (name is String && name.trim().isNotEmpty) {
       return name;
     }
 
     if (name is Map) {
-      return name['common']?.toString() ??
-          name['official']?.toString() ??
-          'Unknown country';
+      return name['common']?.toString() ?? name['official']?.toString() ?? '';
     }
 
     final names = json['names'];
 
     if (names is Map) {
-      return names['common']?.toString() ??
-          names['official']?.toString() ??
-          'Unknown country';
+      return names['common']?.toString() ?? names['official']?.toString() ?? '';
     }
 
     return json['commonName']?.toString() ??
         json['officialName']?.toString() ??
-        'Unknown country';
+        '';
   }
 
-  static String? _readCode(Map json) {
+  static String? _readCode(Map<String, dynamic> json) {
     final value =
         json['cca2'] ??
         json['cca3'] ??
@@ -194,10 +186,10 @@ class CountryModel {
     }
 
     if (region is Map) {
-      return region['name']?.toString() ?? 'No data';
+      return region['name']?.toString() ?? '';
     }
 
-    return 'No data';
+    return '';
   }
 
   static String? _readSubregion(Map<String, dynamic> json) {

@@ -10,9 +10,9 @@ class VisitedCountryId {
       return code;
     }
 
-    final name = country.name?.trim().toLowerCase();
+    final name = country.name.trim().toLowerCase();
 
-    if (name == null || name.isEmpty) {
+    if (name.isEmpty) {
       return null;
     }
 

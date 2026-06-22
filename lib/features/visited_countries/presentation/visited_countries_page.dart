@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
-import '../../countries/data/country_model.dart';
 import '../../countries/logic/countries_cubit.dart';
 import '../../countries/logic/countries_state.dart';
 import '../../countries/presentation/country_display_mapper.dart';
