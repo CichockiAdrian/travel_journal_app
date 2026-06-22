@@ -25,7 +25,12 @@ class CountriesCubit extends Cubit<CountriesState> {
 
       if (isClosed) return;
 
-      countries.sort((a, b) => a.name.compareTo(b.name));
+      countries.sort((a, b) {
+        final firstName = a.name ?? '';
+        final secondName = b.name ?? '';
+
+        return firstName.compareTo(secondName);
+      });
 
       emit(
         state.copyWith(
