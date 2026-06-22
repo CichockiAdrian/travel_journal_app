@@ -12,6 +12,7 @@ import '../../visited_countries/presentation/visited_countries_page.dart';
 import '../logic/account_cubit.dart';
 import '../models/account_menu_item.dart';
 import '../models/account_menu_items.dart';
+import '../../trip_diary/presentation/trip_diary_page.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -175,6 +176,11 @@ class AccountView extends StatelessWidget {
         break;
 
       case AccountMenuItemType.travelJournal:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TripDiaryPage()),
+        );
+        break;
       case AccountMenuItemType.photos:
         ScaffoldMessenger.of(
           context,
