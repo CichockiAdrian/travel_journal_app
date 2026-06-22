@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../visited_countries/data/visited_country_id.dart';
+import '../../visited_countries/logic/visited_countries_cubit.dart';
+import '../../visited_countries/logic/visited_countries_state.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import 'country_display_mapper.dart';
 import '../data/country_model.dart';
@@ -28,12 +32,22 @@ class CountryBottomSheet extends StatelessWidget {
         children: [
           _BottomSheetFlag(flagUrl: flagUrl),
           const SizedBox(height: 12),
-          Text(
-            displayCountry.name,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
+          BlocBuilder<VisitedCountriesCubit, VisitedCountriesState>(
+            builder: (context, state) {
+              final countryId = VisitedCountryId.fromCountry(country);
+              final isVisited =
+                  countryId != null &&
+                  state.visitedCountryIds.contains(countryId);
+
+              if (!isVisited) {
+                return const SizedBox.shrink();
+              }
+
+              return const Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: _VisitedStatusBadge(),
+              );
+            },
           ),
           const SizedBox(height: 20),
           _InfoRow(label: translations.capital, value: displayCountry.capital),
@@ -49,25 +63,85 @@ class CountryBottomSheet extends StatelessWidget {
                 : translations.noData,
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: FilledButton.icon(
-              onPressed: () {
-                debugPrint(translations.markedAsVisited(displayCountry.name));
+          BlocBuilder<VisitedCountriesCubit, VisitedCountriesState>(
+            builder: (context, state) {
+              final countryId = VisitedCountryId.fromCountry(country);
+              final isVisited =
+                  countryId != null &&
+                  state.visitedCountryIds.contains(countryId);
 
-                Navigator.pop(context);
+              final colorScheme = Theme.of(context).colorScheme;
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      translations.markedAsVisited(displayCountry.name),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    height: 52,
+                    child: FilledButton.icon(
+                      style: isVisited
+                          ? FilledButton.styleFrom(
+                              backgroundColor: colorScheme.primaryContainer,
+                              foregroundColor: colorScheme.onPrimaryContainer,
+                            )
+                          : null,
+                      onPressed:
+                          countryId == null || state.isUpdatingVisitedCountry
+                          ? null
+                          : () {
+                              context
+                                  .read<VisitedCountriesCubit>()
+                                  .toggleVisitedCountry(country);
+                            },
+                      icon: Icon(
+                        isVisited
+                            ? Icons.check_circle
+                            : Icons.check_circle_outline,
+                      ),
+                      label: Text(
+                        isVisited
+                            ? translations.removeFromVisited
+                            : translations.markAsVisited,
+                      ),
                     ),
                   ),
-                );
-              },
-              icon: const Icon(Icons.check_circle_outline),
-              label: Text(translations.markAsVisited),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VisitedStatusBadge extends StatelessWidget {
+  const _VisitedStatusBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    final translations = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.verified_rounded,
+            size: 20,
+            color: colorScheme.onPrimaryContainer,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            translations.visited,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],

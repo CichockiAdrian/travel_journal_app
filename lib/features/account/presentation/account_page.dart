@@ -5,6 +5,10 @@ import 'package:travel_journal_app/core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../settings/presentation/settings_page.dart';
+import '../../visited_countries/data/visited_countries_repository.dart';
+import '../../visited_countries/logic/visited_countries_cubit.dart';
+import '../../visited_countries/logic/visited_countries_state.dart';
+import '../../visited_countries/presentation/visited_countries_page.dart';
 import '../logic/account_cubit.dart';
 import '../models/account_menu_item.dart';
 import '../models/account_menu_items.dart';
@@ -14,10 +18,19 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AccountCubit>(
-      create: (_) =>
-          AccountCubit(authRepository: getIt<AuthRepository>())
-            ..loadUserEmail(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              AccountCubit(authRepository: getIt<AuthRepository>())
+                ..loadUserEmail(),
+        ),
+        BlocProvider(
+          create: (_) =>
+              VisitedCountriesCubit(getIt<VisitedCountriesRepository>())
+                ..watchVisitedCountries(),
+        ),
+      ],
       child: const AccountView(),
     );
   }
@@ -38,6 +51,7 @@ class AccountView extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               const SizedBox(height: 12),
+
               Row(
                 children: [
                   CircleAvatar(
@@ -64,26 +78,34 @@ class AccountView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(state.email),
+                        Text(
+                          state.email.isEmpty
+                              ? translations.noData
+                              : state.email,
+                        ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 28),
+
+              const SizedBox(height: 20),
+
               ...accountMenuItems.map((item) {
                 return Card(
                   child: ListTile(
                     leading: Icon(item.icon),
                     title: Text(_getMenuTitle(translations, item.type)),
                     subtitle: Text(_getMenuSubtitle(translations, item.type)),
-                    trailing: const Icon(Icons.chevron_right),
+                    trailing: _AccountMenuItemTrailing(type: item.type),
                     onTap: () =>
                         _handleMenuItemTap(context, item.type, translations),
                   ),
                 );
               }),
+
               const SizedBox(height: 24),
+
               FilledButton.icon(
                 onPressed: state.isLoading
                     ? null
@@ -146,6 +168,12 @@ class AccountView extends StatelessWidget {
         break;
 
       case AccountMenuItemType.visitedCountries:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const VisitedCountriesPage()),
+        );
+        break;
+
       case AccountMenuItemType.travelJournal:
       case AccountMenuItemType.photos:
         ScaffoldMessenger.of(
@@ -153,5 +181,46 @@ class AccountView extends StatelessWidget {
         ).showSnackBar(SnackBar(content: Text(translations.comingSoon)));
         break;
     }
+  }
+}
+
+class _AccountMenuItemTrailing extends StatelessWidget {
+  final AccountMenuItemType type;
+
+  const _AccountMenuItemTrailing({required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    if (type != AccountMenuItemType.visitedCountries) {
+      return const Icon(Icons.chevron_right);
+    }
+
+    return BlocBuilder<VisitedCountriesCubit, VisitedCountriesState>(
+      builder: (context, state) {
+        final count = state.visitedCountries.length;
+
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                count.toString(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right),
+          ],
+        );
+      },
+    );
   }
 }

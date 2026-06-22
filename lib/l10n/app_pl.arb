@@ -65,5 +65,19 @@
  "locationServiceDisabled": "Usługi lokalizacji są wyłączone.",
  "locationPermissionDenied": "Odmówiono dostępu do lokalizacji.",
  "locationPermissionDeniedForever": "Dostęp do lokalizacji został trwale zablokowany. Włącz go w ustawieniach aplikacji.",
- "locationUnknownError": "Nie udało się pobrać aktualnej lokalizacji."
+ "locationUnknownError": "Nie udało się pobrać aktualnej lokalizacji.",
+ "visited": "Odwiedzone",
+ "removeFromVisited": "Usuń z odwiedzonych",
+ "visitedCountriesSyncFailed": "Nie udało się zsynchronizować odwiedzonych krajów.",
+ "signInToSyncVisitedCountries": "Zaloguj się, aby synchronizować odwiedzone kraje.",
+ "countryCannotBeMarkedAsVisited": "Tego kraju nie można oznaczyć jako odwiedzonego.",
+"noVisitedCountriesYet": "Nie masz jeszcze oznaczonych odwiedzonych krajów.",
+"visitedCountriesCount": "Odwiedzone kraje: {count}",
+"@visitedCountriesCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+}
 }

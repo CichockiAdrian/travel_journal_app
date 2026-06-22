@@ -8,15 +8,28 @@ import '../data/country_model.dart';
 import '../logic/countries_cubit.dart';
 import '../logic/countries_state.dart';
 import 'country_bottom_sheet.dart';
+import '../../visited_countries/data/visited_countries_repository.dart';
+import '../../visited_countries/data/visited_country_id.dart';
+import '../../visited_countries/logic/visited_countries_cubit.dart';
+import '../../visited_countries/logic/visited_countries_state.dart';
 
 class CountriesPage extends StatelessWidget {
   const CountriesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          CountriesCubit(countriesRepository: getIt())..loadAllCountries(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              CountriesCubit(countriesRepository: getIt())..loadAllCountries(),
+        ),
+        BlocProvider(
+          create: (_) =>
+              VisitedCountriesCubit(getIt<VisitedCountriesRepository>())
+                ..watchVisitedCountries(),
+        ),
+      ],
       child: const CountriesView(),
     );
   }
@@ -26,11 +39,16 @@ class CountriesView extends StatelessWidget {
   const CountriesView({super.key});
 
   void showCountryDetails(BuildContext context, CountryModel country) {
+    final visitedCountriesCubit = context.read<VisitedCountriesCubit>();
+
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
       builder: (_) {
-        return CountryBottomSheet(country: country);
+        return BlocProvider.value(
+          value: visitedCountriesCubit,
+          child: CountryBottomSheet(country: country),
+        );
       },
     );
   }
@@ -47,23 +65,59 @@ class CountriesView extends StatelessWidget {
     return false;
   }
 
+  String getVisitedCountriesErrorMessage(
+    BuildContext context,
+    VisitedCountriesFailureType type,
+  ) {
+    final translations = AppLocalizations.of(context);
+
+    switch (type) {
+      case VisitedCountriesFailureType.notAuthenticated:
+        return translations.signInToSyncVisitedCountries;
+      case VisitedCountriesFailureType.missingCountryId:
+        return translations.countryCannotBeMarkedAsVisited;
+      case VisitedCountriesFailureType.unknown:
+        return translations.visitedCountriesSyncFailed;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final translations = AppLocalizations.of(context);
     final languageCode = Localizations.localeOf(context).languageCode;
 
-    return BlocListener<CountriesCubit, CountriesState>(
-      listenWhen: (previous, current) {
-        return previous.errorMessage != current.errorMessage &&
-            current.errorMessage != null;
-      },
-      listener: (context, state) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CountriesCubit, CountriesState>(
+          listenWhen: (previous, current) {
+            return previous.errorMessage != current.errorMessage &&
+                current.errorMessage != null;
+          },
+          listener: (context, state) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            context.read<CountriesCubit>().clearError();
+          },
+        ),
+        BlocListener<VisitedCountriesCubit, VisitedCountriesState>(
+          listenWhen: (previous, current) {
+            return previous.failureType != current.failureType &&
+                current.failureType != null;
+          },
+          listener: (context, state) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  getVisitedCountriesErrorMessage(context, state.failureType!),
+                ),
+              ),
+            );
 
-        context.read<CountriesCubit>().clearError();
-      },
+            context.read<VisitedCountriesCubit>().clearFailure();
+          },
+        ),
+      ],
       child: BlocBuilder<CountriesCubit, CountriesState>(
         builder: (context, state) {
           final showInitialLoader =
@@ -174,10 +228,9 @@ class CountriesView extends StatelessWidget {
                             leading: _CountryFlag(flagUrl: country.flagUrl),
                             title: Text(
                               displayCountry.name,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                             subtitle: Text(
                               displayCountry.region,
@@ -188,7 +241,44 @@ class CountriesView extends StatelessWidget {
                                 ).colorScheme.onSurfaceVariant,
                               ),
                             ),
-                            trailing: const Icon(Icons.chevron_right, size: 20),
+                            trailing:
+                                BlocBuilder<
+                                  VisitedCountriesCubit,
+                                  VisitedCountriesState
+                                >(
+                                  builder: (context, visitedState) {
+                                    final countryId =
+                                        VisitedCountryId.fromCountry(country);
+                                    final isVisited =
+                                        countryId != null &&
+                                        visitedState.visitedCountryIds.contains(
+                                          countryId,
+                                        );
+
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if (isVisited) ...[
+                                          Icon(
+                                            Icons.verified_rounded,
+                                            size: 18,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                          const SizedBox(width: 14),
+                                        ],
+                                        Icon(
+                                          Icons.chevron_right,
+                                          size: 20,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
                             onTap: () => showCountryDetails(context, country),
                           );
                         },
