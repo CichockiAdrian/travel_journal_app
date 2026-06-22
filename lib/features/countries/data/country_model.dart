@@ -7,12 +7,12 @@ abstract class CountryModel with _$CountryModel {
   const CountryModel._();
 
   const factory CountryModel({
-    required String name,
+    required String? name,
     required String? code,
     @Default({}) Map<String, String> translatedNames,
     required String? capital,
     required String? flagUrl,
-    required String region,
+    required String? region,
     required String? subregion,
     required int? population,
     required double? latitude,
@@ -34,7 +34,7 @@ abstract class CountryModel with _$CountryModel {
     );
   }
 
-  static String? _readName(Map json) {
+  static String? _readName(Map<String, dynamic> json) {
     final name = json['name'];
 
     if (name is String && name.trim().isNotEmpty) {
@@ -42,18 +42,16 @@ abstract class CountryModel with _$CountryModel {
     }
 
     if (name is Map) {
-      return name['common']?.toString() ?? name['official']?.toString() ?? '';
+      return name['common']?.toString() ?? name['official']?.toString();
     }
 
     final names = json['names'];
 
     if (names is Map) {
-      return names['common']?.toString() ?? names['official']?.toString() ?? '';
+      return names['common']?.toString() ?? names['official']?.toString();
     }
 
-    return json['commonName']?.toString() ??
-        json['officialName']?.toString() ??
-        '';
+    return json['commonName']?.toString() ?? json['officialName']?.toString();
   }
 
   static String? _readCode(Map<String, dynamic> json) {
@@ -178,18 +176,18 @@ abstract class CountryModel with _$CountryModel {
     return null;
   }
 
-  static String? _readRegion(Map json) {
+  static String? _readRegion(Map<String, dynamic> json) {
     final region = json['region'];
 
-    if (region is String) {
+    if (region is String && region.trim().isNotEmpty) {
       return region;
     }
 
     if (region is Map) {
-      return region['name']?.toString() ?? '';
+      return region['name']?.toString();
     }
 
-    return '';
+    return null;
   }
 
   static String? _readSubregion(Map<String, dynamic> json) {

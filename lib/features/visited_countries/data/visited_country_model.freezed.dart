@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VisitedCountryModel {
 
- String get id; String get name; String? get flagUrl; double? get latitude; double? get longitude; DateTime? get visitedAt;
+ String get id; String? get name; String? get flagUrl; double? get latitude; double? get longitude; DateTime? get visitedAt;
 /// Create a copy of VisitedCountryModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -46,7 +46,7 @@ abstract mixin class $VisitedCountryModelCopyWith<$Res>  {
   factory $VisitedCountryModelCopyWith(VisitedCountryModel value, $Res Function(VisitedCountryModel) _then) = _$VisitedCountryModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String? flagUrl, double? latitude, double? longitude, DateTime? visitedAt
+ String id, String? name, String? flagUrl, double? latitude, double? longitude, DateTime? visitedAt
 });
 
 
@@ -63,11 +63,11 @@ class _$VisitedCountryModelCopyWithImpl<$Res>
 
 /// Create a copy of VisitedCountryModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? flagUrl = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? visitedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? flagUrl = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? visitedAt = freezed,}) {
   return _then(VisitedCountryModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,flagUrl: freezed == flagUrl ? _self.flagUrl : flagUrl // ignore: cast_nullable_to_non_nullable
+as String,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,flagUrl: freezed == flagUrl ? _self.flagUrl : flagUrl // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double?,visitedAt: freezed == visitedAt ? _self.visitedAt : visitedAt // ignore: cast_nullable_to_non_nullable
@@ -156,7 +156,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? flagUrl,  double? latitude,  double? longitude,  DateTime? visitedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? name,  String? flagUrl,  double? latitude,  double? longitude,  DateTime? visitedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VisitedCountryModel() when $default != null:
 return $default(_that.id,_that.name,_that.flagUrl,_that.latitude,_that.longitude,_that.visitedAt);case _:
@@ -177,7 +177,7 @@ return $default(_that.id,_that.name,_that.flagUrl,_that.latitude,_that.longitude
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? flagUrl,  double? latitude,  double? longitude,  DateTime? visitedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? name,  String? flagUrl,  double? latitude,  double? longitude,  DateTime? visitedAt)  $default,) {final _that = this;
 switch (_that) {
 case _VisitedCountryModel():
 return $default(_that.id,_that.name,_that.flagUrl,_that.latitude,_that.longitude,_that.visitedAt);case _:
@@ -197,7 +197,7 @@ return $default(_that.id,_that.name,_that.flagUrl,_that.latitude,_that.longitude
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? flagUrl,  double? latitude,  double? longitude,  DateTime? visitedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? name,  String? flagUrl,  double? latitude,  double? longitude,  DateTime? visitedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _VisitedCountryModel() when $default != null:
 return $default(_that.id,_that.name,_that.flagUrl,_that.latitude,_that.longitude,_that.visitedAt);case _:
@@ -216,7 +216,7 @@ class _VisitedCountryModel extends VisitedCountryModel {
   
 
 @override final  String id;
-@override final  String name;
+@override final  String? name;
 @override final  String? flagUrl;
 @override final  double? latitude;
 @override final  double? longitude;
@@ -252,7 +252,7 @@ abstract mixin class _$VisitedCountryModelCopyWith<$Res> implements $VisitedCoun
   factory _$VisitedCountryModelCopyWith(_VisitedCountryModel value, $Res Function(_VisitedCountryModel) _then) = __$VisitedCountryModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String? flagUrl, double? latitude, double? longitude, DateTime? visitedAt
+ String id, String? name, String? flagUrl, double? latitude, double? longitude, DateTime? visitedAt
 });
 
 
@@ -269,11 +269,11 @@ class __$VisitedCountryModelCopyWithImpl<$Res>
 
 /// Create a copy of VisitedCountryModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? flagUrl = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? visitedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? flagUrl = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? visitedAt = freezed,}) {
   return _then(_VisitedCountryModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,flagUrl: freezed == flagUrl ? _self.flagUrl : flagUrl // ignore: cast_nullable_to_non_nullable
+as String,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,flagUrl: freezed == flagUrl ? _self.flagUrl : flagUrl // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double?,visitedAt: freezed == visitedAt ? _self.visitedAt : visitedAt // ignore: cast_nullable_to_non_nullable

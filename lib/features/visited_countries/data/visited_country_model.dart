@@ -17,7 +17,7 @@ abstract class VisitedCountryModel with _$VisitedCountryModel {
 
   const factory VisitedCountryModel({
     required String id,
-    required String name,
+    required String? name,
     required String? flagUrl,
     required double? latitude,
     required double? longitude,
@@ -44,7 +44,7 @@ abstract class VisitedCountryModel with _$VisitedCountryModel {
   }) {
     return VisitedCountryModel(
       id: id,
-      name: data[nameField]?.toString() ?? id,
+      name: data[nameField]?.toString(),
       flagUrl: data[flagUrlField]?.toString(),
       latitude: _readDouble(data[latitudeField]),
       longitude: _readDouble(data[longitudeField]),

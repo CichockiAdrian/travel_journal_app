@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CountryModel {
 
- String get name; String? get code; Map<String, String> get translatedNames; String? get capital; String? get flagUrl; String get region; String? get subregion; int? get population; double? get latitude; double? get longitude;
+ String? get name; String? get code; Map<String, String> get translatedNames; String? get capital; String? get flagUrl; String? get region; String? get subregion; int? get population; double? get latitude; double? get longitude;
 /// Create a copy of CountryModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -46,7 +46,7 @@ abstract mixin class $CountryModelCopyWith<$Res>  {
   factory $CountryModelCopyWith(CountryModel value, $Res Function(CountryModel) _then) = _$CountryModelCopyWithImpl;
 @useResult
 $Res call({
- String name, String? code, Map<String, String> translatedNames, String? capital, String? flagUrl, String region, String? subregion, int? population, double? latitude, double? longitude
+ String? name, String? code, Map<String, String> translatedNames, String? capital, String? flagUrl, String? region, String? subregion, int? population, double? latitude, double? longitude
 });
 
 
@@ -63,15 +63,15 @@ class _$CountryModelCopyWithImpl<$Res>
 
 /// Create a copy of CountryModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? code = freezed,Object? translatedNames = null,Object? capital = freezed,Object? flagUrl = freezed,Object? region = null,Object? subregion = freezed,Object? population = freezed,Object? latitude = freezed,Object? longitude = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? code = freezed,Object? translatedNames = null,Object? capital = freezed,Object? flagUrl = freezed,Object? region = freezed,Object? subregion = freezed,Object? population = freezed,Object? latitude = freezed,Object? longitude = freezed,}) {
   return _then(CountryModel(
-name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String?,translatedNames: null == translatedNames ? _self.translatedNames : translatedNames // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,capital: freezed == capital ? _self.capital : capital // ignore: cast_nullable_to_non_nullable
 as String?,flagUrl: freezed == flagUrl ? _self.flagUrl : flagUrl // ignore: cast_nullable_to_non_nullable
-as String?,region: null == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
-as String,subregion: freezed == subregion ? _self.subregion : subregion // ignore: cast_nullable_to_non_nullable
+as String?,region: freezed == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
+as String?,subregion: freezed == subregion ? _self.subregion : subregion // ignore: cast_nullable_to_non_nullable
 as String?,population: freezed == population ? _self.population : population // ignore: cast_nullable_to_non_nullable
 as int?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
@@ -160,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String? code,  Map<String, String> translatedNames,  String? capital,  String? flagUrl,  String region,  String? subregion,  int? population,  double? latitude,  double? longitude)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  String? code,  Map<String, String> translatedNames,  String? capital,  String? flagUrl,  String? region,  String? subregion,  int? population,  double? latitude,  double? longitude)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CountryModel() when $default != null:
 return $default(_that.name,_that.code,_that.translatedNames,_that.capital,_that.flagUrl,_that.region,_that.subregion,_that.population,_that.latitude,_that.longitude);case _:
@@ -181,7 +181,7 @@ return $default(_that.name,_that.code,_that.translatedNames,_that.capital,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String? code,  Map<String, String> translatedNames,  String? capital,  String? flagUrl,  String region,  String? subregion,  int? population,  double? latitude,  double? longitude)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  String? code,  Map<String, String> translatedNames,  String? capital,  String? flagUrl,  String? region,  String? subregion,  int? population,  double? latitude,  double? longitude)  $default,) {final _that = this;
 switch (_that) {
 case _CountryModel():
 return $default(_that.name,_that.code,_that.translatedNames,_that.capital,_that.flagUrl,_that.region,_that.subregion,_that.population,_that.latitude,_that.longitude);case _:
@@ -201,7 +201,7 @@ return $default(_that.name,_that.code,_that.translatedNames,_that.capital,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String? code,  Map<String, String> translatedNames,  String? capital,  String? flagUrl,  String region,  String? subregion,  int? population,  double? latitude,  double? longitude)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  String? code,  Map<String, String> translatedNames,  String? capital,  String? flagUrl,  String? region,  String? subregion,  int? population,  double? latitude,  double? longitude)?  $default,) {final _that = this;
 switch (_that) {
 case _CountryModel() when $default != null:
 return $default(_that.name,_that.code,_that.translatedNames,_that.capital,_that.flagUrl,_that.region,_that.subregion,_that.population,_that.latitude,_that.longitude);case _:
@@ -219,7 +219,7 @@ class _CountryModel extends CountryModel {
   const _CountryModel({required this.name, required this.code,  Map<String, String> translatedNames = const {}, required this.capital, required this.flagUrl, required this.region, required this.subregion, required this.population, required this.latitude, required this.longitude}): _translatedNames = translatedNames,super._();
   
 
-@override final  String name;
+@override final  String? name;
 @override final  String? code;
  final  Map<String, String> _translatedNames;
 @override@JsonKey() Map<String, String> get translatedNames {
@@ -230,7 +230,7 @@ class _CountryModel extends CountryModel {
 
 @override final  String? capital;
 @override final  String? flagUrl;
-@override final  String region;
+@override final  String? region;
 @override final  String? subregion;
 @override final  int? population;
 @override final  double? latitude;
@@ -266,7 +266,7 @@ abstract mixin class _$CountryModelCopyWith<$Res> implements $CountryModelCopyWi
   factory _$CountryModelCopyWith(_CountryModel value, $Res Function(_CountryModel) _then) = __$CountryModelCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String? code, Map<String, String> translatedNames, String? capital, String? flagUrl, String region, String? subregion, int? population, double? latitude, double? longitude
+ String? name, String? code, Map<String, String> translatedNames, String? capital, String? flagUrl, String? region, String? subregion, int? population, double? latitude, double? longitude
 });
 
 
@@ -283,15 +283,15 @@ class __$CountryModelCopyWithImpl<$Res>
 
 /// Create a copy of CountryModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? code = freezed,Object? translatedNames = null,Object? capital = freezed,Object? flagUrl = freezed,Object? region = null,Object? subregion = freezed,Object? population = freezed,Object? latitude = freezed,Object? longitude = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? code = freezed,Object? translatedNames = null,Object? capital = freezed,Object? flagUrl = freezed,Object? region = freezed,Object? subregion = freezed,Object? population = freezed,Object? latitude = freezed,Object? longitude = freezed,}) {
   return _then(_CountryModel(
-name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String?,translatedNames: null == translatedNames ? _self._translatedNames : translatedNames // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,capital: freezed == capital ? _self.capital : capital // ignore: cast_nullable_to_non_nullable
 as String?,flagUrl: freezed == flagUrl ? _self.flagUrl : flagUrl // ignore: cast_nullable_to_non_nullable
-as String?,region: null == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
-as String,subregion: freezed == subregion ? _self.subregion : subregion // ignore: cast_nullable_to_non_nullable
+as String?,region: freezed == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
+as String?,subregion: freezed == subregion ? _self.subregion : subregion // ignore: cast_nullable_to_non_nullable
 as String?,population: freezed == population ? _self.population : population // ignore: cast_nullable_to_non_nullable
 as int?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
