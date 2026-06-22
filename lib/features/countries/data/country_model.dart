@@ -34,7 +34,7 @@ abstract class CountryModel with _$CountryModel {
     );
   }
 
-  static String _readName(Map<String, dynamic> json) {
+  static String? _readName(Map json) {
     final name = json['name'];
 
     if (name is String && name.trim().isNotEmpty) {
@@ -178,7 +178,7 @@ abstract class CountryModel with _$CountryModel {
     return null;
   }
 
-  static String _readRegion(Map<String, dynamic> json) {
+  static String? _readRegion(Map json) {
     final region = json['region'];
 
     if (region is String) {
