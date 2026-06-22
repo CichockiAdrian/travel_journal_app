@@ -212,12 +212,24 @@ class _MapViewState extends State<_MapView> {
       final countryName = country.name ?? translations.unknownCountry;
       final coordinates = GlobeCoordinates(latitude, longitude);
 
+      void showCountryName() {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(countryName),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+      }
+
       _controller.addPoint(
         Point(
           id: glowPointId,
           coordinates: coordinates,
           label: countryName,
           isLabelVisible: false,
+          onTap: showCountryName,
           style: const PointStyle(
             color: Color(0x66E53935),
             size: 4.2,
@@ -233,11 +245,7 @@ class _MapViewState extends State<_MapView> {
           coordinates: coordinates,
           label: countryName,
           isLabelVisible: false,
-          onTap: () {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(countryName)));
-          },
+          onTap: showCountryName,
           style: const PointStyle(
             color: Color(0xFFE53935),
             size: 2.0,
