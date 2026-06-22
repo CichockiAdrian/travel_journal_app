@@ -55,6 +55,7 @@ dependencies:
   shared_preferences: ^2.5.5
   flutter_earth_globe: ^2.2.1
   geolocator: ^14.0.3
+  firebase_storage: ^13.4.3
 
 dev_dependencies:
   flutter_test:
