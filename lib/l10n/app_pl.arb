@@ -79,5 +79,7 @@
       "type": "int"
     }
   }
-}
+},
+"showVisitedCountries": "Pokaż odwiedzone",
+"hideVisitedCountries": "Ukryj odwiedzone"
 }
