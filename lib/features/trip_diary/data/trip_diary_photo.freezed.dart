@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TripDiaryPhoto {
 
- String get id; String? get entryId; String? get countryCode; String? get url; String? get storagePath; DateTime? get createdAt;
+ String get id; String? get entryId; String? get countryCode; String? get localFileName; DateTime? get createdAt;
 /// Create a copy of TripDiaryPhoto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $TripDiaryPhotoCopyWith<TripDiaryPhoto> get copyWith => _$TripDiaryPhotoCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TripDiaryPhoto&&(identical(other.id, id) || other.id == id)&&(identical(other.entryId, entryId) || other.entryId == entryId)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.url, url) || other.url == url)&&(identical(other.storagePath, storagePath) || other.storagePath == storagePath)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TripDiaryPhoto&&(identical(other.id, id) || other.id == id)&&(identical(other.entryId, entryId) || other.entryId == entryId)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.localFileName, localFileName) || other.localFileName == localFileName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,entryId,countryCode,url,storagePath,createdAt);
+int get hashCode => Object.hash(runtimeType,id,entryId,countryCode,localFileName,createdAt);
 
 @override
 String toString() {
-  return 'TripDiaryPhoto(id: $id, entryId: $entryId, countryCode: $countryCode, url: $url, storagePath: $storagePath, createdAt: $createdAt)';
+  return 'TripDiaryPhoto(id: $id, entryId: $entryId, countryCode: $countryCode, localFileName: $localFileName, createdAt: $createdAt)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $TripDiaryPhotoCopyWith<$Res>  {
   factory $TripDiaryPhotoCopyWith(TripDiaryPhoto value, $Res Function(TripDiaryPhoto) _then) = _$TripDiaryPhotoCopyWithImpl;
 @useResult
 $Res call({
- String id, String? entryId, String? countryCode, String? url, String? storagePath, DateTime? createdAt
+ String id, String? entryId, String? countryCode, String? localFileName, DateTime? createdAt
 });
 
 
@@ -63,13 +63,12 @@ class _$TripDiaryPhotoCopyWithImpl<$Res>
 
 /// Create a copy of TripDiaryPhoto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? entryId = freezed,Object? countryCode = freezed,Object? url = freezed,Object? storagePath = freezed,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? entryId = freezed,Object? countryCode = freezed,Object? localFileName = freezed,Object? createdAt = freezed,}) {
   return _then(TripDiaryPhoto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,entryId: freezed == entryId ? _self.entryId : entryId // ignore: cast_nullable_to_non_nullable
 as String?,countryCode: freezed == countryCode ? _self.countryCode : countryCode // ignore: cast_nullable_to_non_nullable
-as String?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String?,storagePath: freezed == storagePath ? _self.storagePath : storagePath // ignore: cast_nullable_to_non_nullable
+as String?,localFileName: freezed == localFileName ? _self.localFileName : localFileName // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -156,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? entryId,  String? countryCode,  String? url,  String? storagePath,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? entryId,  String? countryCode,  String? localFileName,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TripDiaryPhoto() when $default != null:
-return $default(_that.id,_that.entryId,_that.countryCode,_that.url,_that.storagePath,_that.createdAt);case _:
+return $default(_that.id,_that.entryId,_that.countryCode,_that.localFileName,_that.createdAt);case _:
   return orElse();
 
 }
@@ -177,10 +176,10 @@ return $default(_that.id,_that.entryId,_that.countryCode,_that.url,_that.storage
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? entryId,  String? countryCode,  String? url,  String? storagePath,  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? entryId,  String? countryCode,  String? localFileName,  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _TripDiaryPhoto():
-return $default(_that.id,_that.entryId,_that.countryCode,_that.url,_that.storagePath,_that.createdAt);case _:
+return $default(_that.id,_that.entryId,_that.countryCode,_that.localFileName,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +196,10 @@ return $default(_that.id,_that.entryId,_that.countryCode,_that.url,_that.storage
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? entryId,  String? countryCode,  String? url,  String? storagePath,  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? entryId,  String? countryCode,  String? localFileName,  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TripDiaryPhoto() when $default != null:
-return $default(_that.id,_that.entryId,_that.countryCode,_that.url,_that.storagePath,_that.createdAt);case _:
+return $default(_that.id,_that.entryId,_that.countryCode,_that.localFileName,_that.createdAt);case _:
   return null;
 
 }
@@ -212,14 +211,13 @@ return $default(_that.id,_that.entryId,_that.countryCode,_that.url,_that.storage
 
 
 class _TripDiaryPhoto extends TripDiaryPhoto {
-  const _TripDiaryPhoto({required this.id, required this.entryId, required this.countryCode, required this.url, required this.storagePath, required this.createdAt}): super._();
+  const _TripDiaryPhoto({required this.id, required this.entryId, required this.countryCode, required this.localFileName, required this.createdAt}): super._();
   
 
 @override final  String id;
 @override final  String? entryId;
 @override final  String? countryCode;
-@override final  String? url;
-@override final  String? storagePath;
+@override final  String? localFileName;
 @override final  DateTime? createdAt;
 
 /// Create a copy of TripDiaryPhoto
@@ -232,16 +230,16 @@ _$TripDiaryPhotoCopyWith<_TripDiaryPhoto> get copyWith => __$TripDiaryPhotoCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TripDiaryPhoto&&(identical(other.id, id) || other.id == id)&&(identical(other.entryId, entryId) || other.entryId == entryId)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.url, url) || other.url == url)&&(identical(other.storagePath, storagePath) || other.storagePath == storagePath)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TripDiaryPhoto&&(identical(other.id, id) || other.id == id)&&(identical(other.entryId, entryId) || other.entryId == entryId)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.localFileName, localFileName) || other.localFileName == localFileName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,entryId,countryCode,url,storagePath,createdAt);
+int get hashCode => Object.hash(runtimeType,id,entryId,countryCode,localFileName,createdAt);
 
 @override
 String toString() {
-  return 'TripDiaryPhoto(id: $id, entryId: $entryId, countryCode: $countryCode, url: $url, storagePath: $storagePath, createdAt: $createdAt)';
+  return 'TripDiaryPhoto(id: $id, entryId: $entryId, countryCode: $countryCode, localFileName: $localFileName, createdAt: $createdAt)';
 }
 
 
@@ -252,7 +250,7 @@ abstract mixin class _$TripDiaryPhotoCopyWith<$Res> implements $TripDiaryPhotoCo
   factory _$TripDiaryPhotoCopyWith(_TripDiaryPhoto value, $Res Function(_TripDiaryPhoto) _then) = __$TripDiaryPhotoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? entryId, String? countryCode, String? url, String? storagePath, DateTime? createdAt
+ String id, String? entryId, String? countryCode, String? localFileName, DateTime? createdAt
 });
 
 
@@ -269,13 +267,12 @@ class __$TripDiaryPhotoCopyWithImpl<$Res>
 
 /// Create a copy of TripDiaryPhoto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? entryId = freezed,Object? countryCode = freezed,Object? url = freezed,Object? storagePath = freezed,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? entryId = freezed,Object? countryCode = freezed,Object? localFileName = freezed,Object? createdAt = freezed,}) {
   return _then(_TripDiaryPhoto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,entryId: freezed == entryId ? _self.entryId : entryId // ignore: cast_nullable_to_non_nullable
 as String?,countryCode: freezed == countryCode ? _self.countryCode : countryCode // ignore: cast_nullable_to_non_nullable
-as String?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String?,storagePath: freezed == storagePath ? _self.storagePath : storagePath // ignore: cast_nullable_to_non_nullable
+as String?,localFileName: freezed == localFileName ? _self.localFileName : localFileName // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

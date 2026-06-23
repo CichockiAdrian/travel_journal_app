@@ -8,10 +8,10 @@ import '../../features/countries/data/countries_remote_data_source.dart';
 import '../../features/countries/data/countries_repository.dart';
 import '../../features/map/data/device_location_service.dart';
 import '../../features/trip_diary/data/firebase_trip_diary_repository.dart';
+import '../../features/trip_diary/data/trip_diary_local_photo_storage.dart';
 import '../../features/trip_diary/data/trip_diary_repository.dart';
 import '../../features/visited_countries/data/firebase_visited_countries_repository.dart';
 import '../../features/visited_countries/data/visited_countries_repository.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 final getIt = GetIt.instance;
 
@@ -40,7 +40,7 @@ void setupServiceLocator() {
     () => FirebaseVisitedCountriesRepository(getIt(), getIt()),
   );
 
-  getIt.registerLazySingleton(() => FirebaseStorage.instance);
+  getIt.registerLazySingleton(() => const TripDiaryLocalPhotoStorage());
 
   getIt.registerLazySingleton<TripDiaryRepository>(
     () => FirebaseTripDiaryRepository(getIt(), getIt(), getIt()),

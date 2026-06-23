@@ -10,7 +10,7 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
   static const countryCodeField = 'countryCode';
   static const countryNameField = 'countryName';
   static const countryFlagUrlField = 'countryFlagUrl';
-  static const coverPhotoUrlField = 'coverPhotoUrl';
+  static const coverPhotoFileNameField = 'coverPhotoFileName';
   static const photosCountField = 'photosCount';
   static const travelDateField = 'travelDate';
   static const createdAtField = 'createdAt';
@@ -25,7 +25,7 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
     required String? countryCode,
     required String? countryName,
     required String? countryFlagUrl,
-    required String? coverPhotoUrl,
+    required String? coverPhotoFileName,
     @Default(0) int photosCount,
     required DateTime? travelDate,
     required DateTime? createdAt,
@@ -43,7 +43,7 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
       countryCode: data[countryCodeField]?.toString(),
       countryName: data[countryNameField]?.toString(),
       countryFlagUrl: data[countryFlagUrlField]?.toString(),
-      coverPhotoUrl: data[coverPhotoUrlField]?.toString(),
+      coverPhotoFileName: data[coverPhotoFileNameField]?.toString(),
       photosCount: _readInt(data[photosCountField]),
       travelDate: _readDate(data[travelDateField]),
       createdAt: _readDate(data[createdAtField]),
@@ -58,7 +58,7 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
       countryCodeField: countryCode,
       countryNameField: countryName,
       countryFlagUrlField: countryFlagUrl,
-      coverPhotoUrlField: coverPhotoUrl,
+      coverPhotoFileNameField: coverPhotoFileName,
       photosCountField: photosCount,
       travelDateField: travelDate == null
           ? null

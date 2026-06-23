@@ -2,24 +2,24 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../countries/data/country_model.dart';
 import '../../visited_countries/data/visited_country_id.dart';
 import 'trip_diary_entry.dart';
 import 'trip_diary_limits.dart';
+import 'trip_diary_local_photo_storage.dart';
 import 'trip_diary_photo.dart';
 import 'trip_diary_repository.dart';
 
 class FirebaseTripDiaryRepository implements TripDiaryRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _firebaseAuth;
-  final FirebaseStorage _firebaseStorage;
+  final TripDiaryLocalPhotoStorage _localPhotoStorage;
 
   const FirebaseTripDiaryRepository(
     this._firestore,
     this._firebaseAuth,
-    this._firebaseStorage,
+    this._localPhotoStorage,
   );
 
   @override
@@ -43,6 +43,26 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
   }
 
   @override
+  Stream<List<TripDiaryPhoto>> watchPhotosForEntry(String entryId) {
+    final user = _firebaseAuth.currentUser;
+
+    if (user == null) {
+      return Stream.error(
+        const TripDiaryException(TripDiaryFailureType.notAuthenticated),
+      );
+    }
+
+    return _photosCollection(user.uid)
+        .where(TripDiaryPhoto.entryIdField, isEqualTo: entryId)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            return TripDiaryPhoto.fromFirestore(id: doc.id, data: doc.data());
+          }).toList();
+        });
+  }
+
+  @override
   Future<void> addEntry({
     required String title,
     required String description,
@@ -60,36 +80,39 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
       throw const TripDiaryException(TripDiaryFailureType.tooManyPhotos);
     }
 
-    final countryId = VisitedCountryId.fromCountry(country)?.trim();
+    final countryCode = VisitedCountryId.fromCountry(country)?.trim();
 
-    if (countryId == null || countryId.isEmpty) {
+    if (countryCode == null || countryCode.isEmpty) {
       throw const TripDiaryException(TripDiaryFailureType.missingCountryCode);
     }
 
     final entryDoc = _entriesCollection(user.uid).doc();
-    final uploadedPhotos = <_UploadedTripDiaryPhoto>[];
+    final storedPhotos = <_StoredPhotoWithId>[];
 
     try {
       for (final photo in photos) {
-        final uploadedPhoto = await _uploadPhoto(
-          userId: user.uid,
-          entryId: entryDoc.id,
-          countryCode: countryId,
-          photo: photo,
+        final photoDoc = _photosCollection(user.uid).doc();
+        final storedPhoto = await _localPhotoStorage.savePhoto(
+          sourcePhoto: photo,
+          photoId: photoDoc.id,
         );
 
-        uploadedPhotos.add(uploadedPhoto);
+        storedPhotos.add(
+          _StoredPhotoWithId(id: photoDoc.id, fileName: storedPhoto.fileName),
+        );
       }
 
       final entry = TripDiaryEntry(
         id: entryDoc.id,
         title: title.trim(),
         description: description.trim(),
-        countryCode: countryId,
+        countryCode: countryCode,
         countryName: country.name,
         countryFlagUrl: country.flagUrl,
-        coverPhotoUrl: uploadedPhotos.isEmpty ? null : uploadedPhotos.first.url,
-        photosCount: uploadedPhotos.length,
+        coverPhotoFileName: storedPhotos.isEmpty
+            ? null
+            : storedPhotos.first.fileName,
+        photosCount: storedPhotos.length,
         travelDate: travelDate,
         createdAt: null,
         updatedAt: null,
@@ -99,25 +122,27 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
 
       batch.set(entryDoc, entry.toCreateFirestore());
 
-      for (final uploadedPhoto in uploadedPhotos) {
+      for (final storedPhoto in storedPhotos) {
         final photo = TripDiaryPhoto(
-          id: uploadedPhoto.id,
+          id: storedPhoto.id,
           entryId: entryDoc.id,
-          countryCode: countryId,
-          url: uploadedPhoto.url,
-          storagePath: uploadedPhoto.storagePath,
+          countryCode: countryCode,
+          localFileName: storedPhoto.fileName,
           createdAt: null,
         );
 
         batch.set(
-          _photosCollection(user.uid).doc(uploadedPhoto.id),
+          _photosCollection(user.uid).doc(storedPhoto.id),
           photo.toCreateFirestore(),
         );
       }
 
       await batch.commit();
     } catch (_) {
-      await _deleteUploadedPhotos(uploadedPhotos);
+      for (final storedPhoto in storedPhotos) {
+        await _localPhotoStorage.deletePhoto(storedPhoto.fileName);
+      }
+
       rethrow;
     }
   }
@@ -130,85 +155,28 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
       throw const TripDiaryException(TripDiaryFailureType.notAuthenticated);
     }
 
-    await _entriesCollection(user.uid).doc(entryId).delete();
-  }
+    final photosSnapshot = await _photosCollection(
+      user.uid,
+    ).where(TripDiaryPhoto.entryIdField, isEqualTo: entryId).get();
 
-  Future<_UploadedTripDiaryPhoto> _uploadPhoto({
-    required String userId,
-    required String entryId,
-    required String countryCode,
-    required File photo,
-  }) async {
-    final photoDoc = _photosCollection(userId).doc();
-    final extension = _fileExtension(photo);
-    final storagePath =
-        'users/$userId/trip_diary/$entryId/${photoDoc.id}$extension';
+    final batch = _firestore.batch();
 
-    final storageReference = _firebaseStorage.ref().child(storagePath);
+    batch.delete(_entriesCollection(user.uid).doc(entryId));
 
-    await storageReference.putFile(
-      photo,
-      SettableMetadata(
-        contentType: _contentType(photo),
-        customMetadata: {'entryId': entryId, 'countryCode': countryCode},
-      ),
-    );
-
-    final url = await storageReference.getDownloadURL();
-
-    return _UploadedTripDiaryPhoto(
-      id: photoDoc.id,
-      url: url,
-      storagePath: storagePath,
-    );
-  }
-
-  Future<void> _deleteUploadedPhotos(
-    List<_UploadedTripDiaryPhoto> uploadedPhotos,
-  ) async {
-    for (final uploadedPhoto in uploadedPhotos) {
-      try {
-        await _firebaseStorage.ref(uploadedPhoto.storagePath).delete();
-      } catch (_) {
-        // Best effort cleanup only.
-      }
-    }
-  }
-
-  String _fileExtension(File file) {
-    final path = file.path.toLowerCase();
-
-    if (path.endsWith('.png')) {
-      return '.png';
+    for (final photoDoc in photosSnapshot.docs) {
+      batch.delete(photoDoc.reference);
     }
 
-    if (path.endsWith('.webp')) {
-      return '.webp';
+    await batch.commit();
+
+    for (final photoDoc in photosSnapshot.docs) {
+      final photo = TripDiaryPhoto.fromFirestore(
+        id: photoDoc.id,
+        data: photoDoc.data(),
+      );
+
+      await _localPhotoStorage.deletePhoto(photo.localFileName);
     }
-
-    if (path.endsWith('.heic')) {
-      return '.heic';
-    }
-
-    return '.jpg';
-  }
-
-  String _contentType(File file) {
-    final path = file.path.toLowerCase();
-
-    if (path.endsWith('.png')) {
-      return 'image/png';
-    }
-
-    if (path.endsWith('.webp')) {
-      return 'image/webp';
-    }
-
-    if (path.endsWith('.heic')) {
-      return 'image/heic';
-    }
-
-    return 'image/jpeg';
   }
 
   CollectionReference<Map<String, dynamic>> _entriesCollection(String userId) {
@@ -226,14 +194,9 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
   }
 }
 
-class _UploadedTripDiaryPhoto {
+class _StoredPhotoWithId {
   final String id;
-  final String url;
-  final String storagePath;
+  final String fileName;
 
-  const _UploadedTripDiaryPhoto({
-    required this.id,
-    required this.url,
-    required this.storagePath,
-  });
+  const _StoredPhotoWithId({required this.id, required this.fileName});
 }

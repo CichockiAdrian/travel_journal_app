@@ -2,6 +2,7 @@ import 'dart:io';
 
 import '../../countries/data/country_model.dart';
 import 'trip_diary_entry.dart';
+import 'trip_diary_photo.dart';
 
 enum TripDiaryFailureType {
   notAuthenticated,
@@ -18,6 +19,8 @@ class TripDiaryException implements Exception {
 
 abstract class TripDiaryRepository {
   Stream<List<TripDiaryEntry>> watchEntries();
+
+  Stream<List<TripDiaryPhoto>> watchPhotosForEntry(String entryId);
 
   Future<void> addEntry({
     required String title,
