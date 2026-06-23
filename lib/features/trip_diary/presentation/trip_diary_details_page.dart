@@ -10,6 +10,7 @@ import '../data/trip_diary_entry.dart';
 import '../data/trip_diary_local_photo_storage.dart';
 import '../data/trip_diary_photo.dart';
 import '../logic/trip_diary_cubit.dart';
+import 'trip_diary_photo_carousel_page.dart';
 
 class TripDiaryDetailsPage extends StatelessWidget {
   final TripDiaryEntry entry;
@@ -136,6 +137,16 @@ class _TripDiaryPhotosSectionState extends State<_TripDiaryPhotosSection> {
     );
   }
 
+  Future<List<File?>> _loadLocalFiles(List<TripDiaryPhoto> photos) {
+    final storage = getIt<TripDiaryLocalPhotoStorage>();
+
+    return Future.wait(
+      photos.map((photo) {
+        return storage.findPhoto(photo.localFileName);
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final translations = AppLocalizations.of(context);
@@ -149,28 +160,40 @@ class _TripDiaryPhotosSectionState extends State<_TripDiaryPhotosSection> {
           return const SizedBox.shrink();
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              translations.tripDiaryPhotos,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            GridView.builder(
-              itemCount: photos.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-              ),
-              itemBuilder: (context, index) {
-                return _LocalTripDiaryPhotoTile(photo: photos[index]);
-              },
-            ),
-          ],
+        return FutureBuilder<List<File?>>(
+          future: _loadLocalFiles(photos),
+          builder: (context, filesSnapshot) {
+            final files =
+                filesSnapshot.data ?? List<File?>.filled(photos.length, null);
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  translations.tripDiaryPhotos,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                GridView.builder(
+                  itemCount: photos.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                  ),
+                  itemBuilder: (context, index) {
+                    return _LocalTripDiaryPhotoTile(
+                      file: files[index],
+                      files: files,
+                      index: index,
+                    );
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -178,34 +201,52 @@ class _TripDiaryPhotosSectionState extends State<_TripDiaryPhotosSection> {
 }
 
 class _LocalTripDiaryPhotoTile extends StatelessWidget {
-  final TripDiaryPhoto photo;
+  final File? file;
+  final List<File?> files;
+  final int index;
 
-  const _LocalTripDiaryPhotoTile({required this.photo});
+  const _LocalTripDiaryPhotoTile({
+    required this.file,
+    required this.files,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<File?>(
-      future: getIt<TripDiaryLocalPhotoStorage>().findPhoto(
-        photo.localFileName,
-      ),
-      builder: (context, snapshot) {
-        final file = snapshot.data;
+    final currentFile = file;
 
-        if (file == null) {
-          return const _MissingLocalPhotoTile();
-        }
+    if (currentFile == null) {
+      return const _MissingLocalPhotoTile();
+    }
 
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.file(
-            file,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) {
-              return const _MissingLocalPhotoTile();
-            },
+    return GestureDetector(
+      onTap: () {
+        final carouselPhotoPaths = files
+            .whereType<File>()
+            .map((file) => file.path)
+            .toList();
+
+        final initialCarouselIndex = files.take(index).whereType<File>().length;
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => TripDiaryPhotoCarouselPage(
+              photoPaths: carouselPhotoPaths,
+              initialIndex: initialCarouselIndex,
+            ),
           ),
         );
       },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.file(
+          currentFile,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) {
+            return const _MissingLocalPhotoTile();
+          },
+        ),
+      ),
     );
   }
 }
