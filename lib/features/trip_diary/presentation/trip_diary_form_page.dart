@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
@@ -9,9 +13,9 @@ import '../../countries/logic/countries_cubit.dart';
 import '../../countries/logic/countries_state.dart';
 import '../../countries/presentation/country_display_mapper.dart';
 import '../../visited_countries/data/visited_countries_repository.dart';
-import '../logic/trip_diary_cubit.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../data/trip_diary_limits.dart';
 import '../data/trip_diary_repository.dart';
+import '../logic/trip_diary_cubit.dart';
 
 class TripDiaryFormPage extends StatefulWidget {
   final CountriesRepository countriesRepository;
@@ -32,6 +36,9 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _countryController = TextEditingController();
+  final _imagePicker = ImagePicker();
+
+  final List<File> _selectedPhotos = [];
 
   CountryModel? _selectedCountry;
   DateTime _travelDate = DateTime.now();
@@ -153,6 +160,13 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
                         minLines: 5,
                         maxLines: 8,
                       ),
+                      const SizedBox(height: 16),
+                      _TripDiaryPhotosPicker(
+                        photos: _selectedPhotos,
+                        isSaving: _isSaving,
+                        onAddPhotos: _pickPhotos,
+                        onRemovePhoto: _removePhoto,
+                      ),
                       const SizedBox(height: 12),
                       SwitchListTile(
                         contentPadding: EdgeInsets.zero,
@@ -227,6 +241,122 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
     setState(() => _travelDate = pickedDate);
   }
 
+  Future<void> _pickPhotos() async {
+    final translations = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final remainingSlots =
+        TripDiaryLimits.maxPhotosPerEntry - _selectedPhotos.length;
+
+    if (remainingSlots <= 0) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(translations.tripDiaryPhotosLimitReached)),
+      );
+      return;
+    }
+
+    final source = await showModalBottomSheet<_PhotoSource>(
+      context: context,
+      showDragHandle: true,
+      builder: (bottomSheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_camera_outlined),
+                title: Text(translations.takePhoto),
+                onTap: () {
+                  Navigator.pop(bottomSheetContext, _PhotoSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text(translations.chooseFromGallery),
+                onTap: () {
+                  Navigator.pop(bottomSheetContext, _PhotoSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (source == null) return;
+
+    switch (source) {
+      case _PhotoSource.camera:
+        await _takePhoto();
+        break;
+      case _PhotoSource.gallery:
+        await _pickPhotosFromGallery();
+        break;
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    final translations = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final remainingSlots =
+        TripDiaryLimits.maxPhotosPerEntry - _selectedPhotos.length;
+
+    if (remainingSlots <= 0) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(translations.tripDiaryPhotosLimitReached)),
+      );
+      return;
+    }
+
+    final pickedImage = await _imagePicker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 85,
+    );
+
+    if (pickedImage == null) return;
+
+    setState(() {
+      _selectedPhotos.add(File(pickedImage.path));
+    });
+  }
+
+  Future<void> _pickPhotosFromGallery() async {
+    final translations = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final remainingSlots =
+        TripDiaryLimits.maxPhotosPerEntry - _selectedPhotos.length;
+
+    if (remainingSlots <= 0) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(translations.tripDiaryPhotosLimitReached)),
+      );
+      return;
+    }
+
+    final pickedImages = await _imagePicker.pickMultiImage(imageQuality: 85);
+
+    if (pickedImages.isEmpty) return;
+
+    final selectedImages = pickedImages.take(remainingSlots).map((image) {
+      return File(image.path);
+    }).toList();
+
+    setState(() {
+      _selectedPhotos.addAll(selectedImages);
+    });
+
+    if (pickedImages.length > remainingSlots) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(translations.tripDiaryPhotosLimitReached)),
+      );
+    }
+  }
+
+  void _removePhoto(File photo) {
+    setState(() {
+      _selectedPhotos.remove(photo);
+    });
+  }
+
   Future<void> _saveEntry() async {
     final translations = AppLocalizations.of(context);
     final tripDiaryCubit = context.read<TripDiaryCubit>();
@@ -247,6 +377,7 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
         description: _descriptionController.text,
         country: selectedCountry,
         travelDate: _travelDate,
+        photos: _selectedPhotos,
       );
 
       if (_markCountryAsVisited) {
@@ -261,9 +392,13 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
 
       if (!mounted) return;
 
-      messenger.showSnackBar(
-        SnackBar(content: Text('Nie udało się zapisać wpisu: ${error.type}')),
-      );
+      final message = switch (error.type) {
+        TripDiaryFailureType.tooManyPhotos =>
+          translations.tripDiaryPhotosLimitReached,
+        _ => translations.tripDiarySaveFailed,
+      };
+
+      messenger.showSnackBar(SnackBar(content: Text(message)));
     } on FirebaseException catch (error, stackTrace) {
       debugPrint(
         'Trip diary Firebase save failed: ${error.code} ${error.message}\n$stackTrace',
@@ -298,6 +433,92 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
       languageCode: languageCode,
       translations: translations,
     ).name;
+  }
+}
+
+class _TripDiaryPhotosPicker extends StatelessWidget {
+  final List<File> photos;
+  final bool isSaving;
+  final VoidCallback onAddPhotos;
+  final ValueChanged<File> onRemovePhoto;
+
+  const _TripDiaryPhotosPicker({
+    required this.photos,
+    required this.isSaving,
+    required this.onAddPhotos,
+    required this.onRemovePhoto,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final translations = AppLocalizations.of(context);
+    final canAddMorePhotos = photos.length < TripDiaryLimits.maxPhotosPerEntry;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          translations.tripDiaryPhotos,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          translations.tripDiaryPhotosLimit(TripDiaryLimits.maxPhotosPerEntry),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 12),
+        if (photos.isNotEmpty)
+          SizedBox(
+            height: 96,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: photos.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final photo = photos[index];
+
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        photo,
+                        width: 96,
+                        height: 96,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: InkWell(
+                        onTap: isSaving ? null : () => onRemovePhoto(photo),
+                        borderRadius: BorderRadius.circular(999),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surface.withValues(alpha: 0.85),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.close, size: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        if (photos.isNotEmpty) const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: isSaving || !canAddMorePhotos ? null : onAddPhotos,
+          icon: const Icon(Icons.add_photo_alternate_outlined),
+          label: Text(translations.addPhotos),
+        ),
+      ],
+    );
   }
 }
 
@@ -403,3 +624,5 @@ class _TripDiaryCountryPickerSheet extends StatelessWidget {
     );
   }
 }
+
+enum _PhotoSource { camera, gallery }

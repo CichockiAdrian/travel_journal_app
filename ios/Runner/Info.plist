@@ -26,8 +26,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Travel Journal uses your location to show your current position on the globe.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The app needs camera access to add photos to your trip diary entry.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The app needs photo library access to choose photos for your trip diary entry.</string>
+
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

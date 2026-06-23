@@ -100,5 +100,18 @@
 "deleteTripDiaryEntry": "Usunąć wpis?",
 "deleteTripDiaryEntryConfirmation": "Tego działania nie można cofnąć.",
 "tripDiarySyncFailed": "Nie udało się zsynchronizować dziennika podróży.",
-"tripDiarySaveFailed": "Nie udało się zapisać wpisu."
+"tripDiarySaveFailed": "Nie udało się zapisać wpisu.",
+"tripDiaryPhotos": "Zdjęcia",
+"tripDiaryPhotosLimit": "Możesz dodać maksymalnie {count} zdjęć do wpisu.",
+"@tripDiaryPhotosLimit": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"addPhotos": "Dodaj zdjęcia",
+"tripDiaryPhotosLimitReached": "Osiągnięto limit zdjęć dla tego wpisu.",
+"takePhoto": "Zrób zdjęcie",
+"chooseFromGallery": "Wybierz z galerii"
 }

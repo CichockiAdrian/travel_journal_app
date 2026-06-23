@@ -1,7 +1,14 @@
+import 'dart:io';
+
 import '../../countries/data/country_model.dart';
 import 'trip_diary_entry.dart';
 
-enum TripDiaryFailureType { notAuthenticated, missingCountryCode, unknown }
+enum TripDiaryFailureType {
+  notAuthenticated,
+  missingCountryCode,
+  tooManyPhotos,
+  unknown,
+}
 
 class TripDiaryException implements Exception {
   final TripDiaryFailureType type;
@@ -17,6 +24,7 @@ abstract class TripDiaryRepository {
     required String description,
     required CountryModel country,
     required DateTime travelDate,
+    List<File> photos = const [],
   });
 
   Future<void> deleteEntry(String entryId);

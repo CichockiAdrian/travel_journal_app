@@ -10,6 +10,8 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
   static const countryCodeField = 'countryCode';
   static const countryNameField = 'countryName';
   static const countryFlagUrlField = 'countryFlagUrl';
+  static const coverPhotoUrlField = 'coverPhotoUrl';
+  static const photosCountField = 'photosCount';
   static const travelDateField = 'travelDate';
   static const createdAtField = 'createdAt';
   static const updatedAtField = 'updatedAt';
@@ -23,6 +25,8 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
     required String? countryCode,
     required String? countryName,
     required String? countryFlagUrl,
+    required String? coverPhotoUrl,
+    @Default(0) int photosCount,
     required DateTime? travelDate,
     required DateTime? createdAt,
     required DateTime? updatedAt,
@@ -39,6 +43,8 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
       countryCode: data[countryCodeField]?.toString(),
       countryName: data[countryNameField]?.toString(),
       countryFlagUrl: data[countryFlagUrlField]?.toString(),
+      coverPhotoUrl: data[coverPhotoUrlField]?.toString(),
+      photosCount: _readInt(data[photosCountField]),
       travelDate: _readDate(data[travelDateField]),
       createdAt: _readDate(data[createdAtField]),
       updatedAt: _readDate(data[updatedAtField]),
@@ -52,6 +58,8 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
       countryCodeField: countryCode,
       countryNameField: countryName,
       countryFlagUrlField: countryFlagUrl,
+      coverPhotoUrlField: coverPhotoUrl,
+      photosCountField: photosCount,
       travelDateField: travelDate == null
           ? null
           : Timestamp.fromDate(travelDate!),
@@ -74,5 +82,21 @@ abstract class TripDiaryEntry with _$TripDiaryEntry {
     }
 
     return null;
+  }
+
+  static int _readInt(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+
+    if (value is num) {
+      return value.toInt();
+    }
+
+    if (value is String) {
+      return int.tryParse(value) ?? 0;
+    }
+
+    return 0;
   }
 }

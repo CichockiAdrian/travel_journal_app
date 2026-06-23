@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TripDiaryEntry {
 
- String get id; String? get title; String? get description; String? get countryCode; String? get countryName; String? get countryFlagUrl; DateTime? get travelDate; DateTime? get createdAt; DateTime? get updatedAt;
+ String get id; String? get title; String? get description; String? get countryCode; String? get countryName; String? get countryFlagUrl; String? get coverPhotoUrl; int get photosCount; DateTime? get travelDate; DateTime? get createdAt; DateTime? get updatedAt;
 /// Create a copy of TripDiaryEntry
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $TripDiaryEntryCopyWith<TripDiaryEntry> get copyWith => _$TripDiaryEntryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TripDiaryEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.countryName, countryName) || other.countryName == countryName)&&(identical(other.countryFlagUrl, countryFlagUrl) || other.countryFlagUrl == countryFlagUrl)&&(identical(other.travelDate, travelDate) || other.travelDate == travelDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TripDiaryEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.countryName, countryName) || other.countryName == countryName)&&(identical(other.countryFlagUrl, countryFlagUrl) || other.countryFlagUrl == countryFlagUrl)&&(identical(other.coverPhotoUrl, coverPhotoUrl) || other.coverPhotoUrl == coverPhotoUrl)&&(identical(other.photosCount, photosCount) || other.photosCount == photosCount)&&(identical(other.travelDate, travelDate) || other.travelDate == travelDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,countryCode,countryName,countryFlagUrl,travelDate,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,title,description,countryCode,countryName,countryFlagUrl,coverPhotoUrl,photosCount,travelDate,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'TripDiaryEntry(id: $id, title: $title, description: $description, countryCode: $countryCode, countryName: $countryName, countryFlagUrl: $countryFlagUrl, travelDate: $travelDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'TripDiaryEntry(id: $id, title: $title, description: $description, countryCode: $countryCode, countryName: $countryName, countryFlagUrl: $countryFlagUrl, coverPhotoUrl: $coverPhotoUrl, photosCount: $photosCount, travelDate: $travelDate, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $TripDiaryEntryCopyWith<$Res>  {
   factory $TripDiaryEntryCopyWith(TripDiaryEntry value, $Res Function(TripDiaryEntry) _then) = _$TripDiaryEntryCopyWithImpl;
 @useResult
 $Res call({
- String id, String? title, String? description, String? countryCode, String? countryName, String? countryFlagUrl, DateTime? travelDate, DateTime? createdAt, DateTime? updatedAt
+ String id, String? title, String? description, String? countryCode, String? countryName, String? countryFlagUrl, String? coverPhotoUrl, int photosCount, DateTime? travelDate, DateTime? createdAt, DateTime? updatedAt
 });
 
 
@@ -63,7 +63,7 @@ class _$TripDiaryEntryCopyWithImpl<$Res>
 
 /// Create a copy of TripDiaryEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? countryCode = freezed,Object? countryName = freezed,Object? countryFlagUrl = freezed,Object? travelDate = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? countryCode = freezed,Object? countryName = freezed,Object? countryFlagUrl = freezed,Object? coverPhotoUrl = freezed,Object? photosCount = null,Object? travelDate = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(TripDiaryEntry(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -71,7 +71,9 @@ as String?,description: freezed == description ? _self.description : description
 as String?,countryCode: freezed == countryCode ? _self.countryCode : countryCode // ignore: cast_nullable_to_non_nullable
 as String?,countryName: freezed == countryName ? _self.countryName : countryName // ignore: cast_nullable_to_non_nullable
 as String?,countryFlagUrl: freezed == countryFlagUrl ? _self.countryFlagUrl : countryFlagUrl // ignore: cast_nullable_to_non_nullable
-as String?,travelDate: freezed == travelDate ? _self.travelDate : travelDate // ignore: cast_nullable_to_non_nullable
+as String?,coverPhotoUrl: freezed == coverPhotoUrl ? _self.coverPhotoUrl : coverPhotoUrl // ignore: cast_nullable_to_non_nullable
+as String?,photosCount: null == photosCount ? _self.photosCount : photosCount // ignore: cast_nullable_to_non_nullable
+as int,travelDate: freezed == travelDate ? _self.travelDate : travelDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? title,  String? description,  String? countryCode,  String? countryName,  String? countryFlagUrl,  DateTime? travelDate,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? title,  String? description,  String? countryCode,  String? countryName,  String? countryFlagUrl,  String? coverPhotoUrl,  int photosCount,  DateTime? travelDate,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TripDiaryEntry() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.countryName,_that.countryFlagUrl,_that.travelDate,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.countryName,_that.countryFlagUrl,_that.coverPhotoUrl,_that.photosCount,_that.travelDate,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? title,  String? description,  String? countryCode,  String? countryName,  String? countryFlagUrl,  DateTime? travelDate,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? title,  String? description,  String? countryCode,  String? countryName,  String? countryFlagUrl,  String? coverPhotoUrl,  int photosCount,  DateTime? travelDate,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _TripDiaryEntry():
-return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.countryName,_that.countryFlagUrl,_that.travelDate,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.countryName,_that.countryFlagUrl,_that.coverPhotoUrl,_that.photosCount,_that.travelDate,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? title,  String? description,  String? countryCode,  String? countryName,  String? countryFlagUrl,  DateTime? travelDate,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? title,  String? description,  String? countryCode,  String? countryName,  String? countryFlagUrl,  String? coverPhotoUrl,  int photosCount,  DateTime? travelDate,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TripDiaryEntry() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.countryName,_that.countryFlagUrl,_that.travelDate,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.countryName,_that.countryFlagUrl,_that.coverPhotoUrl,_that.photosCount,_that.travelDate,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.id,_that.title,_that.description,_that.countryCode,_that.c
 
 
 class _TripDiaryEntry extends TripDiaryEntry {
-  const _TripDiaryEntry({required this.id, required this.title, required this.description, required this.countryCode, required this.countryName, required this.countryFlagUrl, required this.travelDate, required this.createdAt, required this.updatedAt}): super._();
+  const _TripDiaryEntry({required this.id, required this.title, required this.description, required this.countryCode, required this.countryName, required this.countryFlagUrl, required this.coverPhotoUrl, this.photosCount = 0, required this.travelDate, required this.createdAt, required this.updatedAt}): super._();
   
 
 @override final  String id;
@@ -224,6 +226,8 @@ class _TripDiaryEntry extends TripDiaryEntry {
 @override final  String? countryCode;
 @override final  String? countryName;
 @override final  String? countryFlagUrl;
+@override final  String? coverPhotoUrl;
+@override@JsonKey() final  int photosCount;
 @override final  DateTime? travelDate;
 @override final  DateTime? createdAt;
 @override final  DateTime? updatedAt;
@@ -238,16 +242,16 @@ _$TripDiaryEntryCopyWith<_TripDiaryEntry> get copyWith => __$TripDiaryEntryCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TripDiaryEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.countryName, countryName) || other.countryName == countryName)&&(identical(other.countryFlagUrl, countryFlagUrl) || other.countryFlagUrl == countryFlagUrl)&&(identical(other.travelDate, travelDate) || other.travelDate == travelDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TripDiaryEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.countryName, countryName) || other.countryName == countryName)&&(identical(other.countryFlagUrl, countryFlagUrl) || other.countryFlagUrl == countryFlagUrl)&&(identical(other.coverPhotoUrl, coverPhotoUrl) || other.coverPhotoUrl == coverPhotoUrl)&&(identical(other.photosCount, photosCount) || other.photosCount == photosCount)&&(identical(other.travelDate, travelDate) || other.travelDate == travelDate)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,countryCode,countryName,countryFlagUrl,travelDate,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,title,description,countryCode,countryName,countryFlagUrl,coverPhotoUrl,photosCount,travelDate,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'TripDiaryEntry(id: $id, title: $title, description: $description, countryCode: $countryCode, countryName: $countryName, countryFlagUrl: $countryFlagUrl, travelDate: $travelDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'TripDiaryEntry(id: $id, title: $title, description: $description, countryCode: $countryCode, countryName: $countryName, countryFlagUrl: $countryFlagUrl, coverPhotoUrl: $coverPhotoUrl, photosCount: $photosCount, travelDate: $travelDate, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -258,7 +262,7 @@ abstract mixin class _$TripDiaryEntryCopyWith<$Res> implements $TripDiaryEntryCo
   factory _$TripDiaryEntryCopyWith(_TripDiaryEntry value, $Res Function(_TripDiaryEntry) _then) = __$TripDiaryEntryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? title, String? description, String? countryCode, String? countryName, String? countryFlagUrl, DateTime? travelDate, DateTime? createdAt, DateTime? updatedAt
+ String id, String? title, String? description, String? countryCode, String? countryName, String? countryFlagUrl, String? coverPhotoUrl, int photosCount, DateTime? travelDate, DateTime? createdAt, DateTime? updatedAt
 });
 
 
@@ -275,7 +279,7 @@ class __$TripDiaryEntryCopyWithImpl<$Res>
 
 /// Create a copy of TripDiaryEntry
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? countryCode = freezed,Object? countryName = freezed,Object? countryFlagUrl = freezed,Object? travelDate = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = freezed,Object? description = freezed,Object? countryCode = freezed,Object? countryName = freezed,Object? countryFlagUrl = freezed,Object? coverPhotoUrl = freezed,Object? photosCount = null,Object? travelDate = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_TripDiaryEntry(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -283,7 +287,9 @@ as String?,description: freezed == description ? _self.description : description
 as String?,countryCode: freezed == countryCode ? _self.countryCode : countryCode // ignore: cast_nullable_to_non_nullable
 as String?,countryName: freezed == countryName ? _self.countryName : countryName // ignore: cast_nullable_to_non_nullable
 as String?,countryFlagUrl: freezed == countryFlagUrl ? _self.countryFlagUrl : countryFlagUrl // ignore: cast_nullable_to_non_nullable
-as String?,travelDate: freezed == travelDate ? _self.travelDate : travelDate // ignore: cast_nullable_to_non_nullable
+as String?,coverPhotoUrl: freezed == coverPhotoUrl ? _self.coverPhotoUrl : coverPhotoUrl // ignore: cast_nullable_to_non_nullable
+as String?,photosCount: null == photosCount ? _self.photosCount : photosCount // ignore: cast_nullable_to_non_nullable
+as int,travelDate: freezed == travelDate ? _self.travelDate : travelDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,

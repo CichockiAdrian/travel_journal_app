@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,12 +52,14 @@ class TripDiaryCubit extends Cubit<TripDiaryState> {
     required String description,
     required CountryModel country,
     required DateTime travelDate,
+    List<File> photos = const [],
   }) async {
     await tripDiaryRepository.addEntry(
       title: title,
       description: description,
       country: country,
       travelDate: travelDate,
+      photos: photos,
     );
   }
 

@@ -100,5 +100,18 @@
 "deleteTripDiaryEntry": "Delete entry?",
 "deleteTripDiaryEntryConfirmation": "This action cannot be undone.",
 "tripDiarySyncFailed": "Could not sync travel diary.",
-"tripDiarySaveFailed": "Could not save entry."
+"tripDiarySaveFailed": "Could not save entry.",
+"tripDiaryPhotos": "Photos",
+"tripDiaryPhotosLimit": "You can add up to {count} photos to this entry.",
+"@tripDiaryPhotosLimit": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"addPhotos": "Add photos",
+"tripDiaryPhotosLimitReached": "Photo limit reached for this entry.",
+"takePhoto": "Take photo",
+"chooseFromGallery": "Choose from gallery"
 }
