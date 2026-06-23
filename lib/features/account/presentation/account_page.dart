@@ -16,6 +16,8 @@ import '../../trip_diary/data/trip_diary_repository.dart';
 import '../activity_statistics/logic/profile_activity_stats_calculator.dart';
 import '../activity_statistics/logic/profile_activity_stats_cubit.dart';
 import '../activity_statistics/presentation/profile_activity_stats_section.dart';
+import 'package:travel_journal_app/features/account/achievements/logic/achievements_calculator.dart';
+import 'package:travel_journal_app/features/account/achievements/presentation/achievements_section.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -33,9 +35,9 @@ class AccountPage extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => ProfileActivityStatsCubit(
-            tripDiaryRepository: getIt<TripDiaryRepository>(),
-            visitedCountriesRepository: getIt<VisitedCountriesRepository>(),
-            calculator: getIt<ProfileActivityStatsCalculator>(),
+            getIt<TripDiaryRepository>(),
+            getIt<VisitedCountriesRepository>(),
+            getIt<ProfileActivityStatsCalculator>(),
           )..watchStats(),
         ),
       ],
@@ -99,6 +101,8 @@ class AccountView extends StatelessWidget {
 
               const SizedBox(height: 20),
               const ProfileActivityStatsSection(),
+              const SizedBox(height: 20),
+              AchievementsSection(calculator: getIt<AchievementsCalculator>()),
               const SizedBox(height: 20),
 
               ...accountMenuItems.map((item) {

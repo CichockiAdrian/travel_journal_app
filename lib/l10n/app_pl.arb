@@ -133,11 +133,55 @@
   }
 },
 "currentMonth": "Aktualny miesiąc",
-"mondayShort": "Pn",
-"tuesdayShort": "Wt",
-"wednesdayShort": "Śr",
-"thursdayShort": "Cz",
-"fridayShort": "Pt",
-"saturdayShort": "So",
-"sundayShort": "Nd"
+"achievements": "Osiągnięcia",
+"achievementsUnlockedCount": "{unlockedCount}/{totalCount} odblokowane",
+"@achievementsUnlockedCount": {
+  "placeholders": {
+    "unlockedCount": {
+      "type": "int"
+    },
+    "totalCount": {
+      "type": "int"
+    }
+  }
+},
+"achievementProgress": "{currentValue}/{requiredValue}",
+"@achievementProgress": {
+  "placeholders": {
+    "currentValue": {
+      "type": "int"
+    },
+    "requiredValue": {
+      "type": "int"
+    }
+  }
+},
+"achievementUnlocked": "Odblokowane",
+"achievementInProgress": "W trakcie",
+"achievementFirstPhotoTitle": "Pierwsze zdjęcie",
+"achievementFirstPhotoDescription": "Dodaj pierwsze zdjęcie do dziennika.",
+"achievementTenPhotosTitle": "Fotograf podróżnik",
+"achievementTenPhotosDescription": "Dodaj 10 zdjęć do dziennika.",
+"achievementFiftyPhotosTitle": "Kolekcjoner wspomnień",
+"achievementFiftyPhotosDescription": "Dodaj 50 zdjęć do dziennika.",
+"achievementFirstNoteTitle": "Pierwsza notatka",
+"achievementFirstNoteDescription": "Dodaj pierwszy wpis do dziennika.",
+"achievementTenNotesTitle": "Kronikarz",
+"achievementTenNotesDescription": "Dodaj 10 wpisów do dziennika.",
+"achievementFirstVisitedCountryTitle": "Pierwszy kraj",
+"achievementFirstVisitedCountryDescription": "Oznacz pierwszy kraj jako odwiedzony.",
+"achievementFiveVisitedCountriesTitle": "Mały odkrywca",
+"achievementFiveVisitedCountriesDescription": "Oznacz 5 krajów jako odwiedzone.",
+"achievementTwentyVisitedCountriesTitle": "Obywatel świata",
+"achievementTwentyVisitedCountriesDescription": "Oznacz 20 krajów jako odwiedzone.",
+"achievementThreeDayStreakTitle": "Dobry start",
+"achievementThreeDayStreakDescription": "Utrzymaj 3 dni aktywności z rzędu.",
+"achievementSevenDayStreakTitle": "Regularny podróżnik",
+"achievementSevenDayStreakDescription": "Utrzymaj 7 dni aktywności z rzędu.",
+"achievementThirtyDayStreakTitle": "Legenda dziennika",
+"achievementThirtyDayStreakDescription": "Utrzymaj 30 dni aktywności z rzędu.",
+"achievementSevenActiveDaysTitle": "Częsty gość",
+"achievementSevenActiveDaysDescription": "Zdobądź 7 dni z aktywnością.",
+"achievementThirtyActiveDaysTitle": "Stały bywalec",
+"achievementThirtyActiveDaysDescription": "Zdobądź 30 dni z aktywnością."
 }

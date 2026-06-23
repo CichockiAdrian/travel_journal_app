@@ -183,7 +183,6 @@ class _ActivityCalendar extends StatelessWidget {
 
   const _ActivityCalendar({required this.days});
 
-  static const int _daysInWeek = 7;
   static const double _cellSize = 22;
   static const double _spacing = 6;
 

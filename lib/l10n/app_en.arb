@@ -133,11 +133,55 @@
   }
 },
 "currentMonth": "Current month",
-"mondayShort": "Mon",
-"tuesdayShort": "Tue",
-"wednesdayShort": "Wed",
-"thursdayShort": "Thu",
-"fridayShort": "Fri",
-"saturdayShort": "Sat",
-"sundayShort": "Sun"
+"achievements": "Achievements",
+"achievementsUnlockedCount": "{unlockedCount}/{totalCount} unlocked",
+"@achievementsUnlockedCount": {
+  "placeholders": {
+    "unlockedCount": {
+      "type": "int"
+    },
+    "totalCount": {
+      "type": "int"
+    }
+  }
+},
+"achievementProgress": "{currentValue}/{requiredValue}",
+"@achievementProgress": {
+  "placeholders": {
+    "currentValue": {
+      "type": "int"
+    },
+    "requiredValue": {
+      "type": "int"
+    }
+  }
+},
+"achievementUnlocked": "Unlocked",
+"achievementInProgress": "In progress",
+"achievementFirstPhotoTitle": "First photo",
+"achievementFirstPhotoDescription": "Add your first photo to the journal.",
+"achievementTenPhotosTitle": "Travel photographer",
+"achievementTenPhotosDescription": "Add 10 photos to the journal.",
+"achievementFiftyPhotosTitle": "Memory collector",
+"achievementFiftyPhotosDescription": "Add 50 photos to the journal.",
+"achievementFirstNoteTitle": "First note",
+"achievementFirstNoteDescription": "Add your first journal entry.",
+"achievementTenNotesTitle": "Chronicler",
+"achievementTenNotesDescription": "Add 10 journal entries.",
+"achievementFirstVisitedCountryTitle": "First country",
+"achievementFirstVisitedCountryDescription": "Mark your first country as visited.",
+"achievementFiveVisitedCountriesTitle": "Small explorer",
+"achievementFiveVisitedCountriesDescription": "Mark 5 countries as visited.",
+"achievementTwentyVisitedCountriesTitle": "Citizen of the world",
+"achievementTwentyVisitedCountriesDescription": "Mark 20 countries as visited.",
+"achievementThreeDayStreakTitle": "Good start",
+"achievementThreeDayStreakDescription": "Keep a 3-day activity streak.",
+"achievementSevenDayStreakTitle": "Regular traveler",
+"achievementSevenDayStreakDescription": "Keep a 7-day activity streak.",
+"achievementThirtyDayStreakTitle": "Journal legend",
+"achievementThirtyDayStreakDescription": "Keep a 30-day activity streak.",
+"achievementSevenActiveDaysTitle": "Frequent visitor",
+"achievementSevenActiveDaysDescription": "Reach 7 days with activity.",
+"achievementThirtyActiveDaysTitle": "Regular user",
+"achievementThirtyActiveDaysDescription": "Reach 30 days with activity."
 }

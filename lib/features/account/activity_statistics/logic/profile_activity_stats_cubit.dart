@@ -20,14 +20,11 @@ class ProfileActivityStatsCubit extends Cubit<ProfileActivityStatsState> {
   List<TripDiaryEntry>? _entries;
   List<VisitedCountryModel>? _visitedCountries;
 
-  ProfileActivityStatsCubit({
-    required TripDiaryRepository tripDiaryRepository,
-    required VisitedCountriesRepository visitedCountriesRepository,
-    required ProfileActivityStatsCalculator calculator,
-  }) : _tripDiaryRepository = tripDiaryRepository,
-       _visitedCountriesRepository = visitedCountriesRepository,
-       _calculator = calculator,
-       super(const ProfileActivityStatsState());
+  ProfileActivityStatsCubit(
+    this._tripDiaryRepository,
+    this._visitedCountriesRepository,
+    this._calculator,
+  ) : super(const ProfileActivityStatsState());
 
   void watchStats() {
     emit(
