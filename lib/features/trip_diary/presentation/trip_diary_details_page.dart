@@ -1,14 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
 
+import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../data/trip_diary_entry.dart';
-import '../logic/trip_diary_cubit.dart';
-import '../../../core/di/service_locator.dart';
 import '../data/trip_diary_local_photo_storage.dart';
 import '../data/trip_diary_photo.dart';
+import '../logic/trip_diary_cubit.dart';
 
 class TripDiaryDetailsPage extends StatelessWidget {
   final TripDiaryEntry entry;
@@ -54,23 +55,10 @@ class TripDiaryDetailsPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(date),
           const SizedBox(height: 16),
-          if (flagUrl != null && flagUrl.isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                flagUrl,
-                height: 180,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) {
-                  return const SizedBox.shrink();
-                },
-              ),
-            ),
-          const SizedBox(height: 16),
           Wrap(
             children: [
               Chip(
-                avatar: const Icon(Icons.public, size: 18),
+                avatar: _CountryFlagAvatar(flagUrl: flagUrl),
                 label: Text(countryLabel),
               ),
             ],
@@ -204,7 +192,7 @@ class _LocalTripDiaryPhotoTile extends StatelessWidget {
         final file = snapshot.data;
 
         if (file == null) {
-          return _MissingLocalPhotoTile();
+          return const _MissingLocalPhotoTile();
         }
 
         return ClipRRect(
@@ -213,7 +201,7 @@ class _LocalTripDiaryPhotoTile extends StatelessWidget {
             file,
             fit: BoxFit.cover,
             errorBuilder: (_, _, _) {
-              return _MissingLocalPhotoTile();
+              return const _MissingLocalPhotoTile();
             },
           ),
         );
@@ -223,6 +211,8 @@ class _LocalTripDiaryPhotoTile extends StatelessWidget {
 }
 
 class _MissingLocalPhotoTile extends StatelessWidget {
+  const _MissingLocalPhotoTile();
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -233,6 +223,33 @@ class _MissingLocalPhotoTile extends StatelessWidget {
       child: Icon(
         Icons.image_not_supported_outlined,
         color: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
+    );
+  }
+}
+
+class _CountryFlagAvatar extends StatelessWidget {
+  final String? flagUrl;
+
+  const _CountryFlagAvatar({required this.flagUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final url = flagUrl?.trim();
+
+    if (url == null || url.isEmpty) {
+      return const Icon(Icons.public, size: 18);
+    }
+
+    return ClipOval(
+      child: Image.network(
+        url,
+        width: 22,
+        height: 22,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) {
+          return const Icon(Icons.public, size: 18);
+        },
       ),
     );
   }
