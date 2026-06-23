@@ -42,9 +42,6 @@ void setupServiceLocator() {
   );
 
   getIt.registerLazySingleton<VisitedCountriesRepository>(
-    () => FirebaseVisitedCountriesRepository(
-      getIt<FirebaseFirestore>(),
-      getIt<FirebaseAuth>(),
-    ),
+    () => FirebaseVisitedCountriesRepository(getIt(), getIt()),
   );
 }

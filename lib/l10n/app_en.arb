@@ -79,5 +79,7 @@
       "type": "int"
     }
   }
-}
+},
+"globeMapMode": "Globe",
+"flatMapMode": "2D map"
 }
