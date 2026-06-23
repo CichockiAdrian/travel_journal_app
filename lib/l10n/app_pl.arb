@@ -113,5 +113,31 @@
 "addPhotos": "Dodaj zdjęcia",
 "tripDiaryPhotosLimitReached": "Osiągnięto limit zdjęć dla tego wpisu.",
 "takePhoto": "Zrób zdjęcie",
-"chooseFromGallery": "Wybierz z galerii"
+"chooseFromGallery": "Wybierz z galerii",
+"profileActivityStats": "Statystyki aktywności",
+"profileActivityStatsSyncFailed": "Nie udało się wczytać statystyk aktywności.",
+"currentActivityStreak": "Aktualny streak",
+"longestActivityStreak": "Najdłuższy streak",
+"activeDays": "Aktywne dni",
+"addedPhotos": "Dodane zdjęcia",
+"addedNotes": "Dodane notatki",
+"activityCalendar": "Kalendarz aktywności",
+"lastThirtyDays": "Ostatnie 30 dni",
+"noActivityYet": "Brak aktywności do pokazania.",
+"daysCount": "{count, plural, =0{0 dni} =1{1 dzień} other{{count} dni}}",
+"@daysCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"currentMonth": "Aktualny miesiąc",
+"mondayShort": "Pn",
+"tuesdayShort": "Wt",
+"wednesdayShort": "Śr",
+"thursdayShort": "Cz",
+"fridayShort": "Pt",
+"saturdayShort": "So",
+"sundayShort": "Nd"
 }

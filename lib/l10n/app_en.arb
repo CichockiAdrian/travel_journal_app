@@ -113,5 +113,31 @@
 "addPhotos": "Add photos",
 "tripDiaryPhotosLimitReached": "Photo limit reached for this entry.",
 "takePhoto": "Take photo",
-"chooseFromGallery": "Choose from gallery"
+"chooseFromGallery": "Choose from gallery",
+"profileActivityStats": "Activity statistics",
+"profileActivityStatsSyncFailed": "Could not load activity statistics.",
+"currentActivityStreak": "Current streak",
+"longestActivityStreak": "Longest streak",
+"activeDays": "Active days",
+"addedPhotos": "Added photos",
+"addedNotes": "Added notes",
+"activityCalendar": "Activity calendar",
+"lastThirtyDays": "Last 30 days",
+"noActivityYet": "No activity to show yet.",
+"daysCount": "{count, plural, =0{0 days} =1{1 day} other{{count} days}}",
+"@daysCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"currentMonth": "Current month",
+"mondayShort": "Mon",
+"tuesdayShort": "Tue",
+"wednesdayShort": "Wed",
+"thursdayShort": "Thu",
+"fridayShort": "Fri",
+"saturdayShort": "Sat",
+"sundayShort": "Sun"
 }

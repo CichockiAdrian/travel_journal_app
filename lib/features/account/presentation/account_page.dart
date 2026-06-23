@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_journal_app/core/di/service_locator.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
-import '../../auth/data/auth_repository.dart';
 import '../../settings/presentation/settings_page.dart';
 import '../../visited_countries/data/visited_countries_repository.dart';
 import '../../visited_countries/logic/visited_countries_cubit.dart';
@@ -13,6 +12,10 @@ import '../logic/account_cubit.dart';
 import '../models/account_menu_item.dart';
 import '../models/account_menu_items.dart';
 import '../../trip_diary/presentation/trip_diary_page.dart';
+import '../../trip_diary/data/trip_diary_repository.dart';
+import '../activity_statistics/logic/profile_activity_stats_calculator.dart';
+import '../activity_statistics/logic/profile_activity_stats_cubit.dart';
+import '../activity_statistics/presentation/profile_activity_stats_section.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -22,14 +25,18 @@ class AccountPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) =>
-              AccountCubit(authRepository: getIt<AuthRepository>())
-                ..loadUserEmail(),
+          create: (_) => AccountCubit(authRepository: getIt())..loadUserEmail(),
         ),
         BlocProvider(
           create: (_) =>
-              VisitedCountriesCubit(getIt<VisitedCountriesRepository>())
-                ..watchVisitedCountries(),
+              VisitedCountriesCubit(getIt())..watchVisitedCountries(),
+        ),
+        BlocProvider(
+          create: (_) => ProfileActivityStatsCubit(
+            tripDiaryRepository: getIt<TripDiaryRepository>(),
+            visitedCountriesRepository: getIt<VisitedCountriesRepository>(),
+            calculator: getIt<ProfileActivityStatsCalculator>(),
+          )..watchStats(),
         ),
       ],
       child: const AccountView(),
@@ -90,6 +97,8 @@ class AccountView extends StatelessWidget {
                 ],
               ),
 
+              const SizedBox(height: 20),
+              const ProfileActivityStatsSection(),
               const SizedBox(height: 20),
 
               ...accountMenuItems.map((item) {
