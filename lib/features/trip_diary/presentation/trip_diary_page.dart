@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
 
 import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
@@ -12,6 +13,7 @@ import '../logic/trip_diary_cubit.dart';
 import '../logic/trip_diary_state.dart';
 import 'trip_diary_details_page.dart';
 import 'trip_diary_form_page.dart';
+import '../data/trip_diary_local_photo_storage.dart';
 
 class TripDiaryPage extends StatelessWidget {
   const TripDiaryPage({super.key});
@@ -155,7 +157,7 @@ class _TripDiaryEntryCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              _CountryThumbnail(flagUrl: entry.countryFlagUrl),
+              _TripDiaryEntryThumbnail(entry: entry),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -200,10 +202,49 @@ class _TripDiaryEntryCard extends StatelessWidget {
   }
 }
 
-class _CountryThumbnail extends StatelessWidget {
+class _TripDiaryEntryThumbnail extends StatelessWidget {
+  final TripDiaryEntry entry;
+
+  const _TripDiaryEntryThumbnail({required this.entry});
+
+  @override
+  Widget build(BuildContext context) {
+    final coverPhotoFileName = entry.coverPhotoFileName?.trim();
+
+    if (coverPhotoFileName == null || coverPhotoFileName.isEmpty) {
+      return _FlagOrPlaceholder(flagUrl: entry.countryFlagUrl);
+    }
+
+    return FutureBuilder<File?>(
+      future: getIt<TripDiaryLocalPhotoStorage>().findPhoto(coverPhotoFileName),
+      builder: (context, snapshot) {
+        final file = snapshot.data;
+
+        if (file == null) {
+          return _FlagOrPlaceholder(flagUrl: entry.countryFlagUrl);
+        }
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.file(
+            file,
+            width: 84,
+            height: 84,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) {
+              return _FlagOrPlaceholder(flagUrl: entry.countryFlagUrl);
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _FlagOrPlaceholder extends StatelessWidget {
   final String? flagUrl;
 
-  const _CountryThumbnail({required this.flagUrl});
+  const _FlagOrPlaceholder({required this.flagUrl});
 
   @override
   Widget build(BuildContext context) {

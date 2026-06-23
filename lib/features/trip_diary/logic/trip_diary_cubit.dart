@@ -7,6 +7,7 @@ import '../../countries/data/country_model.dart';
 import '../data/trip_diary_entry.dart';
 import '../data/trip_diary_repository.dart';
 import 'trip_diary_state.dart';
+import '../data/trip_diary_photo.dart';
 
 class TripDiaryCubit extends Cubit<TripDiaryState> {
   final TripDiaryRepository tripDiaryRepository;
@@ -61,6 +62,10 @@ class TripDiaryCubit extends Cubit<TripDiaryState> {
       travelDate: travelDate,
       photos: photos,
     );
+  }
+
+  Stream<List<TripDiaryPhoto>> watchPhotosForEntry(String entryId) {
+    return tripDiaryRepository.watchPhotosForEntry(entryId);
   }
 
   Future<void> deleteEntry(String entryId) async {
