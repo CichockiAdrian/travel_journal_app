@@ -183,5 +183,14 @@
 "achievementSevenActiveDaysTitle": "Częsty gość",
 "achievementSevenActiveDaysDescription": "Zdobądź 7 dni z aktywnością.",
 "achievementThirtyActiveDaysTitle": "Stały bywalec",
-"achievementThirtyActiveDaysDescription": "Zdobądź 30 dni z aktywnością."
+"achievementThirtyActiveDaysDescription": "Zdobądź 30 dni z aktywnością.",
+"photos": "Zdjęcia",
+"photosAddedToTrips": "Zdjęcia dodane do podróży",
+"noPhotosYet": "Nie masz jeszcze zdjęć",
+"takeFirstPhotoHint": "Kliknij aparat, żeby dodać pierwsze zdjęcie.",
+"photoPreview": "Podgląd zdjęcia",
+"photoSaved": "Zdjęcie zapisane",
+"photoDeleted": "Zdjęcie usunięte",
+"deletePhoto": "Usuń zdjęcie",
+"cannotLoadPhotos": "Nie udało się wczytać zdjęć"
 }

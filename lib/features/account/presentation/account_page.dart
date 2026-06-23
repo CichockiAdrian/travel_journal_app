@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travel_journal_app/core/di/service_locator.dart';
+import 'package:travel_journal_app/features/account/achievements/logic/achievements_calculator.dart';
+import 'package:travel_journal_app/features/account/achievements/presentation/achievements_section.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../photo_gallery/presentation/photo_gallery_page.dart';
 import '../../settings/presentation/settings_page.dart';
+import '../../trip_diary/data/trip_diary_repository.dart';
+import '../../trip_diary/presentation/trip_diary_page.dart';
 import '../../visited_countries/data/visited_countries_repository.dart';
 import '../../visited_countries/logic/visited_countries_cubit.dart';
 import '../../visited_countries/logic/visited_countries_state.dart';
 import '../../visited_countries/presentation/visited_countries_page.dart';
-import '../logic/account_cubit.dart';
-import '../models/account_menu_item.dart';
-import '../models/account_menu_items.dart';
-import '../../trip_diary/presentation/trip_diary_page.dart';
-import '../../trip_diary/data/trip_diary_repository.dart';
 import '../activity_statistics/logic/profile_activity_stats_calculator.dart';
 import '../activity_statistics/logic/profile_activity_stats_cubit.dart';
 import '../activity_statistics/presentation/profile_activity_stats_section.dart';
-import 'package:travel_journal_app/features/account/achievements/logic/achievements_calculator.dart';
-import 'package:travel_journal_app/features/account/achievements/presentation/achievements_section.dart';
+import '../logic/account_cubit.dart';
+import '../models/account_menu_item.dart';
+import '../models/account_menu_items.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -112,8 +113,7 @@ class AccountView extends StatelessWidget {
                     title: Text(_getMenuTitle(translations, item.type)),
                     subtitle: Text(_getMenuSubtitle(translations, item.type)),
                     trailing: _AccountMenuItemTrailing(type: item.type),
-                    onTap: () =>
-                        _handleMenuItemTap(context, item.type, translations),
+                    onTap: () => _handleMenuItemTap(context, item.type),
                   ),
                 );
               }),
@@ -168,11 +168,7 @@ class AccountView extends StatelessWidget {
     }
   }
 
-  void _handleMenuItemTap(
-    BuildContext context,
-    AccountMenuItemType type,
-    AppLocalizations translations,
-  ) {
+  void _handleMenuItemTap(BuildContext context, AccountMenuItemType type) {
     switch (type) {
       case AccountMenuItemType.settings:
         Navigator.push(
@@ -194,10 +190,12 @@ class AccountView extends StatelessWidget {
           MaterialPageRoute(builder: (_) => const TripDiaryPage()),
         );
         break;
+
       case AccountMenuItemType.photos:
-        ScaffoldMessenger.of(
+        Navigator.push(
           context,
-        ).showSnackBar(SnackBar(content: Text(translations.comingSoon)));
+          MaterialPageRoute(builder: (_) => const PhotoGalleryPage()),
+        );
         break;
     }
   }

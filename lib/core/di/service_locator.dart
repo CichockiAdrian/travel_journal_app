@@ -14,6 +14,7 @@ import '../../features/visited_countries/data/firebase_visited_countries_reposit
 import '../../features/visited_countries/data/visited_countries_repository.dart';
 import '../../features/account/activity_statistics/logic/profile_activity_stats_calculator.dart';
 import '../../features/account/achievements/logic/achievements_calculator.dart';
+import '../../features/photo_gallery/data/photo_gallery_repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -52,5 +53,12 @@ void setupServiceLocator() {
 
   getIt.registerLazySingleton<AchievementsCalculator>(
     () => const AchievementsCalculator(),
+  );
+
+  getIt.registerLazySingleton<PhotoGalleryRepository>(
+    () => PhotoGalleryRepository(
+      tripDiaryRepository: getIt<TripDiaryRepository>(),
+      tripDiaryLocalPhotoStorage: getIt<TripDiaryLocalPhotoStorage>(),
+    ),
   );
 }
