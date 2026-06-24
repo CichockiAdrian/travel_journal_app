@@ -309,14 +309,6 @@ class _MapViewState extends State<_MapView> {
     }
   }
 
-  int getVisitedCountriesWithCoordinatesCount(
-    List<VisitedCountryModel> countries,
-  ) {
-    return countries.where((country) {
-      return country.latitude != null && country.longitude != null;
-    }).length;
-  }
-
   @override
   Widget build(BuildContext context) {
     final translations = AppLocalizations.of(context);
@@ -389,9 +381,7 @@ class _MapViewState extends State<_MapView> {
           return BlocBuilder<VisitedCountriesCubit, VisitedCountriesState>(
             builder: (context, visitedCountriesState) {
               final visitedCountriesCount =
-                  getVisitedCountriesWithCoordinatesCount(
-                    visitedCountriesState.visitedCountries,
-                  );
+                  visitedCountriesState.visitedCountriesWithCoordinatesCount;
 
               return Scaffold(
                 appBar: AppBar(
