@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../photo_gallery/presentation/hide_global_camera_overlay.dart';
 
 import 'package:flutter/material.dart';
 
@@ -39,42 +40,44 @@ class _TripDiaryPhotoCarouselPageState
   Widget build(BuildContext context) {
     final photosCount = widget.photoPaths.length;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
+    return HideGlobalCameraOverlay(
+      child: Scaffold(
         backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: Text('${_currentIndex + 1} / $photosCount'),
-      ),
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: photosCount,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          final photoPath = widget.photoPaths[index];
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: Text('${_currentIndex + 1} / $photosCount'),
+        ),
+        body: PageView.builder(
+          controller: _pageController,
+          itemCount: photosCount,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            final photoPath = widget.photoPaths[index];
 
-          return Center(
-            child: InteractiveViewer(
-              minScale: 1,
-              maxScale: 4,
-              child: Image.file(
-                File(photoPath),
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.broken_image_outlined,
-                    color: Colors.white,
-                    size: 64,
-                  );
-                },
+            return Center(
+              child: InteractiveViewer(
+                minScale: 1,
+                maxScale: 4,
+                child: Image.file(
+                  File(photoPath),
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.broken_image_outlined,
+                      color: Colors.white,
+                      size: 64,
+                    );
+                  },
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

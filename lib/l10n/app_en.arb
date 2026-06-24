@@ -183,5 +183,14 @@
 "achievementSevenActiveDaysTitle": "Frequent visitor",
 "achievementSevenActiveDaysDescription": "Reach 7 days with activity.",
 "achievementThirtyActiveDaysTitle": "Regular user",
-"achievementThirtyActiveDaysDescription": "Reach 30 days with activity."
+"achievementThirtyActiveDaysDescription": "Reach 30 days with activity.",
+"photos": "Photos",
+"photosAddedToTrips": "Photos added to trips",
+"noPhotosYet": "You do not have any photos yet",
+"takeFirstPhotoHint": "Tap the camera to add your first photo.",
+"photoPreview": "Photo preview",
+"photoSaved": "Photo saved",
+"photoDeleted": "Photo deleted",
+"deletePhoto": "Delete photo",
+"cannotLoadPhotos": "Could not load photos"
 }
