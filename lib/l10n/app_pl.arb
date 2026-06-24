@@ -81,5 +81,37 @@
   }
 },
 "showVisitedCountries": "Pokaż odwiedzone",
-"hideVisitedCountries": "Ukryj odwiedzone"
+"hideVisitedCountries": "Ukryj odwiedzone",
+"tripDiaryEmpty": "Nie masz jeszcze żadnych wpisów w dzienniku podróży.",
+"tripDiaryDetails": "Szczegóły wpisu",
+"addTripDiaryEntry": "Dodaj wpis",
+"entryTitle": "Tytuł",
+"entryTitleHint": "np. Rzym, Włochy",
+"tripCountry": "Kraj",
+"tripDate": "Data podróży",
+"description": "Opis",
+"descriptionHint": "Napisz coś o swojej podróży...",
+"markCountryAsVisitedWithEntry": "Oznacz ten kraj jako odwiedzony",
+"titleRequired": "Podaj tytuł wpisu.",
+"countryRequired": "Wybierz kraj.",
+"save": "Zapisz",
+"cancel": "Anuluj",
+"delete": "Usuń",
+"deleteTripDiaryEntry": "Usunąć wpis?",
+"deleteTripDiaryEntryConfirmation": "Tego działania nie można cofnąć.",
+"tripDiarySyncFailed": "Nie udało się zsynchronizować dziennika podróży.",
+"tripDiarySaveFailed": "Nie udało się zapisać wpisu.",
+"tripDiaryPhotos": "Zdjęcia",
+"tripDiaryPhotosLimit": "Możesz dodać maksymalnie {count} zdjęć do wpisu.",
+"@tripDiaryPhotosLimit": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"addPhotos": "Dodaj zdjęcia",
+"tripDiaryPhotosLimitReached": "Osiągnięto limit zdjęć dla tego wpisu.",
+"takePhoto": "Zrób zdjęcie",
+"chooseFromGallery": "Wybierz z galerii"
 }
