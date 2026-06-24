@@ -79,5 +79,7 @@
       "type": "int"
     }
   }
-}
+},
+"showVisitedCountries": "Show visited",
+"hideVisitedCountries": "Hide visited"
 }
