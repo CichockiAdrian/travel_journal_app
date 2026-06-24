@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/di/service_locator.dart';
-import '../../../core/navigation/app_navigator_key.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../data/photo_gallery_repository.dart';
 import '../logic/photo_gallery_cubit.dart';
@@ -58,21 +57,16 @@ class _GlobalCameraButton extends StatelessWidget {
   }
 
   Future<void> _takePhoto(BuildContext context) async {
-    final translations = AppLocalizations.of(context);
     final saved = await context.read<PhotoGalleryCubit>().takePhoto();
 
-    if (!saved) {
+    if (!context.mounted || !saved) {
       return;
     }
 
-    final scaffoldContext = appNavigatorKey.currentContext ?? context;
+    final translations = AppLocalizations.of(context);
 
-    if (!scaffoldContext.mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(
-      scaffoldContext,
-    ).showSnackBar(SnackBar(content: Text(translations.photoSaved)));
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(translations.photoSaved)));
   }
 }
