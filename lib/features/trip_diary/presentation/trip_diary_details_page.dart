@@ -10,6 +10,7 @@ import '../data/trip_diary_entry.dart';
 import '../data/trip_diary_local_photo_storage.dart';
 import '../data/trip_diary_photo.dart';
 import '../logic/trip_diary_cubit.dart';
+import 'trip_diary_photo_carousel_page.dart';
 
 class TripDiaryDetailsPage extends StatelessWidget {
   final TripDiaryEntry entry;
@@ -136,6 +137,18 @@ class _TripDiaryPhotosSectionState extends State<_TripDiaryPhotosSection> {
     );
   }
 
+  Future<List<File>> _loadLocalFiles(List<TripDiaryPhoto> photos) async {
+    final storage = getIt<TripDiaryLocalPhotoStorage>();
+
+    final files = await Future.wait(
+      photos.map((photo) {
+        return storage.findPhoto(photo.localFileName);
+      }),
+    );
+
+    return files.whereType<File>().toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final translations = AppLocalizations.of(context);
@@ -149,80 +162,244 @@ class _TripDiaryPhotosSectionState extends State<_TripDiaryPhotosSection> {
           return const SizedBox.shrink();
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              translations.tripDiaryPhotos,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            GridView.builder(
-              itemCount: photos.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-              ),
-              itemBuilder: (context, index) {
-                return _LocalTripDiaryPhotoTile(photo: photos[index]);
-              },
-            ),
-          ],
+        return FutureBuilder<List<File>>(
+          future: _loadLocalFiles(photos),
+          builder: (context, filesSnapshot) {
+            final files = filesSnapshot.data ?? const <File>[];
+
+            if (filesSnapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                height: 220,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (files.isEmpty) {
+              return const _MissingLocalPhotoTile(height: 220);
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  translations.tripDiaryPhotos,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                _TripDiaryPostPhotos(files: files),
+              ],
+            );
+          },
         );
       },
     );
   }
 }
 
-class _LocalTripDiaryPhotoTile extends StatelessWidget {
-  final TripDiaryPhoto photo;
+class _TripDiaryPostPhotos extends StatefulWidget {
+  final List<File> files;
 
-  const _LocalTripDiaryPhotoTile({required this.photo});
+  const _TripDiaryPostPhotos({required this.files});
+
+  @override
+  State<_TripDiaryPostPhotos> createState() => _TripDiaryPostPhotosState();
+}
+
+class _TripDiaryPostPhotosState extends State<_TripDiaryPostPhotos> {
+  late final PageController _pageController;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void didUpdateWidget(covariant _TripDiaryPostPhotos oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (_selectedIndex >= widget.files.length) {
+      _selectedIndex = 0;
+      _pageController.jumpToPage(0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _openFullscreenCarousel() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TripDiaryPhotoCarouselPage(
+          photoPaths: widget.files.map((file) => file.path).toList(),
+          initialIndex: _selectedIndex,
+        ),
+      ),
+    );
+  }
+
+  void _selectPhoto(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<File?>(
-      future: getIt<TripDiaryLocalPhotoStorage>().findPhoto(
-        photo.localFileName,
-      ),
-      builder: (context, snapshot) {
-        final file = snapshot.data;
+    final files = widget.files;
 
-        if (file == null) {
-          return const _MissingLocalPhotoTile();
-        }
-
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.file(
-            file,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) {
-              return const _MissingLocalPhotoTile();
-            },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: _openFullscreenCarousel,
+          child: AspectRatio(
+            aspectRatio: 4 / 3,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: files.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Image.file(
+                        files[index],
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) {
+                          return const _MissingLocalPhotoTile();
+                        },
+                      );
+                    },
+                  ),
+                  Positioned(
+                    right: 12,
+                    bottom: 12,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        child: Text(
+                          '${_selectedIndex + 1}/${files.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Positioned(
+                    left: 12,
+                    bottom: 12,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.open_in_full,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        );
-      },
+        ),
+        if (files.length > 1) ...[
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 72,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: files.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final isSelected = index == _selectedIndex;
+
+                return GestureDetector(
+                  onTap: () => _selectPhoto(index),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    width: 72,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                        width: 2,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        files[index],
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) {
+                          return const _MissingLocalPhotoTile();
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
 
 class _MissingLocalPhotoTile extends StatelessWidget {
-  const _MissingLocalPhotoTile();
+  final double? height;
+
+  const _MissingLocalPhotoTile({this.height});
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Icon(
-        Icons.image_not_supported_outlined,
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+    return SizedBox(
+      height: height,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: Icon(
+            Icons.image_not_supported_outlined,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
       ),
     );
   }
