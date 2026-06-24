@@ -3,12 +3,16 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../core/data/firestore_collection_names.dart';
 import '../../countries/data/country_model.dart';
 import '../../visited_countries/data/visited_country_id.dart';
 import 'trip_diary_entry.dart';
+import 'trip_diary_entry_mapper.dart';
+import 'trip_diary_failure.dart';
 import 'trip_diary_limits.dart';
 import 'trip_diary_local_photo_storage.dart';
 import 'trip_diary_photo.dart';
+import 'trip_diary_photo_mapper.dart';
 import 'trip_diary_repository.dart';
 
 class FirebaseTripDiaryRepository implements TripDiaryRepository {
@@ -33,11 +37,14 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
     }
 
     return _entriesCollection(user.uid)
-        .orderBy(TripDiaryEntry.travelDateField, descending: true)
+        .orderBy(TripDiaryEntryMapper.travelDateField, descending: true)
         .snapshots()
         .map((snapshot) {
           return snapshot.docs.map((doc) {
-            return TripDiaryEntry.fromFirestore(id: doc.id, data: doc.data());
+            return TripDiaryEntryMapper.fromFirestore(
+              id: doc.id,
+              data: doc.data(),
+            );
           }).toList();
         });
   }
@@ -53,11 +60,14 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
     }
 
     return _photosCollection(user.uid)
-        .where(TripDiaryPhoto.entryIdField, isEqualTo: entryId)
+        .where(TripDiaryPhotoMapper.entryIdField, isEqualTo: entryId)
         .snapshots()
         .map((snapshot) {
           return snapshot.docs.map((doc) {
-            return TripDiaryPhoto.fromFirestore(id: doc.id, data: doc.data());
+            return TripDiaryPhotoMapper.fromFirestore(
+              id: doc.id,
+              data: doc.data(),
+            );
           }).toList();
         });
   }
@@ -120,7 +130,7 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
 
       final batch = _firestore.batch();
 
-      batch.set(entryDoc, entry.toCreateFirestore());
+      batch.set(entryDoc, TripDiaryEntryMapper.toCreateFirestore(entry));
 
       for (final storedPhoto in storedPhotos) {
         final photo = TripDiaryPhoto(
@@ -133,7 +143,7 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
 
         batch.set(
           _photosCollection(user.uid).doc(storedPhoto.id),
-          photo.toCreateFirestore(),
+          TripDiaryPhotoMapper.toCreateFirestore(photo),
         );
       }
 
@@ -157,7 +167,7 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
 
     final photosSnapshot = await _photosCollection(
       user.uid,
-    ).where(TripDiaryPhoto.entryIdField, isEqualTo: entryId).get();
+    ).where(TripDiaryPhotoMapper.entryIdField, isEqualTo: entryId).get();
 
     final batch = _firestore.batch();
 
@@ -170,7 +180,7 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
     await batch.commit();
 
     for (final photoDoc in photosSnapshot.docs) {
-      final photo = TripDiaryPhoto.fromFirestore(
+      final photo = TripDiaryPhotoMapper.fromFirestore(
         id: photoDoc.id,
         data: photoDoc.data(),
       );
@@ -181,16 +191,16 @@ class FirebaseTripDiaryRepository implements TripDiaryRepository {
 
   CollectionReference<Map<String, dynamic>> _entriesCollection(String userId) {
     return _firestore
-        .collection('users')
+        .collection(FirestoreCollectionNames.users)
         .doc(userId)
-        .collection('tripDiaryEntries');
+        .collection(FirestoreCollectionNames.tripDiaryEntries);
   }
 
   CollectionReference<Map<String, dynamic>> _photosCollection(String userId) {
     return _firestore
-        .collection('users')
+        .collection(FirestoreCollectionNames.users)
         .doc(userId)
-        .collection('tripDiaryPhotos');
+        .collection(FirestoreCollectionNames.tripDiaryPhotos);
   }
 }
 
