@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 
 import '../../features/auth/data/auth_repository.dart';
 import '../../features/countries/data/countries_api_service.dart';
-import '../../features/countries/data/countries_remote_data_source.dart';
 import '../../features/countries/data/countries_repository.dart';
 import '../../features/map/data/device_location_service.dart';
 import '../../features/trip_diary/data/firebase_trip_diary_repository.dart';
@@ -26,8 +25,12 @@ void setupServiceLocator() {
 
   getIt.registerLazySingleton(() => CountriesApiService());
 
-  getIt.registerLazySingleton(
-    () => CountriesRemoteDataSource(countriesApiService: getIt()),
+  getIt.registerLazySingleton<CountriesRepository>(
+    () => CountriesRepository(remoteDataSource: getIt()),
+  );
+
+  getIt.registerLazySingleton<VisitedCountriesRepository>(
+    () => FirebaseVisitedCountriesRepository(getIt(), getIt()),
   );
 
   getIt.registerLazySingleton(
@@ -35,10 +38,6 @@ void setupServiceLocator() {
   );
 
   getIt.registerLazySingleton(() => DeviceLocationService());
-
-  getIt.registerLazySingleton<VisitedCountriesRepository>(
-    () => FirebaseVisitedCountriesRepository(getIt(), getIt()),
-  );
 
   getIt.registerLazySingleton(() => const TripDiaryLocalPhotoStorage());
 

@@ -5,8 +5,6 @@ import 'dart:io';
 
 import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
-import '../../countries/data/countries_repository.dart';
-import '../../visited_countries/data/visited_countries_repository.dart';
 import '../data/trip_diary_entry.dart';
 import '../data/trip_diary_repository.dart';
 import '../logic/trip_diary_cubit.dart';
@@ -46,11 +44,7 @@ class TripDiaryView extends StatelessWidget {
               builder: (_) {
                 return BlocProvider.value(
                   value: context.read<TripDiaryCubit>(),
-                  child: TripDiaryFormPage(
-                    countriesRepository: getIt<CountriesRepository>(),
-                    visitedCountriesRepository:
-                        getIt<VisitedCountriesRepository>(),
-                  ),
+                  child: const TripDiaryFormPage(),
                 );
               },
             ),
