@@ -14,18 +14,12 @@ import '../../countries/logic/countries_state.dart';
 import '../../countries/presentation/country_display_mapper.dart';
 import '../../visited_countries/data/visited_countries_repository.dart';
 import '../data/trip_diary_limits.dart';
-import '../data/trip_diary_repository.dart';
 import '../logic/trip_diary_cubit.dart';
+import '../../../core/di/service_locator.dart';
+import '../data/trip_diary_failure.dart';
 
 class TripDiaryFormPage extends StatefulWidget {
-  final CountriesRepository countriesRepository;
-  final VisitedCountriesRepository visitedCountriesRepository;
-
-  const TripDiaryFormPage({
-    super.key,
-    required this.countriesRepository,
-    required this.visitedCountriesRepository,
-  });
+  const TripDiaryFormPage({super.key});
 
   @override
   State<TripDiaryFormPage> createState() => _TripDiaryFormPageState();
@@ -57,7 +51,7 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          CountriesCubit(countriesRepository: widget.countriesRepository)
+          CountriesCubit(countriesRepository: getIt<CountriesRepository>())
             ..loadAllCountries(),
       child: Builder(
         builder: (context) {
@@ -381,7 +375,9 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
       );
 
       if (_markCountryAsVisited) {
-        await widget.visitedCountriesRepository.markAsVisited(selectedCountry);
+        await getIt<VisitedCountriesRepository>().markAsVisited(
+          selectedCountry,
+        );
       }
 
       if (!mounted) return;
