@@ -7,8 +7,13 @@ import '../logic/planned_places_cubit.dart';
 
 class PlannedPlaceDetailsBottomSheet extends StatelessWidget {
   final PlannedPlaceModel place;
+  final String? distanceText;
 
-  const PlannedPlaceDetailsBottomSheet({super.key, required this.place});
+  const PlannedPlaceDetailsBottomSheet({
+    super.key,
+    required this.place,
+    this.distanceText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +82,21 @@ class PlannedPlaceDetailsBottomSheet extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
+            if (distanceText != null) ...[
+              const SizedBox(height: 16),
+              Text(
+                translations.plannedPlaceDistanceFromYou,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                distanceText!,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,

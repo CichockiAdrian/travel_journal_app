@@ -21,6 +21,8 @@ import '../../visited_countries/data/visited_country_model.dart';
 import '../data/device_location_service.dart';
 import '../logic/map_cubit.dart';
 import '../logic/map_state.dart';
+import '../../planned_places/data/planned_place_distance_calculator.dart';
+import '../../planned_places/notifications/planned_places_notification_service.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -36,7 +38,10 @@ class MapPage extends StatelessWidget {
           )..loadInitialLocation(),
         ),
         BlocProvider(
-          create: (_) => PlannedPlacesCubit(getIt<PlannedPlacesRepository>()),
+          create: (_) => PlannedPlacesCubit(
+            getIt<PlannedPlacesRepository>(),
+            getIt<PlannedPlaceDistanceCalculator>(),
+          ),
         ),
       ],
       child: const _MapView(),
@@ -98,6 +103,7 @@ class _MapViewState extends State<_MapView> {
     );
 
     _flatMapController = MapController();
+    getIt<PlannedPlacesNotificationService>().initialize();
   }
 
   @override
@@ -244,7 +250,10 @@ class _MapViewState extends State<_MapView> {
       builder: (_) {
         return BlocProvider.value(
           value: context.read<PlannedPlacesCubit>(),
-          child: PlannedPlaceDetailsBottomSheet(place: place),
+          child: PlannedPlaceDetailsBottomSheet(
+            place: place,
+            distanceText: _getPlannedPlaceDistanceText(context, place.id),
+          ),
         );
       },
     );
@@ -298,7 +307,12 @@ class _MapViewState extends State<_MapView> {
                 current.currentLocation != null;
           },
           listener: (context, state) {
-            _upsertCurrentLocationPoint(context, state.currentLocation!);
+            final currentLocation = state.currentLocation!;
+
+            _upsertCurrentLocationPoint(context, currentLocation);
+            context.read<PlannedPlacesCubit>().updateCurrentLocation(
+              currentLocation,
+            );
           },
         ),
         BlocListener<MapCubit, MapState>(
@@ -373,6 +387,37 @@ class _MapViewState extends State<_MapView> {
             );
 
             context.read<PlannedPlacesCubit>().clearFailure();
+          },
+        ),
+        BlocListener<PlannedPlacesCubit, PlannedPlacesState>(
+          listenWhen: (previous, current) {
+            return previous.pendingNearbyNotificationPlace !=
+                    current.pendingNearbyNotificationPlace &&
+                current.pendingNearbyNotificationPlace != null &&
+                current.pendingNearbyNotificationDistanceInMeters != null;
+          },
+          listener: (context, state) async {
+            final place = state.pendingNearbyNotificationPlace!;
+            final distance = state.pendingNearbyNotificationDistanceInMeters!;
+            final formattedDistance = _formatDistance(context, distance);
+            final translations = AppLocalizations.of(context);
+
+            await getIt<PlannedPlacesNotificationService>()
+                .showNearbyPlannedPlaceNotification(
+                  placeId: place.id,
+                  title: translations.nearbyPlannedPlaceNotificationTitle(
+                    place.title,
+                  ),
+                  body: translations.nearbyPlannedPlaceNotificationBody(
+                    formattedDistance,
+                  ),
+                );
+
+            if (!context.mounted) {
+              return;
+            }
+
+            context.read<PlannedPlacesCubit>().clearPendingNearbyNotification();
           },
         ),
       ],
@@ -525,6 +570,33 @@ class _MapViewState extends State<_MapView> {
 
       _renderedVisitedCountryPointIds.add(pointId);
     }
+  }
+
+  String _formatDistance(BuildContext context, double distanceInMeters) {
+    final translations = AppLocalizations.of(context);
+
+    if (distanceInMeters >= 1000) {
+      final distanceInKilometers = distanceInMeters / 1000;
+
+      return translations.distanceKilometers(
+        distanceInKilometers.toStringAsFixed(1),
+      );
+    }
+
+    return translations.distanceMeters(distanceInMeters.round());
+  }
+
+  String? _getPlannedPlaceDistanceText(BuildContext context, String placeId) {
+    final distance = context
+        .read<PlannedPlacesCubit>()
+        .state
+        .distanceByPlaceId[placeId];
+
+    if (distance == null) {
+      return null;
+    }
+
+    return _formatDistance(context, distance);
   }
 }
 

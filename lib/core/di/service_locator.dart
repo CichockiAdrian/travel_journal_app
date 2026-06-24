@@ -11,6 +11,9 @@ import '../../features/countries/data/countries_repository.dart';
 import '../../features/map/data/device_location_service.dart';
 import '../../features/planned_places/data/firebase_planned_places_repository.dart';
 import '../../features/planned_places/data/planned_places_repository.dart';
+import '../../features/planned_places/data/planned_place_distance_calculator.dart';
+import '../../features/planned_places/notifications/planned_places_notification_service.dart';
+import '../../features/planned_places/data/planned_places_nearby_checker.dart';
 
 final getIt = GetIt.instance;
 
@@ -49,5 +52,21 @@ void setupServiceLocator() {
 
   getIt.registerLazySingleton<PlannedPlacesRepository>(
     () => FirebasePlannedPlacesRepository(getIt(), getIt()),
+  );
+
+  getIt.registerLazySingleton<PlannedPlaceDistanceCalculator>(
+    () => const PlannedPlaceDistanceCalculator(),
+  );
+
+  getIt.registerLazySingleton<PlannedPlacesNotificationService>(
+    () => PlannedPlacesNotificationService(),
+  );
+
+  getIt.registerLazySingleton<PlannedPlacesNearbyChecker>(
+    () => PlannedPlacesNearbyChecker(
+      getIt<DeviceLocationService>(),
+      getIt<PlannedPlacesRepository>(),
+      getIt<PlannedPlaceDistanceCalculator>(),
+    ),
   );
 }

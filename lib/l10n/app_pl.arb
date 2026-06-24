@@ -97,5 +97,38 @@
 "plannedPlaceCompleted": "Zrealizowane",
 "plannedPlaceCoordinates": "Współrzędne punktu",
 "plannedPlacesSyncFailed": "Nie udało się zsynchronizować planowanych miejsc.",
-"signInToSyncPlannedPlaces": "Zaloguj się, aby synchronizować planowane miejsca."
+"signInToSyncPlannedPlaces": "Zaloguj się, aby synchronizować planowane miejsca.",
+"plannedPlaceDistanceFromYou": "Odległość od Ciebie",
+"distanceMeters": "{meters} m",
+"@distanceMeters": {
+  "placeholders": {
+    "meters": {
+      "type": "int"
+    }
+  }
+},
+"distanceKilometers": "{kilometers} km",
+"@distanceKilometers": {
+  "placeholders": {
+    "kilometers": {
+      "type": "String"
+    }
+  }
+},
+"nearbyPlannedPlaceNotificationTitle": "Jesteś blisko: {placeName}",
+"@nearbyPlannedPlaceNotificationTitle": {
+  "placeholders": {
+    "placeName": {
+      "type": "String"
+    }
+  }
+},
+"nearbyPlannedPlaceNotificationBody": "Masz około {distance} do zaplanowanego miejsca. Warto zrobić zdjęcie?",
+"@nearbyPlannedPlaceNotificationBody": {
+  "placeholders": {
+    "distance": {
+      "type": "String"
+    }
+  }
+}
 }
