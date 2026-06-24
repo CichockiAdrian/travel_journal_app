@@ -81,5 +81,21 @@
   }
 },
 "globeMapMode": "Globe",
-"flatMapMode": "2D map"
+"flatMapMode": "2D map",
+"plannedPlaces": "Planned places",
+"addPlannedPlace": "Add planned place",
+"plannedPlaceTitle": "Place name",
+"plannedPlaceTitleHint": "E.g. viewpoint",
+"plannedPlaceTitleRequired": "Enter the place name.",
+"plannedPlaceNote": "Note",
+"plannedPlaceNoteHint": "E.g. sunset photo",
+"savePlannedPlace": "Save place",
+"plannedPlaceSaveFailed": "Could not save the place.",
+"plannedPlaceDelete": "Delete place",
+"plannedPlaceMarkCompleted": "Mark as completed",
+"plannedPlaceMarkOpen": "Move back to planned",
+"plannedPlaceCompleted": "Completed",
+"plannedPlaceCoordinates": "Place coordinates",
+"plannedPlacesSyncFailed": "Could not sync planned places.",
+"signInToSyncPlannedPlaces": "Sign in to sync planned places."
 }

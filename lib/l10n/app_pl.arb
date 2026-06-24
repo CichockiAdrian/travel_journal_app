@@ -81,5 +81,21 @@
   }
 },
 "globeMapMode": "Globus",
-"flatMapMode": "Mapa 2D"
+"flatMapMode": "Mapa 2D",
+"plannedPlaces": "Planowane miejsca",
+"addPlannedPlace": "Dodaj planowane miejsce",
+"plannedPlaceTitle": "Nazwa miejsca",
+"plannedPlaceTitleHint": "Np. punkt widokowy",
+"plannedPlaceTitleRequired": "Podaj nazwę miejsca.",
+"plannedPlaceNote": "Notatka",
+"plannedPlaceNoteHint": "Np. zdjęcie o zachodzie słońca",
+"savePlannedPlace": "Zapisz miejsce",
+"plannedPlaceSaveFailed": "Nie udało się zapisać miejsca.",
+"plannedPlaceDelete": "Usuń miejsce",
+"plannedPlaceMarkCompleted": "Oznacz jako zrealizowane",
+"plannedPlaceMarkOpen": "Przywróć jako planowane",
+"plannedPlaceCompleted": "Zrealizowane",
+"plannedPlaceCoordinates": "Współrzędne punktu",
+"plannedPlacesSyncFailed": "Nie udało się zsynchronizować planowanych miejsc.",
+"signInToSyncPlannedPlaces": "Zaloguj się, aby synchronizować planowane miejsca."
 }

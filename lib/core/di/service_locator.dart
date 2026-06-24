@@ -9,6 +9,8 @@ import '../../features/visited_countries/data/firebase_visited_countries_reposit
 import '../../features/visited_countries/data/visited_countries_repository.dart';
 import '../../features/countries/data/countries_repository.dart';
 import '../../features/map/data/device_location_service.dart';
+import '../../features/planned_places/data/firebase_planned_places_repository.dart';
+import '../../features/planned_places/data/planned_places_repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -43,5 +45,9 @@ void setupServiceLocator() {
 
   getIt.registerLazySingleton<VisitedCountriesRepository>(
     () => FirebaseVisitedCountriesRepository(getIt(), getIt()),
+  );
+
+  getIt.registerLazySingleton<PlannedPlacesRepository>(
+    () => FirebasePlannedPlacesRepository(getIt(), getIt()),
   );
 }

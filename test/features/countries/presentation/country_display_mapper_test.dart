@@ -11,11 +11,9 @@ void main() {
   group('CountryDisplayMapper', () {
     test('maps valid country with all fields for English locale', () {
       const country = CountryModel(
+        code: 'de',
         name: 'Germany',
-        translatedNames: {
-          'pol': 'Niemcy',
-          'deu': 'Deutschland',
-        },
+        translatedNames: {'pol': 'Niemcy', 'deu': 'Deutschland'},
         capital: 'Berlin',
         flagUrl: 'https://flagcdn.com/w320/de.png',
         region: 'Europe',
@@ -38,11 +36,9 @@ void main() {
 
     test('maps valid country with translation for Polish locale', () {
       const country = CountryModel(
+        code: 'de',
         name: 'Germany',
-        translatedNames: {
-          'pol': 'Niemcy',
-          'deu': 'Deutschland',
-        },
+        translatedNames: {'pol': 'Niemcy', 'deu': 'Deutschland'},
         capital: 'Berlin',
         flagUrl: 'https://flagcdn.com/w320/de.png',
         region: 'Europe',
@@ -65,10 +61,9 @@ void main() {
 
     test('uses subregion for Americas region', () {
       const country = CountryModel(
+        code: 'ca',
         name: 'Canada',
-        translatedNames: {
-          'pol': 'Kanada',
-        },
+        translatedNames: {'pol': 'Kanada'},
         capital: 'Ottawa',
         flagUrl: 'https://flagcdn.com/w320/ca.png',
         region: 'Americas',
@@ -95,6 +90,7 @@ void main() {
 
     test('handles null/missing properties and fallbacks correctly', () {
       const country = CountryModel(
+        code: null,
         name: null,
         translatedNames: {},
         capital: null,
