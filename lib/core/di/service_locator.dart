@@ -20,6 +20,7 @@ import '../../features/trip_diary/data/trip_diary_local_photo_storage.dart';
 import '../../features/trip_diary/data/trip_diary_repository.dart';
 import '../../features/visited_countries/data/firebase_visited_countries_repository.dart';
 import '../../features/visited_countries/data/visited_countries_repository.dart';
+import '../../features/planned_places/background/planned_places_background_target_storage.dart';
 
 final getIt = GetIt.instance;
 
@@ -71,6 +72,8 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<PlannedPlaceDistanceCalculator>(
     () => const PlannedPlaceDistanceCalculator(),
   );
+
+  getIt.registerLazySingleton(() => PlannedPlacesBackgroundTargetStorage());
 
   getIt.registerLazySingleton<PlannedPlacesNotificationService>(
     () => PlannedPlacesNotificationService(),

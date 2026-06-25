@@ -29,6 +29,8 @@ import '../../photo_gallery/data/photo_gallery_repository.dart';
 import '../../trip_diary/data/trip_diary_repository.dart';
 import '../../trip_diary/logic/trip_diary_cubit.dart';
 import '../../trip_diary/presentation/trip_diary_form_page.dart';
+import '../../planned_places/background/planned_places_background_service.dart';
+import '../../planned_places/background/planned_places_background_target_storage.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -606,6 +608,30 @@ class _MapViewState extends State<_MapView> {
             );
 
             context.read<PlannedPlacesCubit>().clearFailure();
+          },
+        ),
+        BlocListener<PlannedPlacesCubit, PlannedPlacesState>(
+          listenWhen: (previous, current) {
+            return previous.places != current.places;
+          },
+          listener: (context, state) async {
+            final translations = AppLocalizations.of(context);
+
+            await getIt<PlannedPlacesBackgroundTargetStorage>().saveOpenPlaces(
+              places: state.places,
+              titleBuilder: (place) {
+                return translations.nearbyPlannedPlaceNotificationTitle(
+                  place.title,
+                );
+              },
+              bodyBuilder: (_) {
+                return translations.nearbyPlannedPlaceNotificationBody(
+                  translations.distanceMeters(1000),
+                );
+              },
+            );
+
+            await startPlannedPlacesBackgroundService();
           },
         ),
         BlocListener<PlannedPlacesCubit, PlannedPlacesState>(

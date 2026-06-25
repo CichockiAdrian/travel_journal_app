@@ -14,6 +14,7 @@ import 'core/settings/data/app_settings_repository.dart';
 import 'core/settings/logic/app_settings_cubit.dart';
 
 import 'features/photo_gallery/presentation/global_camera_overlay.dart';
+import 'features/planned_places/background/planned_places_background_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await initializePlannedPlacesBackgroundService();
 
   setupServiceLocator();
 
