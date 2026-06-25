@@ -33,6 +33,11 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => MapCubit(
+        getIt<DeviceLocationService>(),
+        getIt<VisitedCountriesRepository>(),
+      )..loadInitialLocation(),
     return MultiBlocProvider(
       providers: [
         BlocProvider(
