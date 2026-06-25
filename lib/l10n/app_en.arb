@@ -80,6 +80,29 @@
     }
   }
 },
+"globeMapMode": "Globe",
+"flatMapMode": "2D map",
+"plannedPlaces": "Planned places",
+"addPlannedPlace": "Add planned place",
+"plannedPlaceTitle": "Place name",
+"plannedPlaceTitleHint": "E.g. viewpoint",
+"plannedPlaceTitleRequired": "Enter the place name.",
+"plannedPlaceNote": "Note",
+"plannedPlaceNoteHint": "E.g. sunset photo",
+"savePlannedPlace": "Save place",
+"plannedPlaceSaveFailed": "Could not save the place.",
+"plannedPlaceDelete": "Delete place",
+"plannedPlaceMarkCompleted": "Mark as completed",
+"plannedPlaceMarkOpen": "Move back to planned",
+"plannedPlaceCompleted": "Completed",
+"plannedPlaceCoordinates": "Place coordinates",
+"plannedPlacesSyncFailed": "Could not sync planned places.",
+"signInToSyncPlannedPlaces": "Sign in to sync planned places.",
+"plannedPlaceDistanceFromYou": "Distance from you",
+"distanceMeters": "{meters} m",
+"@distanceMeters": {
+  "placeholders": {
+    "meters": {
 "showVisitedCountries": "Show visited",
 "hideVisitedCountries": "Hide visited",
 "tripDiaryEmpty": "You do not have any travel diary entries yet.",
@@ -110,6 +133,30 @@
     }
   }
 },
+"distanceKilometers": "{kilometers} km",
+"@distanceKilometers": {
+  "placeholders": {
+    "kilometers": {
+      "type": "String"
+    }
+  }
+},
+"nearbyPlannedPlaceNotificationTitle": "You are near: {placeName}",
+"@nearbyPlannedPlaceNotificationTitle": {
+  "placeholders": {
+    "placeName": {
+      "type": "String"
+    }
+  }
+},
+"nearbyPlannedPlaceNotificationBody": "You are about {distance} from a planned place. Want to take a photo?",
+"@nearbyPlannedPlaceNotificationBody": {
+  "placeholders": {
+    "distance": {
+      "type": "String"
+    }
+  }
+}
 "addPhotos": "Add photos",
 "tripDiaryPhotosLimitReached": "Photo limit reached for this entry.",
 "takePhoto": "Take photo",
