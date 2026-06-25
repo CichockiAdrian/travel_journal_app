@@ -28,4 +28,10 @@ abstract class VisitedCountriesState with _$VisitedCountriesState {
   Set<String> get visitedCountryIds {
     return visitedCountries.map((country) => country.id).toSet();
   }
+
+  int get visitedCountriesWithCoordinatesCount {
+    return visitedCountries.where((country) {
+      return country.latitude != null && country.longitude != null;
+    }).length;
+  }
 }
