@@ -10,6 +10,14 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../planned_places/data/planned_place_model.dart';
+import '../../planned_places/data/planned_places_repository.dart';
+import '../../planned_places/logic/planned_places_cubit.dart';
+import '../../planned_places/logic/planned_places_state.dart';
+import '../../planned_places/presentation/planned_place_details_bottom_sheet.dart';
+import '../../planned_places/presentation/planned_place_form_bottom_sheet.dart';
+import '../../visited_countries/data/visited_countries_repository.dart';
+import '../../visited_countries/data/visited_country_model.dart';
 import '../../visited_countries/data/visited_countries_repository.dart';
 import '../../visited_countries/data/visited_country_model.dart';
 import '../../visited_countries/logic/visited_countries_cubit.dart';
@@ -17,8 +25,8 @@ import '../../visited_countries/logic/visited_countries_state.dart';
 import '../data/device_location_service.dart';
 import '../logic/map_cubit.dart';
 import '../logic/map_state.dart';
-import '../../visited_countries/data/visited_countries_repository.dart';
-import '../../visited_countries/data/visited_country_model.dart';
+import '../../planned_places/data/planned_place_distance_calculator.dart';
+import '../../planned_places/notifications/planned_places_notification_service.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -33,6 +41,16 @@ class MapPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+          create: (_) => MapCubit(
+            getIt<DeviceLocationService>(),
+            getIt<VisitedCountriesRepository>(),
+          )..loadInitialLocation(),
+        ),
+        BlocProvider(
+          create: (_) => PlannedPlacesCubit(
+            getIt<PlannedPlacesRepository>(),
+            getIt<PlannedPlaceDistanceCalculator>(),
+          ),
           create: (_) =>
               MapCubit(getIt<DeviceLocationService>())..loadInitialLocation(),
         ),
@@ -106,6 +124,7 @@ class _MapViewState extends State<_MapView> {
     );
 
     _flatMapController = MapController();
+    getIt<PlannedPlacesNotificationService>().initialize();
   }
 
   @override
@@ -336,6 +355,45 @@ class _MapViewState extends State<_MapView> {
     );
   }
 
+  void _openAddPlannedPlaceBottomSheet(BuildContext context, LatLng point) {
+    context.read<MapCubit>().hideCurrentLocationCard();
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return BlocProvider.value(
+          value: context.read<PlannedPlacesCubit>(),
+          child: PlannedPlaceFormBottomSheet(
+            latitude: point.latitude,
+            longitude: point.longitude,
+          ),
+        );
+      },
+    );
+  }
+
+  void _openPlannedPlaceDetailsBottomSheet(
+    BuildContext context,
+    PlannedPlaceModel place,
+  ) {
+    context.read<MapCubit>().hideCurrentLocationCard();
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return BlocProvider.value(
+          value: context.read<PlannedPlacesCubit>(),
+          child: PlannedPlaceDetailsBottomSheet(
+            place: place,
+            distanceText: _getPlannedPlaceDistanceText(context, place.id),
+          ),
+        );
+      },
+    );
+  }
+
   String _getLocationErrorMessage(
     BuildContext context,
     DeviceLocationFailureType type,
@@ -354,6 +412,9 @@ class _MapViewState extends State<_MapView> {
     }
   }
 
+  String _getPlannedPlacesErrorMessage(
+    BuildContext context,
+    PlannedPlacesFailureType type,
   String getVisitedCountriesErrorMessage(
     BuildContext context,
     VisitedCountriesFailureType type,
@@ -361,6 +422,14 @@ class _MapViewState extends State<_MapView> {
     final translations = AppLocalizations.of(context);
 
     switch (type) {
+      case PlannedPlacesFailureType.notAuthenticated:
+        return translations.signInToSyncPlannedPlaces;
+      case PlannedPlacesFailureType.invalidTitle:
+        return translations.plannedPlaceTitleRequired;
+      case PlannedPlacesFailureType.invalidCoordinates:
+        return translations.locationUnknownError;
+      case PlannedPlacesFailureType.unknown:
+        return translations.plannedPlaceSaveFailed;
       case VisitedCountriesFailureType.notAuthenticated:
         return translations.signInToSyncVisitedCountries;
       case VisitedCountriesFailureType.missingCountryId:
@@ -382,7 +451,12 @@ class _MapViewState extends State<_MapView> {
                 current.currentLocation != null;
           },
           listener: (context, state) {
-            _upsertCurrentLocationPoint(context, state.currentLocation!);
+            final currentLocation = state.currentLocation!;
+
+            _upsertCurrentLocationPoint(context, currentLocation);
+            context.read<PlannedPlacesCubit>().updateCurrentLocation(
+              currentLocation,
+            );
           },
         ),
         BlocListener<MapCubit, MapState>(
@@ -421,6 +495,9 @@ class _MapViewState extends State<_MapView> {
           },
           listener: (context, state) {
             _syncVisitedCountryPoints(context, state.visitedCountries);
+          },
+        ),
+        BlocListener<PlannedPlacesCubit, PlannedPlacesState>(
             syncVisitedCountryPoints(context, state.visitedCountries);
           },
         ),
@@ -433,6 +510,63 @@ class _MapViewState extends State<_MapView> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
+                  _getPlannedPlacesErrorMessage(context, state.failureType!),
+                ),
+              ),
+            );
+
+            context.read<PlannedPlacesCubit>().clearFailure();
+          },
+        ),
+        BlocListener<PlannedPlacesCubit, PlannedPlacesState>(
+          listenWhen: (previous, current) {
+            return previous.actionFailureType != current.actionFailureType &&
+                current.actionFailureType != null;
+          },
+          listener: (context, state) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  _getPlannedPlacesErrorMessage(
+                    context,
+                    state.actionFailureType!,
+                  ),
+                ),
+              ),
+            );
+
+            context.read<PlannedPlacesCubit>().clearFailure();
+          },
+        ),
+        BlocListener<PlannedPlacesCubit, PlannedPlacesState>(
+          listenWhen: (previous, current) {
+            return previous.pendingNearbyNotificationPlace !=
+                    current.pendingNearbyNotificationPlace &&
+                current.pendingNearbyNotificationPlace != null &&
+                current.pendingNearbyNotificationDistanceInMeters != null;
+          },
+          listener: (context, state) async {
+            final place = state.pendingNearbyNotificationPlace!;
+            final distance = state.pendingNearbyNotificationDistanceInMeters!;
+            final formattedDistance = _formatDistance(context, distance);
+            final translations = AppLocalizations.of(context);
+
+            await getIt<PlannedPlacesNotificationService>()
+                .showNearbyPlannedPlaceNotification(
+                  placeId: place.id,
+                  title: translations.nearbyPlannedPlaceNotificationTitle(
+                    place.title,
+                  ),
+                  body: translations.nearbyPlannedPlaceNotificationBody(
+                    formattedDistance,
+                  ),
+                );
+
+            if (!context.mounted) {
+              return;
+            }
+
+            context.read<PlannedPlacesCubit>().clearPendingNearbyNotification();
                   getVisitedCountriesErrorMessage(context, state.failureType!),
                 ),
               ),
@@ -444,6 +578,11 @@ class _MapViewState extends State<_MapView> {
       ],
       child: BlocBuilder<MapCubit, MapState>(
         builder: (context, state) {
+          final plannedPlaces = context
+              .watch<PlannedPlacesCubit>()
+              .state
+              .places;
+
           return Scaffold(
             appBar: AppBar(
               title: Text(translations.map),
@@ -491,10 +630,25 @@ class _MapViewState extends State<_MapView> {
                             controller: _flatMapController,
                             currentLocation: state.currentLocation,
                             visitedCountries: state.visitedCountries,
+                            plannedPlaces: plannedPlaces,
                             onMapTap: () {
                               context
                                   .read<MapCubit>()
                                   .hideCurrentLocationCard();
+                            },
+                            onMapLongPress: (point) {
+                              _openAddPlannedPlaceBottomSheet(context, point);
+                            },
+                            onVisitedCountryTap: (_) {
+                              context
+                                  .read<MapCubit>()
+                                  .hideCurrentLocationCard();
+                            },
+                            onPlannedPlaceTap: (place) {
+                              _openPlannedPlaceDetailsBottomSheet(
+                                context,
+                                place,
+                              );
                             },
                           ),
                   ),
@@ -704,6 +858,33 @@ class _MapViewState extends State<_MapView> {
       _renderedVisitedCountryPointIds.add(pointId);
     }
   }
+
+  String _formatDistance(BuildContext context, double distanceInMeters) {
+    final translations = AppLocalizations.of(context);
+
+    if (distanceInMeters >= 1000) {
+      final distanceInKilometers = distanceInMeters / 1000;
+
+      return translations.distanceKilometers(
+        distanceInKilometers.toStringAsFixed(1),
+      );
+    }
+
+    return translations.distanceMeters(distanceInMeters.round());
+  }
+
+  String? _getPlannedPlaceDistanceText(BuildContext context, String placeId) {
+    final distance = context
+        .read<PlannedPlacesCubit>()
+        .state
+        .distanceByPlaceId[placeId];
+
+    if (distance == null) {
+      return null;
+    }
+
+    return _formatDistance(context, distance);
+  }
 }
 
 class _GlobeMapView extends StatelessWidget {
@@ -763,14 +944,22 @@ class _FlatMapView extends StatelessWidget {
   final MapController controller;
   final DeviceLocation? currentLocation;
   final List<VisitedCountryModel> visitedCountries;
+  final List<PlannedPlaceModel> plannedPlaces;
   final VoidCallback onMapTap;
+  final ValueChanged<LatLng> onMapLongPress;
+  final ValueChanged<VisitedCountryModel> onVisitedCountryTap;
+  final ValueChanged<PlannedPlaceModel> onPlannedPlaceTap;
 
   const _FlatMapView({
     super.key,
     required this.controller,
     required this.currentLocation,
     required this.visitedCountries,
+    required this.plannedPlaces,
     required this.onMapTap,
+    required this.onMapLongPress,
+    required this.onVisitedCountryTap,
+    required this.onPlannedPlaceTap,
   });
 
   @override
@@ -785,12 +974,29 @@ class _FlatMapView extends StatelessWidget {
             width: 46,
             height: 46,
             alignment: Alignment.center,
-            child: _VisitedCountryMapMarker(country: country),
+            child: GestureDetector(
+              onTap: () => onVisitedCountryTap(country),
+              child: _VisitedCountryMapMarker(country: country),
+            ),
           ),
         );
 
+    final plannedPlaceMarkers = plannedPlaces.map((place) {
+      return Marker(
+        point: LatLng(place.latitude, place.longitude),
+        width: 48,
+        height: 48,
+        alignment: Alignment.center,
+        child: GestureDetector(
+          onTap: () => onPlannedPlaceTap(place),
+          child: _PlannedPlaceMapMarker(place: place),
+        ),
+      );
+    });
+
     final markers = <Marker>[
       ...visitedCountryMarkers,
+      ...plannedPlaceMarkers,
       if (currentLocation != null)
         Marker(
           point: LatLng(currentLocation!.latitude, currentLocation!.longitude),
@@ -818,6 +1024,7 @@ class _FlatMapView extends StatelessWidget {
           flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
         ),
         onTap: (_, _) => onMapTap(),
+        onLongPress: (_, point) => onMapLongPress(point),
       ),
       children: [
         TileLayer(
@@ -902,6 +1109,55 @@ class _VisitedCountryMapMarker extends StatelessWidget {
           Icons.check,
           size: 18,
           color: colorScheme.onSecondaryContainer,
+        ),
+      ),
+    );
+  }
+}
+
+class _PlannedPlaceMapMarker extends StatelessWidget {
+  final PlannedPlaceModel place;
+
+  const _PlannedPlaceMapMarker({required this.place});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final backgroundColor = place.isCompleted
+        ? colorScheme.tertiaryContainer
+        : colorScheme.primaryContainer;
+
+    final iconColor = place.isCompleted
+        ? colorScheme.onTertiaryContainer
+        : colorScheme.onPrimaryContainer;
+
+    return Tooltip(
+      message: place.title,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: place.isCompleted
+                ? colorScheme.tertiary
+                : colorScheme.primary,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.24),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Icon(
+          place.isCompleted ? Icons.check : Icons.flag_outlined,
+          size: 20,
+          color: iconColor,
         ),
       ),
     );

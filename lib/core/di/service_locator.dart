@@ -6,6 +6,11 @@ import '../../features/auth/data/auth_repository.dart';
 import '../../features/countries/data/countries_api_service.dart';
 import '../../features/countries/data/countries_repository.dart';
 import '../../features/map/data/device_location_service.dart';
+import '../../features/planned_places/data/firebase_planned_places_repository.dart';
+import '../../features/planned_places/data/planned_places_repository.dart';
+import '../../features/planned_places/data/planned_place_distance_calculator.dart';
+import '../../features/planned_places/notifications/planned_places_notification_service.dart';
+import '../../features/planned_places/data/planned_places_nearby_checker.dart';
 import '../../features/trip_diary/data/firebase_trip_diary_repository.dart';
 import '../../features/trip_diary/data/trip_diary_local_photo_storage.dart';
 import '../../features/trip_diary/data/trip_diary_repository.dart';
@@ -57,6 +62,25 @@ void setupServiceLocator() {
 
   getIt.registerLazySingleton<VisitedCountriesRepository>(
     () => FirebaseVisitedCountriesRepository(getIt(), getIt()),
+  );
+
+  getIt.registerLazySingleton<PlannedPlacesRepository>(
+    () => FirebasePlannedPlacesRepository(getIt(), getIt()),
+  );
+
+  getIt.registerLazySingleton<PlannedPlaceDistanceCalculator>(
+    () => const PlannedPlaceDistanceCalculator(),
+  );
+
+  getIt.registerLazySingleton<PlannedPlacesNotificationService>(
+    () => PlannedPlacesNotificationService(),
+  );
+
+  getIt.registerLazySingleton<PlannedPlacesNearbyChecker>(
+    () => PlannedPlacesNearbyChecker(
+      getIt<DeviceLocationService>(),
+      getIt<PlannedPlacesRepository>(),
+      getIt<PlannedPlaceDistanceCalculator>(),
   getIt.registerLazySingleton<PhotoGalleryRepository>(
     () => PhotoGalleryRepository(
       tripDiaryRepository: getIt<TripDiaryRepository>(),
