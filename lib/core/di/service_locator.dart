@@ -55,6 +55,8 @@ void setupServiceLocator() {
     () => const AchievementsCalculator(),
   );
 
+  getIt.registerLazySingleton<VisitedCountriesRepository>(
+    () => FirebaseVisitedCountriesRepository(getIt(), getIt()),
   getIt.registerLazySingleton<PhotoGalleryRepository>(
     () => PhotoGalleryRepository(
       tripDiaryRepository: getIt<TripDiaryRepository>(),

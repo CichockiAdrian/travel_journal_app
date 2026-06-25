@@ -80,6 +80,8 @@
     }
   }
 },
+"globeMapMode": "Globus",
+"flatMapMode": "Mapa 2D"
 "showVisitedCountries": "Pokaż odwiedzone",
 "hideVisitedCountries": "Ukryj odwiedzone",
 "tripDiaryEmpty": "Nie masz jeszcze żadnych wpisów w dzienniku podróży.",

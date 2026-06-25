@@ -80,6 +80,8 @@
     }
   }
 },
+"globeMapMode": "Globe",
+"flatMapMode": "2D map"
 "showVisitedCountries": "Show visited",
 "hideVisitedCountries": "Hide visited",
 "tripDiaryEmpty": "You do not have any travel diary entries yet.",
