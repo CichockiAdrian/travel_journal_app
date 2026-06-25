@@ -13,6 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/settings/data/app_settings_repository.dart';
 import 'core/settings/logic/app_settings_cubit.dart';
 
+import 'features/photo_gallery/presentation/global_camera_overlay.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -40,6 +42,9 @@ class TravelJournalApp extends StatelessWidget {
     return BlocBuilder<AppSettingsCubit, AppSettingsState>(
       builder: (context, state) {
         return MaterialApp(
+          builder: (context, child) {
+            return GlobalCameraOverlay(child: child ?? const SizedBox.shrink());
+          },
           title: 'Travel Journal',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,

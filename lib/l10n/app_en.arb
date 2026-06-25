@@ -82,4 +82,117 @@
 },
 "globeMapMode": "Globe",
 "flatMapMode": "2D map"
+"showVisitedCountries": "Show visited",
+"hideVisitedCountries": "Hide visited",
+"tripDiaryEmpty": "You do not have any travel diary entries yet.",
+"tripDiaryDetails": "Entry details",
+"addTripDiaryEntry": "Add entry",
+"entryTitle": "Title",
+"entryTitleHint": "e.g. Rome, Italy",
+"tripCountry": "Country",
+"tripDate": "Trip date",
+"description": "Description",
+"descriptionHint": "Write something about your trip...",
+"markCountryAsVisitedWithEntry": "Mark this country as visited",
+"titleRequired": "Enter entry title.",
+"countryRequired": "Select country.",
+"save": "Save",
+"cancel": "Cancel",
+"delete": "Delete",
+"deleteTripDiaryEntry": "Delete entry?",
+"deleteTripDiaryEntryConfirmation": "This action cannot be undone.",
+"tripDiarySyncFailed": "Could not sync travel diary.",
+"tripDiarySaveFailed": "Could not save entry.",
+"tripDiaryPhotos": "Photos",
+"tripDiaryPhotosLimit": "You can add up to {count} photos to this entry.",
+"@tripDiaryPhotosLimit": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"addPhotos": "Add photos",
+"tripDiaryPhotosLimitReached": "Photo limit reached for this entry.",
+"takePhoto": "Take photo",
+"chooseFromGallery": "Choose from gallery",
+"profileActivityStats": "Activity statistics",
+"profileActivityStatsSyncFailed": "Could not load activity statistics.",
+"currentActivityStreak": "Current streak",
+"longestActivityStreak": "Longest streak",
+"activeDays": "Active days",
+"addedPhotos": "Added photos",
+"addedNotes": "Added notes",
+"activityCalendar": "Activity calendar",
+"lastThirtyDays": "Last 30 days",
+"noActivityYet": "No activity to show yet.",
+"daysCount": "{count, plural, =0{0 days} =1{1 day} other{{count} days}}",
+"@daysCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"currentMonth": "Current month",
+"achievements": "Achievements",
+"achievementsUnlockedCount": "{unlockedCount}/{totalCount} unlocked",
+"@achievementsUnlockedCount": {
+  "placeholders": {
+    "unlockedCount": {
+      "type": "int"
+    },
+    "totalCount": {
+      "type": "int"
+    }
+  }
+},
+"achievementProgress": "{currentValue}/{requiredValue}",
+"@achievementProgress": {
+  "placeholders": {
+    "currentValue": {
+      "type": "int"
+    },
+    "requiredValue": {
+      "type": "int"
+    }
+  }
+},
+"achievementUnlocked": "Unlocked",
+"achievementInProgress": "In progress",
+"achievementFirstPhotoTitle": "First photo",
+"achievementFirstPhotoDescription": "Add your first photo to the journal.",
+"achievementTenPhotosTitle": "Travel photographer",
+"achievementTenPhotosDescription": "Add 10 photos to the journal.",
+"achievementFiftyPhotosTitle": "Memory collector",
+"achievementFiftyPhotosDescription": "Add 50 photos to the journal.",
+"achievementFirstNoteTitle": "First note",
+"achievementFirstNoteDescription": "Add your first journal entry.",
+"achievementTenNotesTitle": "Chronicler",
+"achievementTenNotesDescription": "Add 10 journal entries.",
+"achievementFirstVisitedCountryTitle": "First country",
+"achievementFirstVisitedCountryDescription": "Mark your first country as visited.",
+"achievementFiveVisitedCountriesTitle": "Small explorer",
+"achievementFiveVisitedCountriesDescription": "Mark 5 countries as visited.",
+"achievementTwentyVisitedCountriesTitle": "Citizen of the world",
+"achievementTwentyVisitedCountriesDescription": "Mark 20 countries as visited.",
+"achievementThreeDayStreakTitle": "Good start",
+"achievementThreeDayStreakDescription": "Keep a 3-day activity streak.",
+"achievementSevenDayStreakTitle": "Regular traveler",
+"achievementSevenDayStreakDescription": "Keep a 7-day activity streak.",
+"achievementThirtyDayStreakTitle": "Journal legend",
+"achievementThirtyDayStreakDescription": "Keep a 30-day activity streak.",
+"achievementSevenActiveDaysTitle": "Frequent visitor",
+"achievementSevenActiveDaysDescription": "Reach 7 days with activity.",
+"achievementThirtyActiveDaysTitle": "Regular user",
+"achievementThirtyActiveDaysDescription": "Reach 30 days with activity.",
+"photos": "Photos",
+"photosAddedToTrips": "Photos added to trips",
+"noPhotosYet": "You do not have any photos yet",
+"takeFirstPhotoHint": "Tap the camera to add your first photo.",
+"photoPreview": "Photo preview",
+"photoSaved": "Photo saved",
+"photoDeleted": "Photo deleted",
+"deletePhoto": "Delete photo",
+"cannotLoadPhotos": "Could not load photos"
 }

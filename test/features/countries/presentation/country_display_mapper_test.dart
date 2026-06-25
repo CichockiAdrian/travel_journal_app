@@ -11,11 +11,9 @@ void main() {
   group('CountryDisplayMapper', () {
     test('maps valid country with all fields for English locale', () {
       const country = CountryModel(
+        code: 'DEU',
         name: 'Germany',
-        translatedNames: {
-          'pol': 'Niemcy',
-          'deu': 'Deutschland',
-        },
+        translatedNames: {'pol': 'Niemcy', 'deu': 'Deutschland'},
         capital: 'Berlin',
         flagUrl: 'https://flagcdn.com/w320/de.png',
         region: 'Europe',
@@ -38,11 +36,9 @@ void main() {
 
     test('maps valid country with translation for Polish locale', () {
       const country = CountryModel(
+        code: 'DEU',
         name: 'Germany',
-        translatedNames: {
-          'pol': 'Niemcy',
-          'deu': 'Deutschland',
-        },
+        translatedNames: {'pol': 'Niemcy', 'deu': 'Deutschland'},
         capital: 'Berlin',
         flagUrl: 'https://flagcdn.com/w320/de.png',
         region: 'Europe',
@@ -65,10 +61,9 @@ void main() {
 
     test('uses subregion for Americas region', () {
       const country = CountryModel(
+        code: 'CAN',
         name: 'Canada',
-        translatedNames: {
-          'pol': 'Kanada',
-        },
+        translatedNames: {'pol': 'Kanada'},
         capital: 'Ottawa',
         flagUrl: 'https://flagcdn.com/w320/ca.png',
         region: 'Americas',
@@ -83,6 +78,7 @@ void main() {
         languageCode: 'en',
         translations: translationsEn,
       );
+
       expect(displayDataEn.region, equals('North America'));
 
       final displayDataPl = CountryDisplayMapper.fromCountry(
@@ -90,11 +86,13 @@ void main() {
         languageCode: 'pl',
         translations: translationsPl,
       );
+
       expect(displayDataPl.region, equals('Ameryka Północna'));
     });
 
-    test('handles null/missing properties and fallbacks correctly', () {
+    test('uses localized fallbacks for missing properties', () {
       const country = CountryModel(
+        code: 'UNKNOWN',
         name: null,
         translatedNames: {},
         capital: null,
@@ -112,9 +110,9 @@ void main() {
         translations: translationsEn,
       );
 
-      expect(displayDataEn.name, equals('Unknown country'));
-      expect(displayDataEn.capital, equals('No data'));
-      expect(displayDataEn.region, equals('No data'));
+      expect(displayDataEn.name, equals(translationsEn.unknownCountry));
+      expect(displayDataEn.capital, equals(translationsEn.noData));
+      expect(displayDataEn.region, equals(translationsEn.noData));
 
       final displayDataPl = CountryDisplayMapper.fromCountry(
         country: country,
@@ -122,9 +120,9 @@ void main() {
         translations: translationsPl,
       );
 
-      expect(displayDataPl.name, equals('Nieznany kraj'));
-      expect(displayDataPl.capital, equals('Brak danych'));
-      expect(displayDataPl.region, equals('Brak danych'));
+      expect(displayDataPl.name, equals(translationsPl.unknownCountry));
+      expect(displayDataPl.capital, equals(translationsPl.noData));
+      expect(displayDataPl.region, equals(translationsPl.noData));
     });
   });
 }

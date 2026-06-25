@@ -82,4 +82,117 @@
 },
 "globeMapMode": "Globus",
 "flatMapMode": "Mapa 2D"
+"showVisitedCountries": "Pokaż odwiedzone",
+"hideVisitedCountries": "Ukryj odwiedzone",
+"tripDiaryEmpty": "Nie masz jeszcze żadnych wpisów w dzienniku podróży.",
+"tripDiaryDetails": "Szczegóły wpisu",
+"addTripDiaryEntry": "Dodaj wpis",
+"entryTitle": "Tytuł",
+"entryTitleHint": "np. Rzym, Włochy",
+"tripCountry": "Kraj",
+"tripDate": "Data podróży",
+"description": "Opis",
+"descriptionHint": "Napisz coś o swojej podróży...",
+"markCountryAsVisitedWithEntry": "Oznacz ten kraj jako odwiedzony",
+"titleRequired": "Podaj tytuł wpisu.",
+"countryRequired": "Wybierz kraj.",
+"save": "Zapisz",
+"cancel": "Anuluj",
+"delete": "Usuń",
+"deleteTripDiaryEntry": "Usunąć wpis?",
+"deleteTripDiaryEntryConfirmation": "Tego działania nie można cofnąć.",
+"tripDiarySyncFailed": "Nie udało się zsynchronizować dziennika podróży.",
+"tripDiarySaveFailed": "Nie udało się zapisać wpisu.",
+"tripDiaryPhotos": "Zdjęcia",
+"tripDiaryPhotosLimit": "Możesz dodać maksymalnie {count} zdjęć do wpisu.",
+"@tripDiaryPhotosLimit": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"addPhotos": "Dodaj zdjęcia",
+"tripDiaryPhotosLimitReached": "Osiągnięto limit zdjęć dla tego wpisu.",
+"takePhoto": "Zrób zdjęcie",
+"chooseFromGallery": "Wybierz z galerii",
+"profileActivityStats": "Statystyki aktywności",
+"profileActivityStatsSyncFailed": "Nie udało się wczytać statystyk aktywności.",
+"currentActivityStreak": "Aktualny streak",
+"longestActivityStreak": "Najdłuższy streak",
+"activeDays": "Aktywne dni",
+"addedPhotos": "Dodane zdjęcia",
+"addedNotes": "Dodane notatki",
+"activityCalendar": "Kalendarz aktywności",
+"lastThirtyDays": "Ostatnie 30 dni",
+"noActivityYet": "Brak aktywności do pokazania.",
+"daysCount": "{count, plural, =0{0 dni} =1{1 dzień} other{{count} dni}}",
+"@daysCount": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"currentMonth": "Aktualny miesiąc",
+"achievements": "Osiągnięcia",
+"achievementsUnlockedCount": "{unlockedCount}/{totalCount} odblokowane",
+"@achievementsUnlockedCount": {
+  "placeholders": {
+    "unlockedCount": {
+      "type": "int"
+    },
+    "totalCount": {
+      "type": "int"
+    }
+  }
+},
+"achievementProgress": "{currentValue}/{requiredValue}",
+"@achievementProgress": {
+  "placeholders": {
+    "currentValue": {
+      "type": "int"
+    },
+    "requiredValue": {
+      "type": "int"
+    }
+  }
+},
+"achievementUnlocked": "Odblokowane",
+"achievementInProgress": "W trakcie",
+"achievementFirstPhotoTitle": "Pierwsze zdjęcie",
+"achievementFirstPhotoDescription": "Dodaj pierwsze zdjęcie do dziennika.",
+"achievementTenPhotosTitle": "Fotograf podróżnik",
+"achievementTenPhotosDescription": "Dodaj 10 zdjęć do dziennika.",
+"achievementFiftyPhotosTitle": "Kolekcjoner wspomnień",
+"achievementFiftyPhotosDescription": "Dodaj 50 zdjęć do dziennika.",
+"achievementFirstNoteTitle": "Pierwsza notatka",
+"achievementFirstNoteDescription": "Dodaj pierwszy wpis do dziennika.",
+"achievementTenNotesTitle": "Kronikarz",
+"achievementTenNotesDescription": "Dodaj 10 wpisów do dziennika.",
+"achievementFirstVisitedCountryTitle": "Pierwszy kraj",
+"achievementFirstVisitedCountryDescription": "Oznacz pierwszy kraj jako odwiedzony.",
+"achievementFiveVisitedCountriesTitle": "Mały odkrywca",
+"achievementFiveVisitedCountriesDescription": "Oznacz 5 krajów jako odwiedzone.",
+"achievementTwentyVisitedCountriesTitle": "Obywatel świata",
+"achievementTwentyVisitedCountriesDescription": "Oznacz 20 krajów jako odwiedzone.",
+"achievementThreeDayStreakTitle": "Dobry start",
+"achievementThreeDayStreakDescription": "Utrzymaj 3 dni aktywności z rzędu.",
+"achievementSevenDayStreakTitle": "Regularny podróżnik",
+"achievementSevenDayStreakDescription": "Utrzymaj 7 dni aktywności z rzędu.",
+"achievementThirtyDayStreakTitle": "Legenda dziennika",
+"achievementThirtyDayStreakDescription": "Utrzymaj 30 dni aktywności z rzędu.",
+"achievementSevenActiveDaysTitle": "Częsty gość",
+"achievementSevenActiveDaysDescription": "Zdobądź 7 dni z aktywnością.",
+"achievementThirtyActiveDaysTitle": "Stały bywalec",
+"achievementThirtyActiveDaysDescription": "Zdobądź 30 dni z aktywnością.",
+"photos": "Zdjęcia",
+"photosAddedToTrips": "Zdjęcia dodane do podróży",
+"noPhotosYet": "Nie masz jeszcze zdjęć",
+"takeFirstPhotoHint": "Kliknij aparat, żeby dodać pierwsze zdjęcie.",
+"photoPreview": "Podgląd zdjęcia",
+"photoSaved": "Zdjęcie zapisane",
+"photoDeleted": "Zdjęcie usunięte",
+"deletePhoto": "Usuń zdjęcie",
+"cannotLoadPhotos": "Nie udało się wczytać zdjęć"
 }
