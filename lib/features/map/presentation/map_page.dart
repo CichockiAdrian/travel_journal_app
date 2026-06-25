@@ -25,6 +25,10 @@ import '../../visited_countries/data/visited_country_model.dart';
 import '../data/device_location_service.dart';
 import '../logic/map_cubit.dart';
 import '../logic/map_state.dart';
+import '../../photo_gallery/data/photo_gallery_repository.dart';
+import '../../trip_diary/data/trip_diary_repository.dart';
+import '../../trip_diary/logic/trip_diary_cubit.dart';
+import '../../trip_diary/presentation/trip_diary_form_page.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -114,13 +118,13 @@ class _MapViewState extends State<_MapView> {
 
     _notificationTapSubscription = notificationService.notificationTapStream
         .listen((payload) {
-          final placeId = payload.toString().trim();
+          final placeId = payload.toString();
 
           if (placeId.isEmpty) {
             return;
           }
 
-          _handleNotificationTap(placeId);
+          unawaited(_handleNotificationTap(placeId));
         });
   }
 
@@ -141,18 +145,57 @@ class _MapViewState extends State<_MapView> {
     super.dispose();
   }
 
-  void _handleNotificationTap(String placeId) {
+  Future<void> _handleNotificationTap(String placeId) async {
     if (!mounted) {
       return;
     }
 
     final places = context.read<PlannedPlacesCubit>().state.places;
 
+    PlannedPlaceModel? matchingPlace;
+
     for (final place in places) {
       if (place.id == placeId) {
-        _openPlannedPlaceDetailsBottomSheet(context, place);
-        return;
+        matchingPlace = place;
+        break;
       }
+    }
+
+    if (matchingPlace == null) {
+      return;
+    }
+
+    final place = matchingPlace;
+
+    switch (place.actionTag) {
+      case PlannedPlaceActionTag.photo:
+        await getIt<PhotoGalleryRepository>().takePhoto();
+        return;
+
+      case PlannedPlaceActionTag.diary:
+        if (!mounted) {
+          return;
+        }
+
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return BlocProvider(
+                create: (_) => TripDiaryCubit(
+                  tripDiaryRepository: getIt<TripDiaryRepository>(),
+                ),
+                child: TripDiaryFormPage(
+                  initialTitle: place.title,
+                  initialDescription: place.note,
+                ),
+              );
+            },
+          ),
+        );
+        return;
+
+      case PlannedPlaceActionTag.none:
+        return;
     }
   }
 
