@@ -258,5 +258,9 @@
   "photoSaved": "Zdjęcie zapisane",
   "photoDeleted": "Zdjęcie usunięte",
   "deletePhoto": "Usuń zdjęcie",
-  "cannotLoadPhotos": "Nie udało się wczytać zdjęć"
+  "cannotLoadPhotos": "Nie udało się wczytać zdjęć",
+  "plannedPlaceActionTag": "Tag notatki",
+  "plannedPlaceActionNone": "Brak",
+  "plannedPlaceActionPhoto": "Zdjęcie",
+  "plannedPlaceActionDiary": "Notatka"
 }

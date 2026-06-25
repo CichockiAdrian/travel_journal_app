@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../logic/planned_places_cubit.dart';
 import '../logic/planned_places_state.dart';
+import '../data/planned_place_model.dart';
 
 class PlannedPlaceFormBottomSheet extends StatefulWidget {
   final double latitude;
@@ -26,6 +27,7 @@ class _PlannedPlaceFormBottomSheetState
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
+  PlannedPlaceActionTag _selectedActionTag = PlannedPlaceActionTag.none;
 
   @override
   void dispose() {
@@ -42,6 +44,7 @@ class _PlannedPlaceFormBottomSheetState
     final success = await context.read<PlannedPlacesCubit>().addPlace(
       title: _titleController.text,
       note: _noteController.text,
+      actionTag: _selectedActionTag,
       latitude: widget.latitude,
       longitude: widget.longitude,
     );
@@ -58,7 +61,6 @@ class _PlannedPlaceFormBottomSheetState
   @override
   Widget build(BuildContext context) {
     final translations = AppLocalizations.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Padding(
@@ -113,21 +115,53 @@ class _PlannedPlaceFormBottomSheetState
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
+                  Text(
+                    translations.plannedPlaceActionTag,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 18,
-                        color: colorScheme.onSurfaceVariant,
+                      ChoiceChip(
+                        label: Text(translations.plannedPlaceActionNone),
+                        selected:
+                            _selectedActionTag == PlannedPlaceActionTag.none,
+                        onSelected: state.isSaving
+                            ? null
+                            : (_) {
+                                setState(() {
+                                  _selectedActionTag =
+                                      PlannedPlaceActionTag.none;
+                                });
+                              },
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '${widget.latitude.toStringAsFixed(5)}, '
-                          '${widget.longitude.toStringAsFixed(5)}',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: colorScheme.onSurfaceVariant),
-                        ),
+                      ChoiceChip(
+                        label: Text(translations.plannedPlaceActionPhoto),
+                        selected:
+                            _selectedActionTag == PlannedPlaceActionTag.photo,
+                        onSelected: state.isSaving
+                            ? null
+                            : (_) {
+                                setState(() {
+                                  _selectedActionTag =
+                                      PlannedPlaceActionTag.photo;
+                                });
+                              },
+                      ),
+                      ChoiceChip(
+                        label: Text(translations.plannedPlaceActionDiary),
+                        selected:
+                            _selectedActionTag == PlannedPlaceActionTag.diary,
+                        onSelected: state.isSaving
+                            ? null
+                            : (_) {
+                                setState(() {
+                                  _selectedActionTag =
+                                      PlannedPlaceActionTag.diary;
+                                });
+                              },
                       ),
                     ],
                   ),

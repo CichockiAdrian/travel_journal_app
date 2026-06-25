@@ -258,5 +258,9 @@
   "photoSaved": "Photo saved",
   "photoDeleted": "Photo deleted",
   "deletePhoto": "Delete photo",
-  "cannotLoadPhotos": "Could not load photos"
+  "cannotLoadPhotos": "Could not load photos",
+  "plannedPlaceActionTag": "Notification tag",
+  "plannedPlaceActionNone": "None",
+  "plannedPlaceActionPhoto": "Photo",
+  "plannedPlaceActionDiary": "Diary"
 }

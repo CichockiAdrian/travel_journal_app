@@ -26,28 +26,23 @@ class PlannedPlacesCubit extends Cubit<PlannedPlacesState> {
   Future<bool> addPlace({
     required String title,
     required String? note,
+    required PlannedPlaceActionTag actionTag,
     required double latitude,
     required double longitude,
   }) async {
-    if (state.isSaving) {
-      return false;
-    }
-
     emit(state.copyWith(isSaving: true, actionFailureType: null));
 
     try {
       await _repository.addPlannedPlace(
         title: title,
         note: note,
+        actionTag: actionTag,
         latitude: latitude,
         longitude: longitude,
       );
 
       emit(state.copyWith(isSaving: false));
       return true;
-    } on PlannedPlacesException catch (error) {
-      emit(state.copyWith(isSaving: false, actionFailureType: error.type));
-      return false;
     } catch (_) {
       emit(
         state.copyWith(

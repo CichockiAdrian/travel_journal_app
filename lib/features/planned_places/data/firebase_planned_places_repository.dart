@@ -37,6 +37,7 @@ class FirebasePlannedPlacesRepository implements PlannedPlacesRepository {
   Future<void> addPlannedPlace({
     required String title,
     required String? note,
+    required PlannedPlaceActionTag actionTag,
     required double latitude,
     required double longitude,
   }) async {
@@ -66,6 +67,7 @@ class FirebasePlannedPlacesRepository implements PlannedPlacesRepository {
       id: document.id,
       title: trimmedTitle,
       note: note,
+      actionTag: actionTag,
       latitude: latitude,
       longitude: longitude,
       isCompleted: false,

@@ -19,6 +19,7 @@ abstract class PlannedPlacesRepository {
   Future<void> addPlannedPlace({
     required String title,
     required String? note,
+    required PlannedPlaceActionTag actionTag,
     required double latitude,
     required double longitude,
   });
