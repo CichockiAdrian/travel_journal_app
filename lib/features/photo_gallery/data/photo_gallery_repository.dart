@@ -11,13 +11,11 @@ import '../../trip_diary/data/trip_diary_repository.dart';
 import 'photo_gallery_photo.dart';
 
 class PhotoGalleryRepository {
-  PhotoGalleryRepository({
-    required TripDiaryRepository tripDiaryRepository,
-    required TripDiaryLocalPhotoStorage tripDiaryLocalPhotoStorage,
+  PhotoGalleryRepository(
+    this._tripDiaryRepository,
+    this._tripDiaryLocalPhotoStorage, {
     ImagePicker? imagePicker,
-  }) : _tripDiaryRepository = tripDiaryRepository,
-       _tripDiaryLocalPhotoStorage = tripDiaryLocalPhotoStorage,
-       _imagePicker = imagePicker ?? ImagePicker();
+  }) : _imagePicker = imagePicker ?? ImagePicker();
 
   static const String _quickPhotosStorageKey = 'photo_gallery_photos';
 

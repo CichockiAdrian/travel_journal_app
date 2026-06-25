@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_earth_globe/flutter_earth_globe.dart';
@@ -10,23 +12,19 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../planned_places/data/planned_place_distance_calculator.dart';
 import '../../planned_places/data/planned_place_model.dart';
 import '../../planned_places/data/planned_places_repository.dart';
 import '../../planned_places/logic/planned_places_cubit.dart';
 import '../../planned_places/logic/planned_places_state.dart';
+import '../../planned_places/notifications/planned_places_notification_service.dart';
 import '../../planned_places/presentation/planned_place_details_bottom_sheet.dart';
 import '../../planned_places/presentation/planned_place_form_bottom_sheet.dart';
 import '../../visited_countries/data/visited_countries_repository.dart';
 import '../../visited_countries/data/visited_country_model.dart';
-import '../../visited_countries/data/visited_countries_repository.dart';
-import '../../visited_countries/data/visited_country_model.dart';
-import '../../visited_countries/logic/visited_countries_cubit.dart';
-import '../../visited_countries/logic/visited_countries_state.dart';
 import '../data/device_location_service.dart';
 import '../logic/map_cubit.dart';
 import '../logic/map_state.dart';
-import '../../planned_places/data/planned_place_distance_calculator.dart';
-import '../../planned_places/notifications/planned_places_notification_service.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -46,13 +44,6 @@ class MapPage extends StatelessWidget {
             getIt<PlannedPlacesRepository>(),
             getIt<PlannedPlaceDistanceCalculator>(),
           ),
-          create: (_) =>
-              MapCubit(getIt<DeviceLocationService>())..loadInitialLocation(),
-        ),
-        BlocProvider(
-          create: (_) =>
-              VisitedCountriesCubit(getIt<VisitedCountriesRepository>())
-                ..watchVisitedCountries(),
         ),
       ],
       child: const _MapView(),
@@ -72,8 +63,6 @@ class _MapViewState extends State<_MapView> {
   static const String _currentLocationGlowPointId = 'current-location-glow';
   static const String _visitedCountryPointPrefix = 'visited-country-';
 
-  final Set<String> _renderedVisitedCountryPointIds = {};
-
   static const double _initialGlobeZoom = 0.5;
   static const double _minGlobeZoom = 0.1;
   static const double _maxGlobeZoom = 2.5;
@@ -87,16 +76,16 @@ class _MapViewState extends State<_MapView> {
 
   static const LatLng _defaultFlatMapCenter = LatLng(20, 0);
 
+  final Set<String> _renderedVisitedCountryPointIds = {};
+
   late final FlutterEarthGlobeController _globeController;
   late final MapController _flatMapController;
 
+  StreamSubscription<dynamic>? _notificationTapSubscription;
+
   bool _hasCurrentLocationPoint = false;
-  double _currentGlobeZoom = _initialGlobeZoom;
   bool _areVisitedCountryPinsVisible = true;
-
-  double _currentZoom = _initialZoom;
-
-  final Set<String> _visitedCountryPointIds = <String>{};
+  double _currentGlobeZoom = _initialGlobeZoom;
 
   @override
   void initState() {
@@ -119,22 +108,52 @@ class _MapViewState extends State<_MapView> {
     );
 
     _flatMapController = MapController();
-    getIt<PlannedPlacesNotificationService>().initialize();
+
+    final notificationService = getIt<PlannedPlacesNotificationService>();
+    unawaited(notificationService.initialize());
+
+    _notificationTapSubscription = notificationService.notificationTapStream
+        .listen((payload) {
+          final placeId = payload.toString().trim();
+
+          if (placeId.isEmpty) {
+            return;
+          }
+
+          _handleNotificationTap(placeId);
+        });
   }
 
   @override
   void dispose() {
-    _globeController.dispose();
-    _flatMapController.dispose();
-    removeVisitedCountryPoints();
+    unawaited(_notificationTapSubscription?.cancel() ?? Future<void>.value());
+
+    _removeVisitedCountryPoints();
 
     if (_hasCurrentLocationPoint) {
-      _controller.removePoint(_currentLocationPointId);
-      _controller.removePoint(_currentLocationGlowPointId);
+      _globeController.removePoint(_currentLocationPointId);
+      _globeController.removePoint(_currentLocationGlowPointId);
     }
 
-    _controller.dispose();
+    _globeController.dispose();
+    _flatMapController.dispose();
+
     super.dispose();
+  }
+
+  void _handleNotificationTap(String placeId) {
+    if (!mounted) {
+      return;
+    }
+
+    final places = context.read<PlannedPlacesCubit>().state.places;
+
+    for (final place in places) {
+      if (place.id == placeId) {
+        _openPlannedPlaceDetailsBottomSheet(context, place);
+        return;
+      }
+    }
   }
 
   void _updateGlobeZoom(double zoom) {
@@ -236,16 +255,24 @@ class _MapViewState extends State<_MapView> {
 
     _globeController.stopRotation();
     _updateGlobeZoom(0.72);
-    _globeController.focusOnCoordinates(
-  void removeVisitedCountryPoints() {
-    for (final pointId in _visitedCountryPointIds) {
-      _controller.removePoint(pointId);
-    }
 
-    _visitedCountryPointIds.clear();
+    _globeController.focusOnCoordinates(
+      coordinates,
+      animate: true,
+      duration: const Duration(milliseconds: 900),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
-  void toggleVisitedCountryPins(
+  void _removeVisitedCountryPoints() {
+    for (final pointId in _renderedVisitedCountryPointIds) {
+      _globeController.removePoint(pointId);
+    }
+
+    _renderedVisitedCountryPointIds.clear();
+  }
+
+  void _toggleVisitedCountryPins(
     BuildContext context,
     List<VisitedCountryModel> countries,
   ) {
@@ -256,25 +283,26 @@ class _MapViewState extends State<_MapView> {
     });
 
     if (shouldShowPins) {
-      syncVisitedCountryPoints(context, countries);
+      _syncVisitedCountryPoints(context, countries);
     } else {
-      removeVisitedCountryPoints();
+      _removeVisitedCountryPoints();
     }
   }
 
-  void syncVisitedCountryPoints(
+  void _syncVisitedCountryPoints(
     BuildContext context,
-    List<VisitedCountryModel> countries,
+    List<VisitedCountryModel> visitedCountries,
   ) {
-    removeVisitedCountryPoints();
+    _removeVisitedCountryPoints();
 
     if (!_areVisitedCountryPinsVisible) {
       return;
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
     final translations = AppLocalizations.of(context);
 
-    for (final country in countries) {
+    for (final country in visitedCountries) {
       final latitude = country.latitude;
       final longitude = country.longitude;
 
@@ -284,10 +312,15 @@ class _MapViewState extends State<_MapView> {
 
       final pointId = '$_visitedCountryPointPrefix${country.id}';
       final glowPointId = '$pointId-glow';
-      final countryName = country.name ?? translations.unknownCountry;
-      final coordinates = GlobeCoordinates(latitude, longitude);
+      final countryName = country.name?.trim().isEmpty ?? true
+          ? translations.unknownCountry
+          : country.name!.trim();
 
       void showCountryName() {
+        if (!mounted) {
+          return;
+        }
+
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -298,15 +331,15 @@ class _MapViewState extends State<_MapView> {
           );
       }
 
-      _controller.addPoint(
+      _globeController.addPoint(
         Point(
           id: glowPointId,
-          coordinates: coordinates,
+          coordinates: GlobeCoordinates(latitude, longitude),
           label: countryName,
           isLabelVisible: false,
           onTap: showCountryName,
-          style: const PointStyle(
-            color: Color(0x66E53935),
+          style: PointStyle(
+            color: colorScheme.secondary.withValues(alpha: 0.35),
             size: 4.2,
             altitude: 0.025,
             transitionDuration: 500,
@@ -314,15 +347,15 @@ class _MapViewState extends State<_MapView> {
         ),
       );
 
-      _controller.addPoint(
+      _globeController.addPoint(
         Point(
           id: pointId,
-          coordinates: coordinates,
+          coordinates: GlobeCoordinates(latitude, longitude),
           label: countryName,
           isLabelVisible: false,
           onTap: showCountryName,
-          style: const PointStyle(
-            color: Color(0xFFE53935),
+          style: PointStyle(
+            color: colorScheme.secondary,
             size: 2.0,
             altitude: 0.05,
             transitionDuration: 500,
@@ -330,24 +363,10 @@ class _MapViewState extends State<_MapView> {
         ),
       );
 
-      _visitedCountryPointIds
+      _renderedVisitedCountryPointIds
         ..add(glowPointId)
         ..add(pointId);
     }
-  }
-
-  void focusOnCurrentLocation(DeviceLocation location) {
-    final coordinates = GlobeCoordinates(location.latitude, location.longitude);
-
-    _controller.stopRotation();
-    updateZoom(0.72);
-
-    _controller.focusOnCoordinates(
-      coordinates,
-      animate: true,
-      duration: const Duration(milliseconds: 900),
-      curve: Curves.easeInOutCubic,
-    );
   }
 
   void _openAddPlannedPlaceBottomSheet(BuildContext context, LatLng point) {
@@ -410,9 +429,6 @@ class _MapViewState extends State<_MapView> {
   String _getPlannedPlacesErrorMessage(
     BuildContext context,
     PlannedPlacesFailureType type,
-  String getVisitedCountriesErrorMessage(
-    BuildContext context,
-    VisitedCountriesFailureType type,
   ) {
     final translations = AppLocalizations.of(context);
 
@@ -425,13 +441,34 @@ class _MapViewState extends State<_MapView> {
         return translations.locationUnknownError;
       case PlannedPlacesFailureType.unknown:
         return translations.plannedPlaceSaveFailed;
-      case VisitedCountriesFailureType.notAuthenticated:
-        return translations.signInToSyncVisitedCountries;
-      case VisitedCountriesFailureType.missingCountryId:
-        return translations.countryCannotBeMarkedAsVisited;
-      case VisitedCountriesFailureType.unknown:
-        return translations.visitedCountriesSyncFailed;
     }
+  }
+
+  String _formatDistance(BuildContext context, double distanceInMeters) {
+    final translations = AppLocalizations.of(context);
+
+    if (distanceInMeters >= 1000) {
+      final distanceInKilometers = distanceInMeters / 1000;
+
+      return translations.distanceKilometers(
+        distanceInKilometers.toStringAsFixed(1),
+      );
+    }
+
+    return translations.distanceMeters(distanceInMeters.round());
+  }
+
+  String? _getPlannedPlaceDistanceText(BuildContext context, String placeId) {
+    final distance = context
+        .read<PlannedPlacesCubit>()
+        .state
+        .distanceByPlaceId[placeId];
+
+    if (distance == null) {
+      return null;
+    }
+
+    return _formatDistance(context, distance);
   }
 
   @override
@@ -484,7 +521,6 @@ class _MapViewState extends State<_MapView> {
           },
         ),
         BlocListener<MapCubit, MapState>(
-        BlocListener<VisitedCountriesCubit, VisitedCountriesState>(
           listenWhen: (previous, current) {
             return previous.visitedCountries != current.visitedCountries;
           },
@@ -493,10 +529,6 @@ class _MapViewState extends State<_MapView> {
           },
         ),
         BlocListener<PlannedPlacesCubit, PlannedPlacesState>(
-            syncVisitedCountryPoints(context, state.visitedCountries);
-          },
-        ),
-        BlocListener<VisitedCountriesCubit, VisitedCountriesState>(
           listenWhen: (previous, current) {
             return previous.failureType != current.failureType &&
                 current.failureType != null;
@@ -544,7 +576,6 @@ class _MapViewState extends State<_MapView> {
             final place = state.pendingNearbyNotificationPlace!;
             final distance = state.pendingNearbyNotificationDistanceInMeters!;
             final formattedDistance = _formatDistance(context, distance);
-            final translations = AppLocalizations.of(context);
 
             await getIt<PlannedPlacesNotificationService>()
                 .showNearbyPlannedPlaceNotification(
@@ -562,12 +593,6 @@ class _MapViewState extends State<_MapView> {
             }
 
             context.read<PlannedPlacesCubit>().clearPendingNearbyNotification();
-                  getVisitedCountriesErrorMessage(context, state.failureType!),
-                ),
-              ),
-            );
-
-            context.read<VisitedCountriesCubit>().clearFailure();
           },
         ),
       ],
@@ -577,6 +602,16 @@ class _MapViewState extends State<_MapView> {
               .watch<PlannedPlacesCubit>()
               .state
               .places;
+
+          final visibleVisitedCountries = _areVisitedCountryPinsVisible
+              ? state.visitedCountries
+              : const <VisitedCountryModel>[];
+
+          final visitedCountriesWithCoordinatesCount = state.visitedCountries
+              .where((country) {
+                return country.latitude != null && country.longitude != null;
+              })
+              .length;
 
           return Scaffold(
             appBar: AppBar(
@@ -624,7 +659,7 @@ class _MapViewState extends State<_MapView> {
                             key: const ValueKey('flat-map'),
                             controller: _flatMapController,
                             currentLocation: state.currentLocation,
-                            visitedCountries: state.visitedCountries,
+                            visitedCountries: visibleVisitedCountries,
                             plannedPlaces: plannedPlaces,
                             onMapTap: () {
                               context
@@ -664,6 +699,30 @@ class _MapViewState extends State<_MapView> {
                       onZoomIn: () => _zoomIn(context, state.mapDisplayMode),
                     ),
                   ),
+                  if (state.mapDisplayMode == MapDisplayMode.globe)
+                    Positioned(
+                      right: 16,
+                      top: 78,
+                      child: SizedBox(
+                        width: 230,
+                        child: _VisitedCountriesCard(
+                          title: _areVisitedCountryPinsVisible
+                              ? translations.hideVisitedCountries
+                              : translations.showVisitedCountries,
+                          subtitle: translations.visitedCountriesCount(
+                            visitedCountriesWithCoordinatesCount,
+                          ),
+                          isLoading: state.isLoadingVisitedCountries,
+                          arePinsVisible: _areVisitedCountryPinsVisible,
+                          onTogglePins: () {
+                            _toggleVisitedCountryPins(
+                              context,
+                              state.visitedCountries,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   if (state.currentLocation != null &&
                       state.isCurrentLocationCardVisible)
                     Positioned(
@@ -678,207 +737,10 @@ class _MapViewState extends State<_MapView> {
                 ],
               ),
             ),
-        builder: (context, mapState) {
-          return BlocBuilder<VisitedCountriesCubit, VisitedCountriesState>(
-            builder: (context, visitedCountriesState) {
-              final visitedCountriesCount =
-                  visitedCountriesState.visitedCountriesWithCoordinatesCount;
-
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text(translations.map),
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        context.read<MapCubit>().hideCurrentLocationCard();
-                        _controller.toggleRotation();
-                      },
-                      icon: const Icon(Icons.threesixty),
-                    ),
-                    IconButton(
-                      tooltip: translations.showCurrentLocation,
-                      onPressed: mapState.isLoadingLocation
-                          ? null
-                          : context.read<MapCubit>().refreshCurrentLocation,
-                      icon: mapState.isLoadingLocation
-                          ? const SizedBox.square(
-                              dimension: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.my_location),
-                    ),
-                  ],
-                ),
-                body: SafeArea(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final shortestSide =
-                          constraints.maxWidth < constraints.maxHeight
-                          ? constraints.maxWidth
-                          : constraints.maxHeight;
-
-                      final radius = shortestSide * 0.42;
-
-                      const globeOffsetY = -50.0;
-                      const extraRenderHeight = 120.0;
-
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ClipRect(
-                            child: OverflowBox(
-                              alignment: Alignment.center,
-                              minWidth: constraints.maxWidth,
-                              maxWidth: constraints.maxWidth,
-                              minHeight:
-                                  constraints.maxHeight + extraRenderHeight,
-                              maxHeight:
-                                  constraints.maxHeight + extraRenderHeight,
-                              child: Transform.translate(
-                                offset: const Offset(0, globeOffsetY),
-                                child: SizedBox(
-                                  width: constraints.maxWidth,
-                                  height:
-                                      constraints.maxHeight + extraRenderHeight,
-                                  child: Center(
-                                    child: Listener(
-                                      onPointerDown: (_) {
-                                        context
-                                            .read<MapCubit>()
-                                            .hideCurrentLocationCard();
-                                      },
-                                      child: FlutterEarthGlobe(
-                                        controller: _controller,
-                                        radius: radius,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 16,
-                            top: 16,
-                            child: _MapZoomControls(
-                              onZoomOut: () => zoomOut(context),
-                              onZoomIn: () => zoomIn(context),
-                            ),
-                          ),
-                          Positioned(
-                            right: 16,
-                            top: 16,
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: constraints.maxWidth * 0.58,
-                              ),
-                              child: _VisitedCountriesCard(
-                                title: _areVisitedCountryPinsVisible
-                                    ? translations.hideVisitedCountries
-                                    : translations.showVisitedCountries,
-                                subtitle: translations.visitedCountriesCount(
-                                  visitedCountriesCount,
-                                ),
-                                isLoading:
-                                    visitedCountriesState.status ==
-                                    VisitedCountriesStatus.loading,
-                                arePinsVisible: _areVisitedCountryPinsVisible,
-                                onTogglePins: () {
-                                  toggleVisitedCountryPins(
-                                    context,
-                                    visitedCountriesState.visitedCountries,
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          if (mapState.currentLocation != null &&
-                              mapState.isCurrentLocationCardVisible)
-                            Positioned(
-                              left: 16,
-                              right: 16,
-                              bottom: 16,
-                              child: _CurrentLocationCard(
-                                title: translations.currentLocation,
-                                location: mapState.currentLocation!,
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              );
-            },
           );
         },
       ),
     );
-  }
-
-  void _syncVisitedCountryPoints(
-    BuildContext context,
-    List<VisitedCountryModel> visitedCountries,
-  ) {
-    for (final pointId in _renderedVisitedCountryPointIds) {
-      _globeController.removePoint(pointId);
-    }
-
-    _renderedVisitedCountryPointIds.clear();
-
-    final colorScheme = Theme.of(context).colorScheme;
-
-    for (final country in visitedCountries) {
-      final latitude = country.latitude;
-      final longitude = country.longitude;
-
-      if (latitude == null || longitude == null) continue;
-
-      final pointId = '$_visitedCountryPointPrefix${country.id}';
-
-      _globeController.addPoint(
-        Point(
-          id: pointId,
-          coordinates: GlobeCoordinates(latitude, longitude),
-          isLabelVisible: false,
-          style: PointStyle(
-            color: colorScheme.secondary,
-            size: 1.45,
-            altitude: 0.035,
-            transitionDuration: 500,
-          ),
-        ),
-      );
-
-      _renderedVisitedCountryPointIds.add(pointId);
-    }
-  }
-
-  String _formatDistance(BuildContext context, double distanceInMeters) {
-    final translations = AppLocalizations.of(context);
-
-    if (distanceInMeters >= 1000) {
-      final distanceInKilometers = distanceInMeters / 1000;
-
-      return translations.distanceKilometers(
-        distanceInKilometers.toStringAsFixed(1),
-      );
-    }
-
-    return translations.distanceMeters(distanceInMeters.round());
-  }
-
-  String? _getPlannedPlaceDistanceText(BuildContext context, String placeId) {
-    final distance = context
-        .read<PlannedPlacesCubit>()
-        .state
-        .distanceByPlaceId[placeId];
-
-    if (distance == null) {
-      return null;
-    }
-
-    return _formatDistance(context, distance);
   }
 }
 
