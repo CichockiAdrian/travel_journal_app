@@ -131,7 +131,9 @@ void onPlannedPlacesBackgroundServiceStart(ServiceInstance service) async {
     }
 
     final position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.medium,
+      ),
     );
 
     final notifiedPlaceIds =
