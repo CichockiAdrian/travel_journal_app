@@ -117,6 +117,14 @@ void onPlannedPlacesBackgroundServiceStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
+  bool isAppForeground = true;
+
+  service.on('setAppForeground').listen((event) {
+    if (event != null && event['isForeground'] is bool) {
+      isAppForeground = event['isForeground'] as bool;
+    }
+  });
+
   Timer.periodic(const Duration(seconds: 60), (_) async {
     final canUseLocation = await _canUseLocation();
     if (!canUseLocation) {
@@ -131,8 +139,10 @@ void onPlannedPlacesBackgroundServiceStart(ServiceInstance service) async {
     }
 
     final position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.medium,
+      locationSettings: LocationSettings(
+        accuracy: isAppForeground
+            ? LocationAccuracy.medium
+            : LocationAccuracy.low,
       ),
     );
 
