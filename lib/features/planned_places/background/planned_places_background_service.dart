@@ -70,7 +70,8 @@ Future<void> initializePlannedPlacesBackgroundService() async {
 }
 
 Future<void> startPlannedPlacesBackgroundService() async {
-  final hasPermission = await _canUseLocation();
+  final hasPermission = await _canUseBackgroundLocation();
+
   if (!hasPermission) {
     return;
   }
@@ -113,11 +114,14 @@ void onPlannedPlacesBackgroundServiceStart(ServiceInstance service) async {
     await service.setAsForegroundService();
   }
 
+  Timer? backgroundTimer;
+  bool isTickRunning = false;
+  bool isAppForeground = true;
+
   service.on('stopService').listen((_) {
+    backgroundTimer?.cancel();
     service.stopSelf();
   });
-
-  bool isAppForeground = true;
 
   service.on('setAppForeground').listen((event) {
     if (event != null && event['isForeground'] is bool) {
@@ -125,99 +129,111 @@ void onPlannedPlacesBackgroundServiceStart(ServiceInstance service) async {
     }
   });
 
-  Timer.periodic(const Duration(seconds: 60), (_) async {
-    final canUseLocation = await _canUseLocation();
-    if (!canUseLocation) {
+  backgroundTimer = Timer.periodic(const Duration(seconds: 60), (_) async {
+    if (isTickRunning) {
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
+    isTickRunning = true;
 
-    final targets = _loadTargets(prefs);
-    if (targets.isEmpty) {
-      return;
-    }
+    try {
+      final canUseLocation = await _canUseBackgroundLocation();
 
-    final position = await Geolocator.getCurrentPosition(
-      locationSettings: LocationSettings(
-        accuracy: isAppForeground
-            ? LocationAccuracy.medium
-            : LocationAccuracy.low,
-      ),
-    );
-
-    final notifiedPlaceIds =
-        prefs.getStringList(_notifiedPlaceIdsKey)?.toSet() ?? <String>{};
-
-    for (final target in targets) {
-      final distance = Geolocator.distanceBetween(
-        position.latitude,
-        position.longitude,
-        target.latitude,
-        target.longitude,
-      );
-
-      final exitDistance = target.radiusMeters + 150;
-
-      if (distance > exitDistance) {
-        notifiedPlaceIds.remove(target.id);
-        continue;
+      if (!canUseLocation) {
+        return;
       }
 
-      if (distance <= target.radiusMeters &&
-          !notifiedPlaceIds.contains(target.id)) {
-        notifiedPlaceIds.add(target.id);
+      final prefs = await SharedPreferences.getInstance();
+      final targets = _loadTargets(prefs);
 
-        await notifications.show(
-          id: target.id.hashCode.abs(),
-          title: target.title,
-          body: target.body,
-          notificationDetails: const NotificationDetails(
-            android: AndroidNotificationDetails(
-              nearbyPlannedPlacesChannelId,
-              'Nearby planned places',
-              channelDescription:
-                  'Notifications shown near planned map places.',
-              importance: Importance.high,
-              priority: Priority.high,
+      if (targets.isEmpty) {
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(
+          accuracy: isAppForeground
+              ? LocationAccuracy.medium
+              : LocationAccuracy.low,
+        ),
+      );
+
+      final notifiedPlaceIds =
+          prefs.getStringList(_notifiedPlaceIdsKey)?.toSet() ?? <String>{};
+
+      for (final target in targets) {
+        final distance = Geolocator.distanceBetween(
+          position.latitude,
+          position.longitude,
+          target.latitude,
+          target.longitude,
+        );
+
+        final exitDistance = target.radiusMeters + 150;
+
+        if (distance > exitDistance) {
+          notifiedPlaceIds.remove(target.id);
+          continue;
+        }
+
+        if (distance <= target.radiusMeters &&
+            !notifiedPlaceIds.contains(target.id)) {
+          notifiedPlaceIds.add(target.id);
+
+          await notifications.show(
+            id: target.id.hashCode.abs(),
+            title: target.title,
+            body: target.body,
+            notificationDetails: const NotificationDetails(
+              android: AndroidNotificationDetails(
+                nearbyPlannedPlacesChannelId,
+                'Nearby planned places',
+                channelDescription:
+                    'Notifications shown near planned map places.',
+                importance: Importance.high,
+                priority: Priority.high,
+              ),
+              iOS: DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+              ),
             ),
-            iOS: DarwinNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
-            ),
-          ),
-          payload: target.id,
+            payload: target.id,
+          );
+        }
+      }
+
+      await prefs.setStringList(
+        _notifiedPlaceIdsKey,
+        notifiedPlaceIds.toList(),
+      );
+
+      if (service is AndroidServiceInstance) {
+        await service.setForegroundNotificationInfo(
+          title: 'Travel Journal',
+          content: 'Checking nearby planned places',
         );
       }
-    }
-
-    await prefs.setStringList(_notifiedPlaceIdsKey, notifiedPlaceIds.toList());
-
-    if (service is AndroidServiceInstance) {
-      await service.setForegroundNotificationInfo(
-        title: 'Travel Journal',
-        content: 'Checking nearby planned places',
-      );
+    } catch (error, stackTrace) {
+      debugPrint('Background location tick failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      isTickRunning = false;
     }
   });
 }
 
-Future<bool> _canUseLocation() async {
+Future<bool> _canUseBackgroundLocation() async {
   final isServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
   if (!isServiceEnabled) {
     return false;
   }
 
-  var permission = await Geolocator.checkPermission();
+  final permission = await Geolocator.checkPermission();
 
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-  }
-
-  return permission == LocationPermission.always ||
-      permission == LocationPermission.whileInUse;
+  return permission == LocationPermission.always;
 }
 
 List<_BackgroundPlannedPlaceTarget> _loadTargets(SharedPreferences prefs) {
@@ -225,18 +241,28 @@ List<_BackgroundPlannedPlaceTarget> _loadTargets(SharedPreferences prefs) {
       prefs.getStringList(PlannedPlacesBackgroundTargetStorage.targetsKey) ??
       [];
 
-  return encodedTargets.map((encodedTarget) {
-    final json = jsonDecode(encodedTarget) as Map<String, dynamic>;
+  final targets = <_BackgroundPlannedPlaceTarget>[];
 
-    return _BackgroundPlannedPlaceTarget(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      body: json['body'] as String,
-      latitude: (json['latitude'] as num).toDouble(),
-      longitude: (json['longitude'] as num).toDouble(),
-      radiusMeters: (json['radiusMeters'] as num).toDouble(),
-    );
-  }).toList();
+  for (final encodedTarget in encodedTargets) {
+    try {
+      final decodedTarget = jsonDecode(encodedTarget) as Map<String, dynamic>;
+
+      targets.add(
+        _BackgroundPlannedPlaceTarget(
+          id: decodedTarget['id'] as String,
+          title: decodedTarget['title'] as String,
+          body: decodedTarget['body'] as String,
+          latitude: (decodedTarget['latitude'] as num).toDouble(),
+          longitude: (decodedTarget['longitude'] as num).toDouble(),
+          radiusMeters: (decodedTarget['radiusMeters'] as num).toDouble(),
+        ),
+      );
+    } catch (error) {
+      debugPrint('Invalid planned place background target: $error');
+    }
+  }
+
+  return targets;
 }
 
 class _BackgroundPlannedPlaceTarget {
