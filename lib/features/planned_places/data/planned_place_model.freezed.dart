@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PlannedPlaceModel {
 
- String get id; String get title; String? get note; double get latitude; double get longitude; bool get isCompleted; DateTime? get createdAt; DateTime? get completedAt;
+ String get id; String get title; String? get note; PlannedPlaceActionTag get actionTag; double get latitude; double get longitude; bool get isCompleted; DateTime? get createdAt; DateTime? get completedAt;
 /// Create a copy of PlannedPlaceModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $PlannedPlaceModelCopyWith<PlannedPlaceModel> get copyWith => _$PlannedPlaceMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlannedPlaceModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlannedPlaceModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.actionTag, actionTag) || other.actionTag == actionTag)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,note,latitude,longitude,isCompleted,createdAt,completedAt);
+int get hashCode => Object.hash(runtimeType,id,title,note,actionTag,latitude,longitude,isCompleted,createdAt,completedAt);
 
 @override
 String toString() {
-  return 'PlannedPlaceModel(id: $id, title: $title, note: $note, latitude: $latitude, longitude: $longitude, isCompleted: $isCompleted, createdAt: $createdAt, completedAt: $completedAt)';
+  return 'PlannedPlaceModel(id: $id, title: $title, note: $note, actionTag: $actionTag, latitude: $latitude, longitude: $longitude, isCompleted: $isCompleted, createdAt: $createdAt, completedAt: $completedAt)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $PlannedPlaceModelCopyWith<$Res>  {
   factory $PlannedPlaceModelCopyWith(PlannedPlaceModel value, $Res Function(PlannedPlaceModel) _then) = _$PlannedPlaceModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? note, double latitude, double longitude, bool isCompleted, DateTime? createdAt, DateTime? completedAt
+ String id, String title, String? note, PlannedPlaceActionTag actionTag, double latitude, double longitude, bool isCompleted, DateTime? createdAt, DateTime? completedAt
 });
 
 
@@ -63,12 +63,13 @@ class _$PlannedPlaceModelCopyWithImpl<$Res>
 
 /// Create a copy of PlannedPlaceModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? note = freezed,Object? latitude = null,Object? longitude = null,Object? isCompleted = null,Object? createdAt = freezed,Object? completedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? note = freezed,Object? actionTag = null,Object? latitude = null,Object? longitude = null,Object? isCompleted = null,Object? createdAt = freezed,Object? completedAt = freezed,}) {
   return _then(PlannedPlaceModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
-as String?,latitude: null == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as String?,actionTag: null == actionTag ? _self.actionTag : actionTag // ignore: cast_nullable_to_non_nullable
+as PlannedPlaceActionTag,latitude: null == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double,longitude: null == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? note,  double latitude,  double longitude,  bool isCompleted,  DateTime? createdAt,  DateTime? completedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? note,  PlannedPlaceActionTag actionTag,  double latitude,  double longitude,  bool isCompleted,  DateTime? createdAt,  DateTime? completedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PlannedPlaceModel() when $default != null:
-return $default(_that.id,_that.title,_that.note,_that.latitude,_that.longitude,_that.isCompleted,_that.createdAt,_that.completedAt);case _:
+return $default(_that.id,_that.title,_that.note,_that.actionTag,_that.latitude,_that.longitude,_that.isCompleted,_that.createdAt,_that.completedAt);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.title,_that.note,_that.latitude,_that.longitude,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? note,  double latitude,  double longitude,  bool isCompleted,  DateTime? createdAt,  DateTime? completedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? note,  PlannedPlaceActionTag actionTag,  double latitude,  double longitude,  bool isCompleted,  DateTime? createdAt,  DateTime? completedAt)  $default,) {final _that = this;
 switch (_that) {
 case _PlannedPlaceModel():
-return $default(_that.id,_that.title,_that.note,_that.latitude,_that.longitude,_that.isCompleted,_that.createdAt,_that.completedAt);case _:
+return $default(_that.id,_that.title,_that.note,_that.actionTag,_that.latitude,_that.longitude,_that.isCompleted,_that.createdAt,_that.completedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.title,_that.note,_that.latitude,_that.longitude,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? note,  double latitude,  double longitude,  bool isCompleted,  DateTime? createdAt,  DateTime? completedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? note,  PlannedPlaceActionTag actionTag,  double latitude,  double longitude,  bool isCompleted,  DateTime? createdAt,  DateTime? completedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _PlannedPlaceModel() when $default != null:
-return $default(_that.id,_that.title,_that.note,_that.latitude,_that.longitude,_that.isCompleted,_that.createdAt,_that.completedAt);case _:
+return $default(_that.id,_that.title,_that.note,_that.actionTag,_that.latitude,_that.longitude,_that.isCompleted,_that.createdAt,_that.completedAt);case _:
   return null;
 
 }
@@ -214,12 +215,13 @@ return $default(_that.id,_that.title,_that.note,_that.latitude,_that.longitude,_
 
 
 class _PlannedPlaceModel extends PlannedPlaceModel {
-  const _PlannedPlaceModel({required this.id, required this.title, required this.note, required this.latitude, required this.longitude, required this.isCompleted, required this.createdAt, required this.completedAt}): super._();
+  const _PlannedPlaceModel({required this.id, required this.title, required this.note, required this.actionTag, required this.latitude, required this.longitude, required this.isCompleted, required this.createdAt, required this.completedAt}): super._();
   
 
 @override final  String id;
 @override final  String title;
 @override final  String? note;
+@override final  PlannedPlaceActionTag actionTag;
 @override final  double latitude;
 @override final  double longitude;
 @override final  bool isCompleted;
@@ -236,16 +238,16 @@ _$PlannedPlaceModelCopyWith<_PlannedPlaceModel> get copyWith => __$PlannedPlaceM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlannedPlaceModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlannedPlaceModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.actionTag, actionTag) || other.actionTag == actionTag)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,note,latitude,longitude,isCompleted,createdAt,completedAt);
+int get hashCode => Object.hash(runtimeType,id,title,note,actionTag,latitude,longitude,isCompleted,createdAt,completedAt);
 
 @override
 String toString() {
-  return 'PlannedPlaceModel(id: $id, title: $title, note: $note, latitude: $latitude, longitude: $longitude, isCompleted: $isCompleted, createdAt: $createdAt, completedAt: $completedAt)';
+  return 'PlannedPlaceModel(id: $id, title: $title, note: $note, actionTag: $actionTag, latitude: $latitude, longitude: $longitude, isCompleted: $isCompleted, createdAt: $createdAt, completedAt: $completedAt)';
 }
 
 
@@ -256,7 +258,7 @@ abstract mixin class _$PlannedPlaceModelCopyWith<$Res> implements $PlannedPlaceM
   factory _$PlannedPlaceModelCopyWith(_PlannedPlaceModel value, $Res Function(_PlannedPlaceModel) _then) = __$PlannedPlaceModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? note, double latitude, double longitude, bool isCompleted, DateTime? createdAt, DateTime? completedAt
+ String id, String title, String? note, PlannedPlaceActionTag actionTag, double latitude, double longitude, bool isCompleted, DateTime? createdAt, DateTime? completedAt
 });
 
 
@@ -273,12 +275,13 @@ class __$PlannedPlaceModelCopyWithImpl<$Res>
 
 /// Create a copy of PlannedPlaceModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? note = freezed,Object? latitude = null,Object? longitude = null,Object? isCompleted = null,Object? createdAt = freezed,Object? completedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? note = freezed,Object? actionTag = null,Object? latitude = null,Object? longitude = null,Object? isCompleted = null,Object? createdAt = freezed,Object? completedAt = freezed,}) {
   return _then(_PlannedPlaceModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
-as String?,latitude: null == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as String?,actionTag: null == actionTag ? _self.actionTag : actionTag // ignore: cast_nullable_to_non_nullable
+as PlannedPlaceActionTag,latitude: null == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double,longitude: null == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../countries/data/countries_repository.dart';
 import '../../countries/data/country_model.dart';
@@ -13,13 +14,19 @@ import '../../countries/logic/countries_cubit.dart';
 import '../../countries/logic/countries_state.dart';
 import '../../countries/presentation/country_display_mapper.dart';
 import '../../visited_countries/data/visited_countries_repository.dart';
+import '../data/trip_diary_failure.dart';
 import '../data/trip_diary_limits.dart';
 import '../logic/trip_diary_cubit.dart';
-import '../../../core/di/service_locator.dart';
-import '../data/trip_diary_failure.dart';
 
 class TripDiaryFormPage extends StatefulWidget {
-  const TripDiaryFormPage({super.key});
+  final String? initialTitle;
+  final String? initialDescription;
+
+  const TripDiaryFormPage({
+    super.key,
+    this.initialTitle,
+    this.initialDescription,
+  });
 
   @override
   State<TripDiaryFormPage> createState() => _TripDiaryFormPageState();
@@ -38,6 +45,22 @@ class _TripDiaryFormPageState extends State<TripDiaryFormPage> {
   DateTime _travelDate = DateTime.now();
   bool _markCountryAsVisited = true;
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final initialTitle = widget.initialTitle?.trim();
+    final initialDescription = widget.initialDescription?.trim();
+
+    if (initialTitle != null && initialTitle.isNotEmpty) {
+      _titleController.text = initialTitle;
+    }
+
+    if (initialDescription != null && initialDescription.isNotEmpty) {
+      _descriptionController.text = initialDescription;
+    }
+  }
 
   @override
   void dispose() {
@@ -469,7 +492,7 @@ class _TripDiaryPhotosPicker extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: photos.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              separatorBuilder: (context, _) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
                 final photo = photos[index];
 
@@ -587,7 +610,7 @@ class _TripDiaryCountryPickerSheet extends StatelessWidget {
                       },
                       child: ListView.separated(
                         itemCount: state.visibleCountries.length,
-                        separatorBuilder: (_, _) {
+                        separatorBuilder: (context, _) {
                           return const Divider(height: 1);
                         },
                         itemBuilder: (context, index) {

@@ -11,7 +11,6 @@ void main() {
   group('CountryDisplayMapper', () {
     test('maps valid country with all fields for English locale', () {
       const country = CountryModel(
-        code: 'de',
         code: 'DEU',
         name: 'Germany',
         translatedNames: {'pol': 'Niemcy', 'deu': 'Deutschland'},
@@ -37,7 +36,6 @@ void main() {
 
     test('maps valid country with translation for Polish locale', () {
       const country = CountryModel(
-        code: 'de',
         code: 'DEU',
         name: 'Germany',
         translatedNames: {'pol': 'Niemcy', 'deu': 'Deutschland'},
@@ -63,7 +61,6 @@ void main() {
 
     test('uses subregion for Americas region', () {
       const country = CountryModel(
-        code: 'ca',
         code: 'CAN',
         name: 'Canada',
         translatedNames: {'pol': 'Kanada'},
@@ -95,7 +92,6 @@ void main() {
 
     test('uses localized fallbacks for missing properties', () {
       const country = CountryModel(
-        code: null,
         code: 'UNKNOWN',
         name: null,
         translatedNames: {},

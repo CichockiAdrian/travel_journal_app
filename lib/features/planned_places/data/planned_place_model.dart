@@ -3,10 +3,28 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'planned_place_model.freezed.dart';
 
+enum PlannedPlaceActionTag {
+  none('none'),
+  photo('photo'),
+  diary('diary');
+
+  const PlannedPlaceActionTag(this.value);
+
+  final String value;
+
+  static PlannedPlaceActionTag fromValue(String? value) {
+    return PlannedPlaceActionTag.values.firstWhere(
+      (tag) => tag.value == value,
+      orElse: () => PlannedPlaceActionTag.none,
+    );
+  }
+}
+
 @freezed
 abstract class PlannedPlaceModel with _$PlannedPlaceModel {
   static const titleField = 'title';
   static const noteField = 'note';
+  static const actionTagField = 'actionTag';
   static const latitudeField = 'latitude';
   static const longitudeField = 'longitude';
   static const isCompletedField = 'isCompleted';
@@ -19,6 +37,7 @@ abstract class PlannedPlaceModel with _$PlannedPlaceModel {
     required String id,
     required String title,
     required String? note,
+    required PlannedPlaceActionTag actionTag,
     required double latitude,
     required double longitude,
     required bool isCompleted,
@@ -34,6 +53,9 @@ abstract class PlannedPlaceModel with _$PlannedPlaceModel {
       id: id,
       title: data[titleField]?.toString().trim() ?? '',
       note: _readNullableTrimmedString(data[noteField]),
+      actionTag: PlannedPlaceActionTag.fromValue(
+        data[actionTagField]?.toString(),
+      ),
       latitude: _readDouble(data[latitudeField]) ?? 0,
       longitude: _readDouble(data[longitudeField]) ?? 0,
       isCompleted: data[isCompletedField] == true,
@@ -46,6 +68,7 @@ abstract class PlannedPlaceModel with _$PlannedPlaceModel {
     return {
       titleField: title.trim(),
       noteField: _emptyToNull(note),
+      actionTagField: actionTag.value,
       latitudeField: latitude,
       longitudeField: longitude,
       isCompletedField: false,

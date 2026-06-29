@@ -1,6 +1,6 @@
 {
   "@@locale": "pl",
-  "appTitle": "Travel Journal",
+  "appTitle": "Dziennik podróży",
   "appTagline": "Twoje podróże.\nTwoje wspomnienia.",
 
   "email": "Email",
@@ -15,8 +15,8 @@
   "countries": "Kraje",
   "searchCountry": "Szukaj kraju...",
   "noCountriesFound": "Nie znaleziono krajów.",
-  "noSearchResults": "Brak wyników dla podanej frazy.",
-  "countriesFetchFailed": "Nie udało się pobrać krajów.",
+  "noSearchResults": "Brak wyników dla wpisanej frazy.",
+  "countriesFetchFailed": "Nie udało się wczytać krajów.",
   "tryAgain": "Spróbuj ponownie",
 
   "capital": "Stolica",
@@ -24,11 +24,13 @@
   "population": "Populacja",
   "coordinates": "Współrzędne",
   "noData": "Brak danych",
-  "markAsVisited": "Oznacz jako odwiedzony",
-  "markedAsVisited": "Oznaczono jako odwiedzony: {countryName}",
+  "markAsVisited": "Oznacz jako odwiedzone",
+  "markedAsVisited": "Oznaczono jako odwiedzone: {countryName}",
   "@markedAsVisited": {
     "placeholders": {
-      "countryName": {}
+      "countryName": {
+        "type": "String"
+      }
     }
   },
 
@@ -49,7 +51,7 @@
   "visitedCountries": "Odwiedzone kraje",
   "visitedCountriesSubtitle": "Lista krajów oznaczonych jako odwiedzone",
   "travelJournal": "Dziennik podróży",
-  "travelJournalSubtitle": "Wpisy i wspomnienia z wyjazdów",
+  "travelJournalSubtitle": "Wpisy i wspomnienia z podróży",
   "photos": "Zdjęcia",
   "photosSubtitle": "Zdjęcia dodane do podróży",
   "settingsSubtitle": "Preferencje aplikacji",
@@ -60,184 +62,205 @@
   "systemTheme": "Systemowy",
   "lightTheme": "Jasny",
   "darkTheme": "Ciemny",
+
   "showCurrentLocation": "Pokaż aktualną lokalizację",
- "currentLocation": "Aktualna lokalizacja",
- "locationServiceDisabled": "Usługi lokalizacji są wyłączone.",
- "locationPermissionDenied": "Odmówiono dostępu do lokalizacji.",
- "locationPermissionDeniedForever": "Dostęp do lokalizacji został trwale zablokowany. Włącz go w ustawieniach aplikacji.",
- "locationUnknownError": "Nie udało się pobrać aktualnej lokalizacji.",
- "visited": "Odwiedzone",
- "removeFromVisited": "Usuń z odwiedzonych",
- "visitedCountriesSyncFailed": "Nie udało się zsynchronizować odwiedzonych krajów.",
- "signInToSyncVisitedCountries": "Zaloguj się, aby synchronizować odwiedzone kraje.",
- "countryCannotBeMarkedAsVisited": "Tego kraju nie można oznaczyć jako odwiedzonego.",
-"noVisitedCountriesYet": "Nie masz jeszcze oznaczonych odwiedzonych krajów.",
-"visitedCountriesCount": "Odwiedzone kraje: {count}",
-"@visitedCountriesCount": {
-  "placeholders": {
-    "count": {
-      "type": "int"
+  "currentLocation": "Aktualna lokalizacja",
+  "locationServiceDisabled": "Usługi lokalizacji są wyłączone.",
+  "locationPermissionDenied": "Odmówiono dostępu do lokalizacji.",
+  "locationPermissionDeniedForever": "Dostęp do lokalizacji został trwale odrzucony. Włącz go w ustawieniach aplikacji.",
+  "locationUnknownError": "Nie udało się pobrać aktualnej lokalizacji.",
+
+  "visited": "Odwiedzone",
+  "removeFromVisited": "Usuń z odwiedzonych",
+  "visitedCountriesSyncFailed": "Nie udało się zsynchronizować odwiedzonych krajów.",
+  "signInToSyncVisitedCountries": "Zaloguj się, aby synchronizować odwiedzone kraje.",
+  "countryCannotBeMarkedAsVisited": "Tego kraju nie można oznaczyć jako odwiedzonego.",
+  "noVisitedCountriesYet": "Nie oznaczono jeszcze żadnego kraju jako odwiedzonego.",
+  "visitedCountriesCount": "Odwiedzone kraje: {count}",
+  "@visitedCountriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
     }
-  }
-},
-"globeMapMode": "Globus",
-"flatMapMode": "Mapa 2D",
-"plannedPlaces": "Planowane miejsca",
-"addPlannedPlace": "Dodaj planowane miejsce",
-"plannedPlaceTitle": "Nazwa miejsca",
-"plannedPlaceTitleHint": "Np. punkt widokowy",
-"plannedPlaceTitleRequired": "Podaj nazwę miejsca.",
-"plannedPlaceNote": "Notatka",
-"plannedPlaceNoteHint": "Np. zdjęcie o zachodzie słońca",
-"savePlannedPlace": "Zapisz miejsce",
-"plannedPlaceSaveFailed": "Nie udało się zapisać miejsca.",
-"plannedPlaceDelete": "Usuń miejsce",
-"plannedPlaceMarkCompleted": "Oznacz jako zrealizowane",
-"plannedPlaceMarkOpen": "Przywróć jako planowane",
-"plannedPlaceCompleted": "Zrealizowane",
-"plannedPlaceCoordinates": "Współrzędne punktu",
-"plannedPlacesSyncFailed": "Nie udało się zsynchronizować planowanych miejsc.",
-"signInToSyncPlannedPlaces": "Zaloguj się, aby synchronizować planowane miejsca.",
-"plannedPlaceDistanceFromYou": "Odległość od Ciebie",
-"distanceMeters": "{meters} m",
-"@distanceMeters": {
-  "placeholders": {
-    "meters": {
-"showVisitedCountries": "Pokaż odwiedzone",
-"hideVisitedCountries": "Ukryj odwiedzone",
-"tripDiaryEmpty": "Nie masz jeszcze żadnych wpisów w dzienniku podróży.",
-"tripDiaryDetails": "Szczegóły wpisu",
-"addTripDiaryEntry": "Dodaj wpis",
-"entryTitle": "Tytuł",
-"entryTitleHint": "np. Rzym, Włochy",
-"tripCountry": "Kraj",
-"tripDate": "Data podróży",
-"description": "Opis",
-"descriptionHint": "Napisz coś o swojej podróży...",
-"markCountryAsVisitedWithEntry": "Oznacz ten kraj jako odwiedzony",
-"titleRequired": "Podaj tytuł wpisu.",
-"countryRequired": "Wybierz kraj.",
-"save": "Zapisz",
-"cancel": "Anuluj",
-"delete": "Usuń",
-"deleteTripDiaryEntry": "Usunąć wpis?",
-"deleteTripDiaryEntryConfirmation": "Tego działania nie można cofnąć.",
-"tripDiarySyncFailed": "Nie udało się zsynchronizować dziennika podróży.",
-"tripDiarySaveFailed": "Nie udało się zapisać wpisu.",
-"tripDiaryPhotos": "Zdjęcia",
-"tripDiaryPhotosLimit": "Możesz dodać maksymalnie {count} zdjęć do wpisu.",
-"@tripDiaryPhotosLimit": {
-  "placeholders": {
-    "count": {
-      "type": "int"
+  },
+
+  "globeMapMode": "Globus",
+  "flatMapMode": "Mapa 2D",
+
+  "plannedPlaces": "Planowane miejsca",
+  "addPlannedPlace": "Dodaj planowane miejsce",
+  "plannedPlaceTitle": "Nazwa miejsca",
+  "plannedPlaceTitleHint": "Np. punkt widokowy",
+  "plannedPlaceTitleRequired": "Podaj nazwę miejsca.",
+  "plannedPlaceNote": "Notatka",
+  "plannedPlaceNoteHint": "Np. zdjęcie zachodu słońca",
+  "savePlannedPlace": "Zapisz miejsce",
+  "plannedPlaceSaveFailed": "Nie udało się zapisać miejsca.",
+  "plannedPlaceDelete": "Usuń miejsce",
+  "plannedPlaceMarkCompleted": "Oznacz jako zrealizowane",
+  "plannedPlaceMarkOpen": "Przenieś z powrotem do planowanych",
+  "plannedPlaceCompleted": "Zrealizowane",
+  "plannedPlaceCoordinates": "Współrzędne miejsca",
+  "plannedPlacesSyncFailed": "Nie udało się zsynchronizować planowanych miejsc.",
+  "signInToSyncPlannedPlaces": "Zaloguj się, aby synchronizować planowane miejsca.",
+  "plannedPlaceDistanceFromYou": "Odległość od Ciebie",
+
+  "distanceMeters": "{meters} m",
+  "@distanceMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
     }
-  }
-},
-"distanceKilometers": "{kilometers} km",
-"@distanceKilometers": {
-  "placeholders": {
-    "kilometers": {
-      "type": "String"
+  },
+
+  "distanceKilometers": "{kilometers} km",
+  "@distanceKilometers": {
+    "placeholders": {
+      "kilometers": {
+        "type": "String"
+      }
     }
-  }
-},
-"nearbyPlannedPlaceNotificationTitle": "Jesteś blisko: {placeName}",
-"@nearbyPlannedPlaceNotificationTitle": {
-  "placeholders": {
-    "placeName": {
-      "type": "String"
+  },
+
+  "nearbyPlannedPlaceNotificationTitle": "Jesteś blisko: {placeName}",
+  "@nearbyPlannedPlaceNotificationTitle": {
+    "placeholders": {
+      "placeName": {
+        "type": "String"
+      }
     }
-  }
-},
-"nearbyPlannedPlaceNotificationBody": "Masz około {distance} do zaplanowanego miejsca. Warto zrobić zdjęcie?",
-"@nearbyPlannedPlaceNotificationBody": {
-  "placeholders": {
-    "distance": {
-      "type": "String"
+  },
+
+  "nearbyPlannedPlaceNotificationBody": "Masz około {distance} do zaplanowanego miejsca. Warto zrobić zdjęcie?",
+  "@nearbyPlannedPlaceNotificationBody": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
     }
-  }
-}
-"addPhotos": "Dodaj zdjęcia",
-"tripDiaryPhotosLimitReached": "Osiągnięto limit zdjęć dla tego wpisu.",
-"takePhoto": "Zrób zdjęcie",
-"chooseFromGallery": "Wybierz z galerii",
-"profileActivityStats": "Statystyki aktywności",
-"profileActivityStatsSyncFailed": "Nie udało się wczytać statystyk aktywności.",
-"currentActivityStreak": "Aktualny streak",
-"longestActivityStreak": "Najdłuższy streak",
-"activeDays": "Aktywne dni",
-"addedPhotos": "Dodane zdjęcia",
-"addedNotes": "Dodane notatki",
-"activityCalendar": "Kalendarz aktywności",
-"lastThirtyDays": "Ostatnie 30 dni",
-"noActivityYet": "Brak aktywności do pokazania.",
-"daysCount": "{count, plural, =0{0 dni} =1{1 dzień} other{{count} dni}}",
-"@daysCount": {
-  "placeholders": {
-    "count": {
-      "type": "int"
+  },
+
+  "showVisitedCountries": "Pokaż odwiedzone",
+  "hideVisitedCountries": "Ukryj odwiedzone",
+
+  "tripDiaryEmpty": "Nie masz jeszcze żadnych wpisów w dzienniku podróży.",
+  "tripDiaryDetails": "Szczegóły wpisu",
+  "addTripDiaryEntry": "Dodaj wpis",
+  "entryTitle": "Tytuł",
+  "entryTitleHint": "np. Rzym, Włochy",
+  "tripCountry": "Kraj",
+  "tripDate": "Data podróży",
+  "description": "Opis",
+  "descriptionHint": "Napisz coś o swojej podróży...",
+  "markCountryAsVisitedWithEntry": "Oznacz ten kraj jako odwiedzony",
+  "titleRequired": "Podaj tytuł wpisu.",
+  "countryRequired": "Wybierz kraj.",
+  "save": "Zapisz",
+  "cancel": "Anuluj",
+  "delete": "Usuń",
+  "deleteTripDiaryEntry": "Usunąć wpis?",
+  "deleteTripDiaryEntryConfirmation": "Tego działania nie można cofnąć.",
+  "tripDiarySyncFailed": "Nie udało się zsynchronizować dziennika podróży.",
+  "tripDiarySaveFailed": "Nie udało się zapisać wpisu.",
+  "tripDiaryPhotos": "Zdjęcia",
+  "tripDiaryPhotosLimit": "Możesz dodać maksymalnie {count} zdjęć do wpisu.",
+  "@tripDiaryPhotosLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
     }
-  }
-},
-"currentMonth": "Aktualny miesiąc",
-"achievements": "Osiągnięcia",
-"achievementsUnlockedCount": "{unlockedCount}/{totalCount} odblokowane",
-"@achievementsUnlockedCount": {
-  "placeholders": {
-    "unlockedCount": {
-      "type": "int"
-    },
-    "totalCount": {
-      "type": "int"
+  },
+
+  "addPhotos": "Dodaj zdjęcia",
+  "tripDiaryPhotosLimitReached": "Osiągnięto limit zdjęć dla tego wpisu.",
+  "takePhoto": "Zrób zdjęcie",
+  "chooseFromGallery": "Wybierz z galerii",
+
+  "profileActivityStats": "Statystyki aktywności",
+  "profileActivityStatsSyncFailed": "Nie udało się wczytać statystyk aktywności.",
+  "currentActivityStreak": "Aktualna seria",
+  "longestActivityStreak": "Najdłuższa seria",
+  "activeDays": "Aktywne dni",
+  "addedPhotos": "Dodane zdjęcia",
+  "addedNotes": "Dodane notatki",
+  "activityCalendar": "Kalendarz aktywności",
+  "lastThirtyDays": "Ostatnie 30 dni",
+  "noActivityYet": "Brak aktywności do pokazania.",
+  "daysCount": "{count, plural, =0{0 dni} =1{1 dzień} other{{count} dni}}",
+  "@daysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
     }
-  }
-},
-"achievementProgress": "{currentValue}/{requiredValue}",
-"@achievementProgress": {
-  "placeholders": {
-    "currentValue": {
-      "type": "int"
-    },
-    "requiredValue": {
-      "type": "int"
+  },
+  "currentMonth": "Bieżący miesiąc",
+
+  "achievements": "Osiągnięcia",
+  "achievementsUnlockedCount": "{unlockedCount}/{totalCount} odblokowano",
+  "@achievementsUnlockedCount": {
+    "placeholders": {
+      "unlockedCount": {
+        "type": "int"
+      },
+      "totalCount": {
+        "type": "int"
+      }
     }
-  }
-},
-"achievementUnlocked": "Odblokowane",
-"achievementInProgress": "W trakcie",
-"achievementFirstPhotoTitle": "Pierwsze zdjęcie",
-"achievementFirstPhotoDescription": "Dodaj pierwsze zdjęcie do dziennika.",
-"achievementTenPhotosTitle": "Fotograf podróżnik",
-"achievementTenPhotosDescription": "Dodaj 10 zdjęć do dziennika.",
-"achievementFiftyPhotosTitle": "Kolekcjoner wspomnień",
-"achievementFiftyPhotosDescription": "Dodaj 50 zdjęć do dziennika.",
-"achievementFirstNoteTitle": "Pierwsza notatka",
-"achievementFirstNoteDescription": "Dodaj pierwszy wpis do dziennika.",
-"achievementTenNotesTitle": "Kronikarz",
-"achievementTenNotesDescription": "Dodaj 10 wpisów do dziennika.",
-"achievementFirstVisitedCountryTitle": "Pierwszy kraj",
-"achievementFirstVisitedCountryDescription": "Oznacz pierwszy kraj jako odwiedzony.",
-"achievementFiveVisitedCountriesTitle": "Mały odkrywca",
-"achievementFiveVisitedCountriesDescription": "Oznacz 5 krajów jako odwiedzone.",
-"achievementTwentyVisitedCountriesTitle": "Obywatel świata",
-"achievementTwentyVisitedCountriesDescription": "Oznacz 20 krajów jako odwiedzone.",
-"achievementThreeDayStreakTitle": "Dobry start",
-"achievementThreeDayStreakDescription": "Utrzymaj 3 dni aktywności z rzędu.",
-"achievementSevenDayStreakTitle": "Regularny podróżnik",
-"achievementSevenDayStreakDescription": "Utrzymaj 7 dni aktywności z rzędu.",
-"achievementThirtyDayStreakTitle": "Legenda dziennika",
-"achievementThirtyDayStreakDescription": "Utrzymaj 30 dni aktywności z rzędu.",
-"achievementSevenActiveDaysTitle": "Częsty gość",
-"achievementSevenActiveDaysDescription": "Zdobądź 7 dni z aktywnością.",
-"achievementThirtyActiveDaysTitle": "Stały bywalec",
-"achievementThirtyActiveDaysDescription": "Zdobądź 30 dni z aktywnością.",
-"photos": "Zdjęcia",
-"photosAddedToTrips": "Zdjęcia dodane do podróży",
-"noPhotosYet": "Nie masz jeszcze zdjęć",
-"takeFirstPhotoHint": "Kliknij aparat, żeby dodać pierwsze zdjęcie.",
-"photoPreview": "Podgląd zdjęcia",
-"photoSaved": "Zdjęcie zapisane",
-"photoDeleted": "Zdjęcie usunięte",
-"deletePhoto": "Usuń zdjęcie",
-"cannotLoadPhotos": "Nie udało się wczytać zdjęć"
+  },
+  "achievementProgress": "{currentValue}/{requiredValue}",
+  "@achievementProgress": {
+    "placeholders": {
+      "currentValue": {
+        "type": "int"
+      },
+      "requiredValue": {
+        "type": "int"
+      }
+    }
+  },
+  "achievementUnlocked": "Odblokowane",
+  "achievementInProgress": "W trakcie",
+  "achievementFirstPhotoTitle": "Pierwsze zdjęcie",
+  "achievementFirstPhotoDescription": "Dodaj pierwsze zdjęcie do dziennika.",
+  "achievementTenPhotosTitle": "Fotograf podróży",
+  "achievementTenPhotosDescription": "Dodaj 10 zdjęć do dziennika.",
+  "achievementFiftyPhotosTitle": "Kolekcjoner wspomnień",
+  "achievementFiftyPhotosDescription": "Dodaj 50 zdjęć do dziennika.",
+  "achievementFirstNoteTitle": "Pierwsza notatka",
+  "achievementFirstNoteDescription": "Dodaj pierwszy wpis do dziennika.",
+  "achievementTenNotesTitle": "Kronikarz",
+  "achievementTenNotesDescription": "Dodaj 10 wpisów do dziennika.",
+  "achievementFirstVisitedCountryTitle": "Pierwszy kraj",
+  "achievementFirstVisitedCountryDescription": "Oznacz pierwszy kraj jako odwiedzony.",
+  "achievementFiveVisitedCountriesTitle": "Mały odkrywca",
+  "achievementFiveVisitedCountriesDescription": "Oznacz 5 krajów jako odwiedzone.",
+  "achievementTwentyVisitedCountriesTitle": "Obywatel świata",
+  "achievementTwentyVisitedCountriesDescription": "Oznacz 20 krajów jako odwiedzone.",
+  "achievementThreeDayStreakTitle": "Dobry początek",
+  "achievementThreeDayStreakDescription": "Utrzymaj 3-dniową serię aktywności.",
+  "achievementSevenDayStreakTitle": "Regularny podróżnik",
+  "achievementSevenDayStreakDescription": "Utrzymaj 7-dniową serię aktywności.",
+  "achievementThirtyDayStreakTitle": "Legenda dziennika",
+  "achievementThirtyDayStreakDescription": "Utrzymaj 30-dniową serię aktywności.",
+  "achievementSevenActiveDaysTitle": "Częsty gość",
+  "achievementSevenActiveDaysDescription": "Osiągnij 7 dni z aktywnością.",
+  "achievementThirtyActiveDaysTitle": "Regularny użytkownik",
+  "achievementThirtyActiveDaysDescription": "Osiągnij 30 dni z aktywnością.",
+
+  "photosAddedToTrips": "Zdjęcia dodane do podróży",
+  "noPhotosYet": "Nie masz jeszcze żadnych zdjęć",
+  "takeFirstPhotoHint": "Kliknij aparat, aby dodać pierwsze zdjęcie.",
+  "photoPreview": "Podgląd zdjęcia",
+  "photoSaved": "Zdjęcie zapisane",
+  "photoDeleted": "Zdjęcie usunięte",
+  "deletePhoto": "Usuń zdjęcie",
+  "cannotLoadPhotos": "Nie udało się wczytać zdjęć",
+  "plannedPlaceActionTag": "Tag notatki",
+  "plannedPlaceActionNone": "Brak",
+  "plannedPlaceActionPhoto": "Zdjęcie",
+  "plannedPlaceActionDiary": "Notatka"
 }

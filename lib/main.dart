@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/auth_gate.dart';
@@ -14,6 +15,7 @@ import 'core/settings/data/app_settings_repository.dart';
 import 'core/settings/logic/app_settings_cubit.dart';
 
 import 'features/photo_gallery/presentation/global_camera_overlay.dart';
+import 'features/planned_places/background/planned_places_background_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +23,7 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await initializePlannedPlacesBackgroundService();
 
   setupServiceLocator();
 
@@ -34,8 +37,37 @@ Future<void> main() async {
   );
 }
 
-class TravelJournalApp extends StatelessWidget {
+class TravelJournalApp extends StatefulWidget {
   const TravelJournalApp({super.key});
+
+  @override
+  State<TravelJournalApp> createState() => _TravelJournalAppState();
+}
+
+class _TravelJournalAppState extends State<TravelJournalApp>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final service = FlutterBackgroundService();
+    if (state == AppLifecycleState.resumed) {
+      service.invoke('setAppForeground', {'isForeground': true});
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      service.invoke('setAppForeground', {'isForeground': false});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

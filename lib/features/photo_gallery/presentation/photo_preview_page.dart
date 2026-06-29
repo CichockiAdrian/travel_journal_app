@@ -37,7 +37,7 @@ class PhotoPreviewPage extends StatelessWidget {
               child: Image.file(
                 File(photo.filePath),
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) {
+                errorBuilder: (_, _, _) {
                   return const Icon(Icons.broken_image_outlined);
                 },
               ),

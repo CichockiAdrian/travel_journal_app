@@ -153,7 +153,7 @@ class _PhotoGridItem extends StatelessWidget {
           child: Image.file(
             File(photo.filePath),
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) {
+            errorBuilder: (_, _, _) {
               return const ColoredBox(
                 color: Colors.black12,
                 child: Icon(Icons.broken_image_outlined),
