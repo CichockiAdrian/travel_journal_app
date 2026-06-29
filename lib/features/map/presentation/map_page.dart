@@ -12,7 +12,6 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../l10n/generated/app_localizations.dart';
-import '../../planned_places/data/planned_place_distance_calculator.dart';
 import '../../planned_places/data/planned_place_model.dart';
 import '../../planned_places/data/planned_places_repository.dart';
 import '../../planned_places/logic/planned_places_cubit.dart';
@@ -20,7 +19,6 @@ import '../../planned_places/logic/planned_places_state.dart';
 import '../../planned_places/notifications/planned_places_notification_service.dart';
 import '../../planned_places/presentation/planned_place_details_bottom_sheet.dart';
 import '../../planned_places/presentation/planned_place_form_bottom_sheet.dart';
-import '../../visited_countries/data/visited_countries_repository.dart';
 import '../../visited_countries/data/visited_country_model.dart';
 import '../data/device_location_service.dart';
 import '../logic/map_cubit.dart';
@@ -37,24 +35,13 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => MapCubit(
-        getIt<DeviceLocationService>(),
-        getIt<VisitedCountriesRepository>(),
-      )..loadInitialLocation(),
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => MapCubit(
-            getIt<DeviceLocationService>(),
-            getIt<VisitedCountriesRepository>(),
-          )..loadInitialLocation(),
+        BlocProvider<MapCubit>(
+          create: (_) => MapCubit(getIt(), getIt())..loadInitialLocation(),
         ),
-        BlocProvider(
-          create: (_) => PlannedPlacesCubit(
-            getIt<PlannedPlacesRepository>(),
-            getIt<PlannedPlaceDistanceCalculator>(),
-          ),
+        BlocProvider<PlannedPlacesCubit>(
+          create: (_) => PlannedPlacesCubit(getIt(), getIt()),
         ),
       ],
       child: const _MapView(),
