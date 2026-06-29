@@ -9,9 +9,9 @@ Built with Flutter, Firebase, interactive maps, local photo storage, background 
 ## Preview
 
 <p align="center">
-  <img src="docs/screenshots/Zrzut%20ekranu%202026-06-29%20o%2012.15.26%2012.18.16%281%29.png" width="30%" alt="Account and activity statistics screen" />
-  <img src="docs/screenshots/Zrzut%20ekranu%202026-06-29%20o%2012.15.30%2012.18.16.png" width="30%" alt="Interactive 3D globe map screen" />
-  <img src="docs/screenshots/Zrzut%20ekranu%202026-06-29%20o%2012.15.43%2012.18.16.png" width="30%" alt="Countries list screen" />
+  <img src="docs/screenshots/account-stats.png" width="30%" alt="Account and activity statistics screen" />
+  <img src="docs/screenshots/map-globe.png" width="30%" alt="Interactive 3D globe map screen" />
+  <img src="docs/screenshots/countries-list.png" width="30%" alt="Countries list screen" />
 </p>
 
 ---
